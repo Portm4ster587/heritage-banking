@@ -74,27 +74,30 @@ export const AccountOverview = () => {
     .reduce((sum, account) => sum + account.balance, 0);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8 animate-fade-in">
+      <div className="flex items-center justify-between animate-slide-up">
         <div>
-          <h2 className="text-3xl font-bold text-primary">Account Overview</h2>
+          <h2 className="text-3xl font-bold text-primary mb-2">Account Overview</h2>
           <p className="text-muted-foreground">Manage your financial portfolio</p>
         </div>
-        <Button className="banking-gradient-primary">
+        <Button className="banking-gradient-primary banking-button pulse-glow">
           <CreditCard className="mr-2 h-4 w-4" />
           Open New Account
         </Button>
       </div>
 
-      <Card className="banking-card banking-gradient-secondary text-secondary-foreground">
-        <CardHeader>
+      <Card className="banking-card banking-gradient-secondary text-secondary-foreground hover-lift animate-scale-in relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-secondary-light/20 rounded-full -mr-16 -mt-16" />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-accent/20 rounded-full -ml-12 -mb-12" />
+        
+        <CardHeader className="relative z-10">
           <CardTitle className="flex items-center space-x-2">
-            <TrendingUp className="h-6 w-6" />
+            <TrendingUp className="h-6 w-6 animate-float" />
             <span>Total Portfolio Value</span>
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="text-4xl font-bold">
+        <CardContent className="relative z-10">
+          <div className="text-4xl font-bold animate-balance-pulse">
             {new Intl.NumberFormat('en-US', {
               style: 'currency',
               currency: 'USD',
@@ -103,10 +106,13 @@ export const AccountOverview = () => {
           <p className="text-secondary-foreground/80 mt-2">
             Across all active accounts
           </p>
+          <div className="mt-4 h-2 bg-secondary-foreground/20 rounded-full overflow-hidden">
+            <div className="h-full bg-accent animate-slide-in-right" style={{ width: '75%' }} />
+          </div>
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 stagger-fade-in">
         {accountTypes.map((account, index) => (
           <BalanceMeter
             key={index}

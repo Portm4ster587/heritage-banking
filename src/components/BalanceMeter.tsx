@@ -25,37 +25,42 @@ export const BalanceMeter = ({
   };
 
   return (
-    <Card className="banking-card banking-shadow hover:shadow-lg transition-all duration-300 border-l-4 border-l-primary">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">
+    <Card className="banking-card banking-shadow hover-lift border-l-4 border-l-primary animate-fade-in group overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 relative z-10">
+        <CardTitle className="text-sm font-medium text-muted-foreground transition-colors group-hover:text-primary">
           {accountName}
         </CardTitle>
-        <Wallet className="h-4 w-4 text-muted-foreground" />
+        <Wallet className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors group-hover:animate-pulse" />
       </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold text-primary">
+      <CardContent className="relative z-10">
+        <div className="text-2xl font-bold text-primary animate-balance-pulse group-hover:animate-none transition-all duration-300">
           {formatCurrency(balance)}
         </div>
-        <p className="text-xs text-muted-foreground mb-4">
+        <p className="text-xs text-muted-foreground mb-4 opacity-75 group-hover:opacity-100 transition-opacity">
           Account: {accountNumber}
         </p>
         
-        <div className="flex items-center space-x-2 text-xs">
+        <div className="flex items-center space-x-2 text-xs animate-slide-up">
           {isPositive ? (
-            <TrendingUp className="h-4 w-4 text-success" />
+            <TrendingUp className="h-4 w-4 text-success animate-pulse" />
           ) : (
-            <TrendingDown className="h-4 w-4 text-destructive" />
+            <TrendingDown className="h-4 w-4 text-destructive animate-pulse" />
           )}
-          <span className={isPositive ? "text-success" : "text-destructive"}>
+          <span className={`font-semibold ${isPositive ? "text-success" : "text-destructive"}`}>
             {isPositive ? "+" : ""}{changePercent}%
           </span>
           <span className="text-muted-foreground">vs last month</span>
         </div>
         
-        <Progress 
-          value={75} 
-          className="mt-3" 
-        />
+        <div className="mt-3 space-y-2">
+          <Progress 
+            value={75} 
+            className="transition-all duration-500 hover:shadow-sm" 
+          />
+          <div className="h-1 w-full bg-gradient-to-r from-primary/20 via-secondary/20 to-accent/20 rounded-full opacity-50 group-hover:opacity-100 transition-opacity" />
+        </div>
       </CardContent>
     </Card>
   );

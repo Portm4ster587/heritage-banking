@@ -12,24 +12,30 @@ const Index = () => {
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div 
-          className="h-96 bg-cover bg-center relative"
+          className="h-96 bg-cover bg-center relative animate-fade-in"
           style={{ backgroundImage: `url(${bankingHeroImage})` }}
         >
-          <div className="absolute inset-0 bg-primary/80"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/80 to-primary-dark/90"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+          
+          {/* Animated background elements */}
+          <div className="absolute top-10 right-10 w-32 h-32 bg-accent/20 rounded-full blur-xl animate-float"></div>
+          <div className="absolute bottom-20 left-20 w-24 h-24 bg-secondary/20 rounded-full blur-lg animate-float" style={{ animationDelay: '1s' }}></div>
+          
           <div className="relative container mx-auto px-6 h-full flex items-center">
-            <div className="text-primary-foreground max-w-2xl">
-              <h1 className="text-5xl font-bold mb-4">
+            <div className="text-primary-foreground max-w-2xl animate-slide-up">
+              <h1 className="text-5xl font-bold mb-4 animate-fade-in">
                 Welcome to Modern Banking
               </h1>
-              <p className="text-xl mb-6 text-primary-foreground/90">
+              <p className="text-xl mb-6 text-primary-foreground/90 animate-fade-in" style={{ animationDelay: '0.2s' }}>
                 Experience the future of financial services with US Heritage & Investments Bank. 
                 Your trusted partner for comprehensive banking solutions.
               </p>
-              <div className="flex space-x-4">
-                <button className="bg-accent text-accent-foreground px-8 py-3 rounded-lg font-semibold hover:bg-accent-light transition-colors">
+              <div className="flex space-x-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                <button className="bg-accent text-accent-foreground px-8 py-3 rounded-lg font-semibold hover:bg-accent-light banking-button pulse-glow">
                   Open Account
                 </button>
-                <button className="border-2 border-primary-foreground text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:bg-primary-foreground hover:text-primary transition-colors">
+                <button className="border-2 border-primary-foreground text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:bg-primary-foreground hover:text-primary banking-button">
                   Learn More
                 </button>
               </div>
@@ -39,10 +45,16 @@ const Index = () => {
       </section>
 
       {/* Main Content */}
-      <main className="container mx-auto px-6 py-12 space-y-16">
-        <AccountOverview />
-        <CreditCardSection />
-        <QuickActions />
+      <main className="container mx-auto px-6 py-12 space-y-20">
+        <div className="animate-fade-in" style={{ animationDelay: '0.6s' }}>
+          <AccountOverview />
+        </div>
+        <div className="animate-fade-in" style={{ animationDelay: '0.8s' }}>
+          <CreditCardSection />
+        </div>
+        <div className="animate-fade-in" style={{ animationDelay: '1s' }}>
+          <QuickActions />
+        </div>
       </main>
 
       {/* Footer */}
