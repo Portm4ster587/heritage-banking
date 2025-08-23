@@ -1,12 +1,91 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { BankingHeader } from "../components/BankingHeader";
+import { AccountOverview } from "../components/AccountOverview";
+import { CreditCardSection } from "../components/CreditCardSection";
+import { QuickActions } from "../components/QuickActions";
+import bankingHeroImage from "@/assets/banking-hero.jpg";
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <BankingHeader />
+      
+      {/* Hero Section */}
+      <section className="relative overflow-hidden">
+        <div 
+          className="h-96 bg-cover bg-center relative"
+          style={{ backgroundImage: `url(${bankingHeroImage})` }}
+        >
+          <div className="absolute inset-0 bg-primary/80"></div>
+          <div className="relative container mx-auto px-6 h-full flex items-center">
+            <div className="text-primary-foreground max-w-2xl">
+              <h1 className="text-5xl font-bold mb-4">
+                Welcome to Modern Banking
+              </h1>
+              <p className="text-xl mb-6 text-primary-foreground/90">
+                Experience the future of financial services with US Heritage & Investments Bank. 
+                Your trusted partner for comprehensive banking solutions.
+              </p>
+              <div className="flex space-x-4">
+                <button className="bg-accent text-accent-foreground px-8 py-3 rounded-lg font-semibold hover:bg-accent-light transition-colors">
+                  Open Account
+                </button>
+                <button className="border-2 border-primary-foreground text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:bg-primary-foreground hover:text-primary transition-colors">
+                  Learn More
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-6 py-12 space-y-16">
+        <AccountOverview />
+        <CreditCardSection />
+        <QuickActions />
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-primary text-primary-foreground py-12">
+        <div className="container mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <h3 className="text-lg font-semibold mb-4">US Heritage & Investments Bank</h3>
+              <p className="text-primary-foreground/80 text-sm">
+                Your trusted financial partner since 1892. 
+                Licensed by IRS and FDIC insured.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Services</h4>
+              <ul className="space-y-2 text-sm text-primary-foreground/80">
+                <li>Personal Banking</li>
+                <li>Business Banking</li>
+                <li>Investment Services</li>
+                <li>Mortgage Lending</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Support</h4>
+              <ul className="space-y-2 text-sm text-primary-foreground/80">
+                <li>Customer Service</li>
+                <li>Find ATM/Branch</li>
+                <li>Security Center</li>
+                <li>Mobile Banking</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Contact</h4>
+              <ul className="space-y-2 text-sm text-primary-foreground/80">
+                <li>1-800-HERITAGE</li>
+                <li>support@usheritage.bank</li>
+                <li>24/7 Customer Service</li>
+                <li>FDIC Member</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

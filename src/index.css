@@ -2,41 +2,67 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* US Heritage & Investments Bank Design System - Professional Banking Interface */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
+    /* Banking Professional Color Palette */
+    --background: 247 250 255;
+    --foreground: 221 229 235;
+    
+    --card: 255 255 255;
+    --card-foreground: 30 41 59;
+    
+    --popover: 255 255 255;
+    --popover-foreground: 30 41 59;
+    
+    /* Primary Banking Blue */
+    --primary: 211 84% 19%;
+    --primary-foreground: 255 255 255;
+    --primary-light: 211 84% 35%;
+    --primary-dark: 211 84% 12%;
+    
+    /* Secondary Banking Green */
+    --secondary: 142 69% 24%;
+    --secondary-foreground: 255 255 255;
+    --secondary-light: 142 69% 35%;
+    
+    /* Accent Gold */
+    --accent: 45 93% 47%;
+    --accent-foreground: 30 41 59;
+    --accent-light: 45 93% 60%;
+    
+    /* Muted Banking Grays */
+    --muted: 220 13% 96%;
+    --muted-foreground: 220 9% 46%;
+    
+    /* Status Colors */
+    --success: 142 76% 36%;
+    --success-foreground: 255 255 255;
+    --warning: 38 92% 50%;
+    --warning-foreground: 255 255 255;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 255 255 255;
+    
+    /* Neutral Tones */
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 211 84% 19%;
+    
+    /* Banking Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-light)));
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-light)));
+    --gradient-accent: linear-gradient(135deg, hsl(var(--accent)), hsl(var(--accent-light)));
+    --gradient-muted: linear-gradient(180deg, hsl(var(--background)), hsl(var(--muted)));
+    
+    /* Professional Shadows */
+    --shadow-soft: 0 2px 8px rgba(30, 41, 59, 0.08);
+    --shadow-medium: 0 4px 16px rgba(30, 41, 59, 0.12);
+    --shadow-strong: 0 8px 32px rgba(30, 41, 59, 0.16);
+    --shadow-banking: 0 4px 24px rgba(53, 123, 207, 0.15);
+    
+    /* Banking Radius */
+    --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -94,6 +120,37 @@ All colors MUST be HSL.
   }
 }
 
+/* Banking-specific utility classes */
+@layer components {
+  .banking-gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .banking-gradient-secondary {
+    background: var(--gradient-secondary);
+  }
+  
+  .banking-shadow {
+    box-shadow: var(--shadow-banking);
+  }
+  
+  .banking-card {
+    @apply bg-card rounded-xl border border-border/50 p-6;
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(8px);
+  }
+  
+  .balance-meter {
+    background: conic-gradient(
+      from 0deg,
+      hsl(var(--primary)) 0deg,
+      hsl(var(--primary-light)) 120deg,
+      hsl(var(--secondary)) 240deg,
+      hsl(var(--accent)) 360deg
+    );
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -101,5 +158,7 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "cv11", "ss01";
+    font-variation-settings: "opsz" 32;
   }
 }
