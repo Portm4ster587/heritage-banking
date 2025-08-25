@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 import { BankingHeader } from "../components/BankingHeader";
 import { AccountOverview } from "../components/AccountOverview";
 import { CreditCardSection } from "../components/CreditCardSection";
@@ -32,12 +34,23 @@ const Index = () => {
                 Your trusted partner for comprehensive banking solutions.
               </p>
               <div className="flex space-x-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                <button className="bg-accent text-accent-foreground px-8 py-3 rounded-lg font-semibold hover:bg-accent-light banking-button pulse-glow">
-                  Open Account
-                </button>
-                <button className="border-2 border-primary-foreground text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:bg-primary-foreground hover:text-primary banking-button">
-                  Learn More
-                </button>
+                <Link to="/auth">
+                  <Button 
+                    size="lg" 
+                    className="bg-accent text-accent-foreground hover:bg-accent-light px-8 py-3 font-semibold banking-button pulse-glow"
+                  >
+                    Open Account
+                  </Button>
+                </Link>
+                <Link to="/dashboard">
+                  <Button 
+                    variant="outline" 
+                    size="lg"
+                    className="border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary px-8 py-3 font-semibold banking-button"
+                  >
+                    Sign In
+                  </Button>
+                </Link>
               </div>
             </div>
           </div>
