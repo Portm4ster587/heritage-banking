@@ -8,8 +8,32 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
-export const BankingHeader = () => {
+interface BankingHeaderProps {
+  activeSection?: string;
+  onSectionChange?: (section: string) => void;
+}
+
+export const BankingHeader = ({ activeSection, onSectionChange }: BankingHeaderProps) => {
+  const { user, signOut } = useAuth();
+  const { toast } = useToast();
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast({
+      title: "Signed out",
+      description: "You have been successfully signed out."
+    });
+  };
+
+  const handleNavClick = (section: string) => {
+    if (onSectionChange) {
+      onSectionChange(section);
+    }
+  };
+
   return (
     <header className="banking-gradient-primary text-primary-foreground shadow-lg border-b animate-slide-up">
       <div className="container mx-auto px-6 py-4">
@@ -23,11 +47,36 @@ export const BankingHeader = () => {
           </div>
           
           <nav className="hidden md:flex items-center space-x-8">
-            <a href="#" className="banking-link hover:text-accent-light transition-all duration-300 hover:scale-105">Accounts</a>
-            <a href="#" className="banking-link hover:text-accent-light transition-all duration-300 hover:scale-105">Transfers</a>
-            <a href="#" className="banking-link hover:text-accent-light transition-all duration-300 hover:scale-105">Investments</a>
-            <a href="#" className="banking-link hover:text-accent-light transition-all duration-300 hover:scale-105">Credit Cards</a>
-            <a href="#" className="banking-link hover:text-accent-light transition-all duration-300 hover:scale-105">Loans</a>
+            <button 
+              onClick={() => handleNavClick('accounts')}
+              className={`banking-link hover:text-accent-light transition-all duration-300 hover:scale-105 ${activeSection === 'accounts' ? 'text-accent-light' : ''}`}
+            >
+              Accounts
+            </button>
+            <button 
+              onClick={() => handleNavClick('transfers')}
+              className={`banking-link hover:text-accent-light transition-all duration-300 hover:scale-105 ${activeSection === 'transfers' ? 'text-accent-light' : ''}`}
+            >
+              Transfers
+            </button>
+            <button 
+              onClick={() => handleNavClick('investments')}
+              className={`banking-link hover:text-accent-light transition-all duration-300 hover:scale-105 ${activeSection === 'investments' ? 'text-accent-light' : ''}`}
+            >
+              Investments
+            </button>
+            <button 
+              onClick={() => handleNavClick('cards')}
+              className={`banking-link hover:text-accent-light transition-all duration-300 hover:scale-105 ${activeSection === 'cards' ? 'text-accent-light' : ''}`}
+            >
+              Credit Cards
+            </button>
+            <button 
+              onClick={() => handleNavClick('loans')}
+              className={`banking-link hover:text-accent-light transition-all duration-300 hover:scale-105 ${activeSection === 'loans' ? 'text-accent-light' : ''}`}
+            >
+              Loans
+            </button>
           </nav>
           
           <div className="flex items-center space-x-4 animate-fade-in">
@@ -42,13 +91,19 @@ export const BankingHeader = () => {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 animate-scale-in">
-                <DropdownMenuLabel>John Smith</DropdownMenuLabel>
+                <DropdownMenuLabel>{user?.email || 'User'}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="hover:bg-muted transition-colors">
+                <DropdownMenuItem 
+                  className="hover:bg-muted transition-colors"
+                  onClick={() => handleNavClick('profile')}
+                >
                   <Settings className="mr-2 h-4 w-4" />
                   Account Settings
                 </DropdownMenuItem>
-                <DropdownMenuItem className="hover:bg-muted transition-colors">
+                <DropdownMenuItem 
+                  className="hover:bg-muted transition-colors"
+                  onClick={handleSignOut}
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   Sign Out
                 </DropdownMenuItem>

@@ -23,6 +23,7 @@ import {
   Clock
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { BankingHeader } from '@/components/BankingHeader';
 
 interface Account {
   id: string;
@@ -50,12 +51,48 @@ export default function Dashboard() {
   const [transfers, setTransfers] = useState<Transfer[]>([]);
   const [loading, setLoading] = useState(true);
   const [balanceVisible, setBalanceVisible] = useState(true);
+  const [activeSection, setActiveSection] = useState('accounts');
 
   useEffect(() => {
     if (user) {
       fetchAccountData();
+      createDefaultAccountsIfNeeded();
     }
   }, [user]);
+
+  const createDefaultAccountsIfNeeded = async () => {
+    try {
+      // Check if user already has accounts
+      const { data: existingAccounts } = await supabase
+        .from('accounts')
+        .select('*')
+        .eq('user_id', user?.id);
+
+      if (!existingAccounts || existingAccounts.length === 0) {
+        // Create default checking account
+        const { error } = await supabase
+          .from('accounts')
+          .insert([{
+            user_id: user?.id,
+            type: 'personal_checking',
+            account_number: `CHK${Math.random().toString().slice(2, 12)}`,
+            balance: 1000,
+            status: 'active',
+            currency: 'USD'
+          }]);
+
+        if (!error) {
+          fetchAccountData(); // Refresh data
+          toast({
+            title: "Account Created",
+            description: "Your checking account has been activated!"
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error creating default account:', error);
+    }
+  };
 
   const fetchAccountData = async () => {
     try {
@@ -105,57 +142,14 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5">
-      {/* Header */}
-      <header className="border-b border-border/50 bg-card/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <Wallet className="w-5 h-5 text-primary" />
-              </div>
-              <div>
-                <h1 className="text-xl font-semibold">SecureBank Pro</h1>
-                <p className="text-sm text-muted-foreground">Welcome back, {user?.email}</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              {isAdmin && (
-                <Badge variant="destructive" className="animate-pulse">
-                  Admin
-                </Badge>
-              )}
-              <Button variant="ghost" size="sm">
-                <Bell className="w-4 h-4" />
-              </Button>
-              <Button variant="ghost" size="sm">
-                <Settings className="w-4 h-4" />
-              </Button>
-              <Button variant="ghost" size="sm" onClick={handleSignOut}>
-                <LogOut className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <BankingHeader activeSection={activeSection} onSectionChange={setActiveSection} />
 
       <div className="container mx-auto px-4 py-8">
-        {/* Account Status Alert */}
-        {accounts.length === 0 && (
-          <Card className="mb-8 border-amber-200 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/50">
-            <CardHeader>
-              <CardTitle className="text-amber-800 dark:text-amber-200">Account Activation Required</CardTitle>
-              <CardDescription className="text-amber-700 dark:text-amber-300">
-                To start using SecureBank Pro, you need to activate your account with a $100 deposit via cryptocurrency.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="bg-amber-600 hover:bg-amber-700">
-                Activate Account
-              </Button>
-            </CardContent>
-          </Card>
-        )}
+        {/* Welcome Message */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold mb-2">Welcome back, {user?.email}</h1>
+          <p className="text-muted-foreground">Manage your accounts and banking services</p>
+        </div>
 
         {/* Balance Overview */}
         <div className="grid gap-6 md:grid-cols-3 mb-8">
@@ -209,11 +203,13 @@ export default function Dashboard() {
         </div>
 
         {/* Main Content Tabs */}
-        <Tabs defaultValue="accounts" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
+        <Tabs value={activeSection} onValueChange={setActiveSection} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="accounts">Accounts</TabsTrigger>
             <TabsTrigger value="transfers">Transfers</TabsTrigger>
             <TabsTrigger value="cards">Cards</TabsTrigger>
+            <TabsTrigger value="investments">Investments</TabsTrigger>
+            <TabsTrigger value="loans">Loans</TabsTrigger>
             <TabsTrigger value="profile">Profile</TabsTrigger>
           </TabsList>
 
@@ -226,17 +222,11 @@ export default function Dashboard() {
               </Button>
             </div>
             
-            {accounts.length === 0 ? (
-              <Card>
-                <CardContent className="text-center py-12">
-                  <Wallet className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                  <h3 className="text-lg font-semibold mb-2">No Accounts Yet</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Start by opening your first account to begin banking with us.
-                  </p>
-                  <Button>Open Your First Account</Button>
-                </CardContent>
-              </Card>
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                <p className="text-muted-foreground mt-4">Loading accounts...</p>
+              </div>
             ) : (
               <div className="grid gap-4 md:grid-cols-2">
                 {accounts.map((account) => (
@@ -270,6 +260,87 @@ export default function Dashboard() {
                 ))}
               </div>
             )}
+          </TabsContent>
+
+          <TabsContent value="investments" className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-semibold">Investment Portfolio</h2>
+              <Button className="gap-2">
+                <TrendingUp className="w-4 h-4" />
+                New Investment
+              </Button>
+            </div>
+            
+            <Card>
+              <CardContent className="text-center py-12">
+                <TrendingUp className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">Start Investing</h3>
+                <p className="text-muted-foreground mb-4">
+                  Build your wealth with our investment products and advisory services.
+                </p>
+                <Button>Explore Investment Options</Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="loans" className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-semibold">Loans & Credit</h2>
+              <Button className="gap-2">
+                <Plus className="w-4 h-4" />
+                Apply for Loan
+              </Button>
+            </div>
+            
+            <div className="grid gap-4 md:grid-cols-2">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Personal Loans</CardTitle>
+                  <CardDescription>Quick approval for personal expenses</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold text-green-600">2.9% APR</p>
+                  <p className="text-sm text-muted-foreground mb-4">Starting rate</p>
+                  <Button variant="outline" className="w-full">Apply Now</Button>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Home Loans</CardTitle>
+                  <CardDescription>Competitive rates for home purchases</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold text-green-600">3.2% APR</p>
+                  <p className="text-sm text-muted-foreground mb-4">30-year fixed</p>
+                  <Button variant="outline" className="w-full">Get Pre-approved</Button>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Auto Loans</CardTitle>
+                  <CardDescription>Finance your next vehicle</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold text-green-600">2.5% APR</p>
+                  <p className="text-sm text-muted-foreground mb-4">New vehicles</p>
+                  <Button variant="outline" className="w-full">Calculate Payment</Button>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle>Business Loans</CardTitle>
+                  <CardDescription>Grow your business with flexible financing</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold text-green-600">4.1% APR</p>
+                  <p className="text-sm text-muted-foreground mb-4">SBA loans available</p>
+                  <Button variant="outline" className="w-full">Learn More</Button>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="transfers" className="space-y-4">
