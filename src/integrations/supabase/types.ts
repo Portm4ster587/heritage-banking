@@ -14,16 +14,381 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      accounts: {
+        Row: {
+          account_number: string
+          balance: number
+          created_at: string
+          currency: Database["public"]["Enums"]["currency"]
+          id: string
+          metadata: Json
+          status: Database["public"]["Enums"]["account_status"]
+          type: Database["public"]["Enums"]["account_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_number: string
+          balance?: number
+          created_at?: string
+          currency?: Database["public"]["Enums"]["currency"]
+          id?: string
+          metadata?: Json
+          status?: Database["public"]["Enums"]["account_status"]
+          type: Database["public"]["Enums"]["account_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_number?: string
+          balance?: number
+          created_at?: string
+          currency?: Database["public"]["Enums"]["currency"]
+          id?: string
+          metadata?: Json
+          status?: Database["public"]["Enums"]["account_status"]
+          type?: Database["public"]["Enums"]["account_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      admin_actions: {
+        Row: {
+          action: string
+          admin_user_id: string
+          created_at: string
+          details: Json
+          id: string
+          target_id: string | null
+          target_table: string | null
+        }
+        Insert: {
+          action: string
+          admin_user_id: string
+          created_at?: string
+          details?: Json
+          id?: string
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Update: {
+          action?: string
+          admin_user_id?: string
+          created_at?: string
+          details?: Json
+          id?: string
+          target_id?: string | null
+          target_table?: string | null
+        }
+        Relationships: []
+      }
+      cards: {
+        Row: {
+          account_id: string
+          card_type: string
+          created_at: string
+          embossed_name: string | null
+          exp_month: number | null
+          exp_year: number | null
+          id: string
+          last4: string | null
+          network: string | null
+          status: Database["public"]["Enums"]["card_status"]
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          card_type: string
+          created_at?: string
+          embossed_name?: string | null
+          exp_month?: number | null
+          exp_year?: number | null
+          id?: string
+          last4?: string | null
+          network?: string | null
+          status?: Database["public"]["Enums"]["card_status"]
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          card_type?: string
+          created_at?: string
+          embossed_name?: string | null
+          exp_month?: number | null
+          exp_year?: number | null
+          id?: string
+          last4?: string | null
+          network?: string | null
+          status?: Database["public"]["Enums"]["card_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cards_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kyc_submissions: {
+        Row: {
+          created_at: string
+          document_urls: Json | null
+          id: string
+          notes: string | null
+          reviewed_by_admin_id: string | null
+          ssn_encrypted: string | null
+          ssn_last4: string | null
+          status: Database["public"]["Enums"]["kyc_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          document_urls?: Json | null
+          id?: string
+          notes?: string | null
+          reviewed_by_admin_id?: string | null
+          ssn_encrypted?: string | null
+          ssn_last4?: string | null
+          status?: Database["public"]["Enums"]["kyc_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          document_urls?: Json | null
+          id?: string
+          notes?: string | null
+          reviewed_by_admin_id?: string | null
+          ssn_encrypted?: string | null
+          ssn_last4?: string | null
+          status?: Database["public"]["Enums"]["kyc_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      newsletter_subscriptions: {
+        Row: {
+          consent: boolean
+          created_at: string
+          email: string
+          id: string
+          unsubscribed_at: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          consent?: boolean
+          created_at?: string
+          email: string
+          id?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          consent?: boolean
+          created_at?: string
+          email?: string
+          id?: string
+          unsubscribed_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          address_line1: string | null
+          address_line2: string | null
+          business_name: string | null
+          business_type: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          dob: string | null
+          email: string | null
+          first_name: string | null
+          id: string
+          last_name: string | null
+          phone: string | null
+          postal_code: string | null
+          ssn_last4: string | null
+          state: string | null
+          updated_at: string
+        }
+        Insert: {
+          address_line1?: string | null
+          address_line2?: string | null
+          business_name?: string | null
+          business_type?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          dob?: string | null
+          email?: string | null
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          ssn_last4?: string | null
+          state?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address_line1?: string | null
+          address_line2?: string | null
+          business_name?: string | null
+          business_type?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          dob?: string | null
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          phone?: string | null
+          postal_code?: string | null
+          ssn_last4?: string | null
+          state?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      transfers: {
+        Row: {
+          amount: number
+          approved_by_admin_id: string | null
+          created_at: string
+          created_by_user_id: string
+          currency: Database["public"]["Enums"]["currency"]
+          from_account_id: string
+          fttc_token_required: boolean
+          id: string
+          memo: string | null
+          progress: number
+          status: Database["public"]["Enums"]["transfer_status"]
+          to_account_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          approved_by_admin_id?: string | null
+          created_at?: string
+          created_by_user_id: string
+          currency?: Database["public"]["Enums"]["currency"]
+          from_account_id: string
+          fttc_token_required?: boolean
+          id?: string
+          memo?: string | null
+          progress?: number
+          status?: Database["public"]["Enums"]["transfer_status"]
+          to_account_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          approved_by_admin_id?: string | null
+          created_at?: string
+          created_by_user_id?: string
+          currency?: Database["public"]["Enums"]["currency"]
+          from_account_id?: string
+          fttc_token_required?: boolean
+          id?: string
+          memo?: string | null
+          progress?: number
+          status?: Database["public"]["Enums"]["transfer_status"]
+          to_account_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transfers_from_account_id_fkey"
+            columns: ["from_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transfers_to_account_id_fkey"
+            columns: ["to_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      account_status:
+        | "pending"
+        | "active"
+        | "suspended"
+        | "closed"
+        | "kyc_pending"
+      account_type:
+        | "personal_checking"
+        | "personal_savings"
+        | "business_checking"
+        | "business_savings"
+      app_role: "admin" | "moderator" | "user"
+      card_status:
+        | "pending"
+        | "approved"
+        | "shipped"
+        | "active"
+        | "blocked"
+        | "cancelled"
+      currency: "USD" | "EUR" | "GBP" | "JPY" | "CAD" | "AUD" | "USDT"
+      kyc_status: "pending" | "approved" | "rejected" | "needs_more_info"
+      transfer_status:
+        | "pending"
+        | "processing"
+        | "paused"
+        | "requires_token"
+        | "completed"
+        | "failed"
+        | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +515,40 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      account_status: [
+        "pending",
+        "active",
+        "suspended",
+        "closed",
+        "kyc_pending",
+      ],
+      account_type: [
+        "personal_checking",
+        "personal_savings",
+        "business_checking",
+        "business_savings",
+      ],
+      app_role: ["admin", "moderator", "user"],
+      card_status: [
+        "pending",
+        "approved",
+        "shipped",
+        "active",
+        "blocked",
+        "cancelled",
+      ],
+      currency: ["USD", "EUR", "GBP", "JPY", "CAD", "AUD", "USDT"],
+      kyc_status: ["pending", "approved", "rejected", "needs_more_info"],
+      transfer_status: [
+        "pending",
+        "processing",
+        "paused",
+        "requires_token",
+        "completed",
+        "failed",
+        "cancelled",
+      ],
+    },
   },
 } as const
