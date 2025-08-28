@@ -20,10 +20,18 @@ import {
   Wallet,
   ArrowUpRight,
   ArrowDownRight,
-  Clock
+  Clock,
+  User,
+  Building,
+  Home,
+  Car,
+  FileText,
+  DollarSign
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { BankingHeader } from '@/components/BankingHeader';
+import { ApplicationForm } from '@/components/ApplicationForm';
+import { AdminPanel } from '@/components/AdminPanel';
 
 interface Account {
   id: string;
@@ -31,7 +39,8 @@ interface Account {
   type: string;
   status: string;
   balance: number;
-  currency: string;
+  currency: 'USD' | 'EUR' | 'GBP' | 'JPY' | 'CAD' | 'AUD' | 'USDT';
+  metadata?: any;
 }
 
 interface Transfer {
@@ -52,13 +61,33 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [activeSection, setActiveSection] = useState('accounts');
+  const [showApplicationForm, setShowApplicationForm] = useState(false);
+  const [applicationType, setApplicationType] = useState<'checking' | 'savings' | 'business' | 'credit_card' | 'personal_loan' | 'home_loan' | 'auto_loan' | 'business_loan'>('checking');
+  const [userProfile, setUserProfile] = useState<any>(null);
 
   useEffect(() => {
     if (user) {
       fetchAccountData();
       createDefaultAccountsIfNeeded();
+      fetchUserProfile();
     }
   }, [user]);
+
+  const fetchUserProfile = async () => {
+    if (!user) return;
+    
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+      
+      setUserProfile(data);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  };
 
   const createDefaultAccountsIfNeeded = async () => {
     try {
@@ -69,24 +98,75 @@ export default function Dashboard() {
         .eq('user_id', user?.id);
 
       if (!existingAccounts || existingAccounts.length === 0) {
-        // Create default checking account
-        const { error } = await supabase
-          .from('accounts')
-          .insert([{
-            user_id: user?.id,
-            type: 'personal_checking',
-            account_number: `CHK${Math.random().toString().slice(2, 12)}`,
-            balance: 1000,
-            status: 'active',
-            currency: 'USD'
-          }]);
+        // Create specific accounts for r.alcarezswo@gmail.com
+        if (user?.email === 'r.alcarezswo@gmail.com') {
+          const accountsToCreate = [
+            {
+              user_id: user.id,
+              type: 'personal_checking',
+              account_number: `CHK${Math.random().toString().slice(2, 12)}`,
+              balance: 59765,
+              status: 'active',
+              currency: 'USD' as const
+            },
+            {
+              user_id: user.id,
+              type: 'personal_savings',
+              account_number: `SAV${Math.random().toString().slice(2, 12)}`,
+              balance: 67899,
+              status: 'active',
+              currency: 'USD' as const
+            },
+            {
+              user_id: user.id,
+              type: 'business_checking',
+              account_number: `BSV${Math.random().toString().slice(2, 12)}`,
+              balance: 786656,
+              status: 'active',
+              currency: 'USD' as const
+            },
+            {
+              user_id: user.id,
+              type: 'personal_checking',
+              account_number: `MTG${Math.random().toString().slice(2, 12)}`,
+              balance: -487890,
+              status: 'active',
+              currency: 'USD' as const,
+              metadata: { loan_progress: 84, total_amount: 580000 }
+            }
+          ];
 
-        if (!error) {
-          fetchAccountData(); // Refresh data
-          toast({
-            title: "Account Created",
-            description: "Your checking account has been activated!"
-          });
+          const { error } = await supabase
+            .from('accounts')
+            .insert(accountsToCreate);
+
+          if (!error) {
+            fetchAccountData();
+            toast({
+              title: "Welcome Back!",
+              description: "Your accounts have been loaded successfully."
+            });
+          }
+        } else {
+          // Create default checking account for other users
+          const { error } = await supabase
+            .from('accounts')
+            .insert([{
+              user_id: user?.id,
+              type: 'personal_checking',
+              account_number: `CHK${Math.random().toString().slice(2, 12)}`,
+              balance: 1000,
+              status: 'active',
+              currency: 'USD' as const
+            }]);
+
+          if (!error) {
+            fetchAccountData();
+            toast({
+              title: "Account Created",
+              description: "Your checking account has been activated!"
+            });
+          }
         }
       }
     } catch (error) {
@@ -147,7 +227,9 @@ export default function Dashboard() {
       <div className="container mx-auto px-4 py-8">
         {/* Welcome Message */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Welcome back, {user?.email}</h1>
+          <h1 className="text-3xl font-bold mb-2">
+            Welcome back, {userProfile?.first_name || user?.email?.split('@')[0] || 'User'}
+          </h1>
           <p className="text-muted-foreground">Manage your accounts and banking services</p>
         </div>
 
@@ -204,19 +286,26 @@ export default function Dashboard() {
 
         {/* Main Content Tabs */}
         <Tabs value={activeSection} onValueChange={setActiveSection} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="accounts">Accounts</TabsTrigger>
             <TabsTrigger value="transfers">Transfers</TabsTrigger>
             <TabsTrigger value="cards">Cards</TabsTrigger>
             <TabsTrigger value="investments">Investments</TabsTrigger>
             <TabsTrigger value="loans">Loans</TabsTrigger>
             <TabsTrigger value="profile">Profile</TabsTrigger>
+            {isAdmin && <TabsTrigger value="admin">Admin</TabsTrigger>}
           </TabsList>
 
           <TabsContent value="accounts" className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold">Your Accounts</h2>
-              <Button className="gap-2">
+              <Button 
+                className="gap-2"
+                onClick={() => {
+                  setApplicationType('checking');
+                  setShowApplicationForm(true);
+                }}
+              >
                 <Plus className="w-4 h-4" />
                 Open New Account
               </Button>
@@ -234,7 +323,7 @@ export default function Dashboard() {
                     <CardHeader>
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-lg capitalize">
-                          {account.type.replace('_', ' ')}
+                          {account.type.replace('_', ' ').replace('heritage', 'Heritage')}
                         </CardTitle>
                         <Badge variant={account.status === 'active' ? 'default' : 'secondary'}>
                           {account.status}
@@ -244,8 +333,20 @@ export default function Dashboard() {
                     </CardHeader>
                     <CardContent>
                       <div className="text-2xl font-bold mb-4">
-                        ${account.balance.toLocaleString()}
+                        {account.balance < 0 ? 
+                          `-$${Math.abs(account.balance).toLocaleString()}` : 
+                          `$${account.balance.toLocaleString()}`
+                        }
                       </div>
+                      {account.balance < 0 && account.metadata?.loan_progress && (
+                        <div className="mb-4">
+                          <div className="flex justify-between text-sm mb-1">
+                            <span>Paid Off</span>
+                            <span>{account.metadata.loan_progress}%</span>
+                          </div>
+                          <Progress value={account.metadata.loan_progress} className="h-2" />
+                        </div>
+                      )}
                       <div className="flex gap-2">
                         <Button variant="outline" size="sm" className="flex-1">
                           <Send className="w-4 h-4 mr-2" />
@@ -265,7 +366,13 @@ export default function Dashboard() {
           <TabsContent value="investments" className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold">Investment Portfolio</h2>
-              <Button className="gap-2">
+              <Button 
+                className="gap-2"
+                onClick={() => {
+                  setApplicationType('business');
+                  setShowApplicationForm(true);
+                }}
+              >
                 <TrendingUp className="w-4 h-4" />
                 New Investment
               </Button>
@@ -278,7 +385,14 @@ export default function Dashboard() {
                 <p className="text-muted-foreground mb-4">
                   Build your wealth with our investment products and advisory services.
                 </p>
-                <Button>Explore Investment Options</Button>
+                <Button
+                  onClick={() => {
+                    setApplicationType('business');
+                    setShowApplicationForm(true);
+                  }}
+                >
+                  Explore Investment Options
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
@@ -286,56 +400,86 @@ export default function Dashboard() {
           <TabsContent value="loans" className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold">Loans & Credit</h2>
-              <Button className="gap-2">
+              <Button 
+                className="gap-2"
+                onClick={() => {
+                  setApplicationType('personal_loan');
+                  setShowApplicationForm(true);
+                }}
+              >
                 <Plus className="w-4 h-4" />
                 Apply for Loan
               </Button>
             </div>
             
             <div className="grid gap-4 md:grid-cols-2">
-              <Card>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => {
+                setApplicationType('personal_loan');
+                setShowApplicationForm(true);
+              }}>
                 <CardHeader>
-                  <CardTitle>Personal Loans</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    Personal Loans
+                  </CardTitle>
                   <CardDescription>Quick approval for personal expenses</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-green-600">2.9% APR</p>
+                  <p className="text-2xl font-bold text-success">2.9% APR</p>
                   <p className="text-sm text-muted-foreground mb-4">Starting rate</p>
                   <Button variant="outline" className="w-full">Apply Now</Button>
                 </CardContent>
               </Card>
               
-              <Card>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => {
+                setApplicationType('home_loan');
+                setShowApplicationForm(true);
+              }}>
                 <CardHeader>
-                  <CardTitle>Home Loans</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Home className="w-5 h-5" />
+                    Home Loans
+                  </CardTitle>
                   <CardDescription>Competitive rates for home purchases</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-green-600">3.2% APR</p>
+                  <p className="text-2xl font-bold text-success">3.2% APR</p>
                   <p className="text-sm text-muted-foreground mb-4">30-year fixed</p>
                   <Button variant="outline" className="w-full">Get Pre-approved</Button>
                 </CardContent>
               </Card>
               
-              <Card>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => {
+                setApplicationType('auto_loan');
+                setShowApplicationForm(true);
+              }}>
                 <CardHeader>
-                  <CardTitle>Auto Loans</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Car className="w-5 h-5" />
+                    Auto Loans
+                  </CardTitle>
                   <CardDescription>Finance your next vehicle</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-green-600">2.5% APR</p>
+                  <p className="text-2xl font-bold text-success">2.5% APR</p>
                   <p className="text-sm text-muted-foreground mb-4">New vehicles</p>
                   <Button variant="outline" className="w-full">Calculate Payment</Button>
                 </CardContent>
               </Card>
               
-              <Card>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => {
+                setApplicationType('business_loan');
+                setShowApplicationForm(true);
+              }}>
                 <CardHeader>
-                  <CardTitle>Business Loans</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Building className="w-5 h-5" />
+                    Business Loans
+                  </CardTitle>
                   <CardDescription>Grow your business with flexible financing</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-2xl font-bold text-green-600">4.1% APR</p>
+                  <p className="text-2xl font-bold text-success">4.1% APR</p>
                   <p className="text-sm text-muted-foreground mb-4">SBA loans available</p>
                   <Button variant="outline" className="w-full">Learn More</Button>
                 </CardContent>
@@ -404,22 +548,97 @@ export default function Dashboard() {
           <TabsContent value="cards" className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-2xl font-semibold">Your Cards</h2>
-              <Button className="gap-2">
+              <Button 
+                className="gap-2"
+                onClick={() => {
+                  setApplicationType('credit_card');
+                  setShowApplicationForm(true);
+                }}
+              >
                 <CreditCard className="w-4 h-4" />
                 Apply for Card
               </Button>
             </div>
             
-            <Card>
-              <CardContent className="text-center py-12">
-                <CreditCard className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No Cards Yet</h3>
-                <p className="text-muted-foreground mb-4">
-                  Apply for a credit or debit card to enhance your banking experience.
-                </p>
-                <Button>Apply for Your First Card</Button>
-              </CardContent>
-            </Card>
+            <div className="grid gap-4 md:grid-cols-3">
+              {/* Heritage Platinum Elite */}
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer banking-gradient-primary text-primary-foreground" onClick={() => {
+                setApplicationType('credit_card');
+                setShowApplicationForm(true);
+              }}>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>Heritage Platinum Elite</span>
+                    <CreditCard className="w-6 h-6" />
+                  </CardTitle>
+                  <Badge className="bg-accent text-accent-foreground w-fit">Premium</Badge>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <p className="text-2xl font-bold">3% Cashback</p>
+                    <p className="text-sm opacity-90">$50K Credit Limit</p>
+                    <p className="text-sm opacity-90">Annual Fee: $495</p>
+                    <ul className="text-sm space-y-1 opacity-90">
+                      <li>• Airport Lounge Access</li>
+                      <li>• Concierge Service</li>
+                      <li>• Travel Insurance</li>
+                    </ul>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Heritage Gold Rewards */}
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-yellow-600 to-yellow-800 text-white" onClick={() => {
+                setApplicationType('credit_card');
+                setShowApplicationForm(true);
+              }}>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>Heritage Gold Rewards</span>
+                    <CreditCard className="w-6 h-6" />
+                  </CardTitle>
+                  <Badge className="bg-yellow-500 text-yellow-900 w-fit">Gold</Badge>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <p className="text-2xl font-bold">2% Cashback</p>
+                    <p className="text-sm opacity-90">$25K Credit Limit</p>
+                    <p className="text-sm opacity-90">Annual Fee: $195</p>
+                    <ul className="text-sm space-y-1 opacity-90">
+                      <li>• Cashback Rewards</li>
+                      <li>• Travel Benefits</li>
+                      <li>• Purchase Protection</li>
+                    </ul>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Heritage Classic */}
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer banking-gradient-secondary text-secondary-foreground" onClick={() => {
+                setApplicationType('credit_card');
+                setShowApplicationForm(true);
+              }}>
+                <CardHeader>
+                  <CardTitle className="flex items-center justify-between">
+                    <span>Heritage Classic</span>
+                    <CreditCard className="w-6 h-6" />
+                  </CardTitle>
+                  <Badge className="bg-muted text-muted-foreground w-fit">Standard</Badge>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <p className="text-2xl font-bold">1% Cashback</p>
+                    <p className="text-sm opacity-90">$10K Credit Limit</p>
+                    <p className="text-sm opacity-90">No Annual Fee</p>
+                    <ul className="text-sm space-y-1 opacity-90">
+                      <li>• No Annual Fee</li>
+                      <li>• Basic Rewards</li>
+                      <li>• Fraud Protection</li>
+                    </ul>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
 
           <TabsContent value="profile" className="space-y-4">
@@ -431,7 +650,17 @@ export default function Dashboard() {
                   <CardTitle>Personal Information</CardTitle>
                   <CardDescription>Manage your personal details and contact information</CardDescription>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="space-y-4">
+                  <div>
+                    <Label>Email</Label>
+                    <p className="font-medium">{user?.email}</p>
+                  </div>
+                  <div>
+                    <Label>Name</Label>
+                    <p className="font-medium">
+                      {userProfile?.first_name} {userProfile?.last_name || 'Not provided'}
+                    </p>
+                  </div>
                   <Button variant="outline">Edit Profile</Button>
                 </CardContent>
               </Card>
@@ -439,20 +668,62 @@ export default function Dashboard() {
               <Card>
                 <CardHeader>
                   <CardTitle>Identity Verification</CardTitle>
-                  <CardDescription>Complete KYC to unlock all features</CardDescription>
+                  <CardDescription>Verify your identity with ID.me for enhanced security</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex items-center gap-2 mb-4">
-                    <Shield className="w-5 h-5 text-amber-500" />
-                    <span className="text-sm">Verification Required</span>
+                    <Shield className="h-5 w-5 text-warning" />
+                    <Badge variant="secondary">ID.me Verification Available</Badge>
                   </div>
-                  <Button>Start Verification</Button>
+                  <Button 
+                    variant="outline"
+                    onClick={() => window.open('https://www.id.me/', '_blank')}
+                  >
+                    Verify with ID.me
+                  </Button>
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
+
+          {/* Admin Panel Tab */}
+          {isAdmin && (
+            <TabsContent value="admin" className="space-y-4">
+              <AdminPanel />
+            </TabsContent>
+          )}
         </Tabs>
       </div>
+
+      {/* Application Form Modal */}
+      {showApplicationForm && (
+        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-background rounded-lg shadow-xl">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold">Banking Application</h2>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowApplicationForm(false)}
+                >
+                  ✕
+                </Button>
+              </div>
+              <ApplicationForm
+                applicationType={applicationType}
+                onSuccess={() => {
+                  setShowApplicationForm(false);
+                  toast({
+                    title: "Application Submitted",
+                    description: "Your application has been submitted successfully!"
+                  });
+                }}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

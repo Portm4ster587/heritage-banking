@@ -83,6 +83,156 @@ export type Database = {
         }
         Relationships: []
       }
+      applications: {
+        Row: {
+          additional_data: Json | null
+          address_line1: string | null
+          address_line2: string | null
+          annual_income: number | null
+          annual_revenue: number | null
+          application_type: string
+          assets_value: number | null
+          business_address: string | null
+          business_ein: string | null
+          business_name: string | null
+          business_phone: string | null
+          business_type: string | null
+          city: string | null
+          collateral_description: string | null
+          country: string | null
+          created_at: string
+          date_of_birth: string | null
+          documents: Json | null
+          email: string | null
+          employer_name: string | null
+          employment_length: number | null
+          employment_status: string | null
+          existing_debt: number | null
+          first_name: string | null
+          id: string
+          id_verification_data: Json | null
+          id_verification_status: string | null
+          id_verification_url: string | null
+          job_title: string | null
+          last_name: string | null
+          middle_name: string | null
+          monthly_expenses: number | null
+          monthly_income: number | null
+          phone: string | null
+          postal_code: string | null
+          purpose: string | null
+          requested_amount: number | null
+          requested_limit: number | null
+          review_notes: string | null
+          reviewed_by_admin_id: string | null
+          ssn_last4: string | null
+          state: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          work_phone: string | null
+          years_in_business: number | null
+        }
+        Insert: {
+          additional_data?: Json | null
+          address_line1?: string | null
+          address_line2?: string | null
+          annual_income?: number | null
+          annual_revenue?: number | null
+          application_type: string
+          assets_value?: number | null
+          business_address?: string | null
+          business_ein?: string | null
+          business_name?: string | null
+          business_phone?: string | null
+          business_type?: string | null
+          city?: string | null
+          collateral_description?: string | null
+          country?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          documents?: Json | null
+          email?: string | null
+          employer_name?: string | null
+          employment_length?: number | null
+          employment_status?: string | null
+          existing_debt?: number | null
+          first_name?: string | null
+          id?: string
+          id_verification_data?: Json | null
+          id_verification_status?: string | null
+          id_verification_url?: string | null
+          job_title?: string | null
+          last_name?: string | null
+          middle_name?: string | null
+          monthly_expenses?: number | null
+          monthly_income?: number | null
+          phone?: string | null
+          postal_code?: string | null
+          purpose?: string | null
+          requested_amount?: number | null
+          requested_limit?: number | null
+          review_notes?: string | null
+          reviewed_by_admin_id?: string | null
+          ssn_last4?: string | null
+          state?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          work_phone?: string | null
+          years_in_business?: number | null
+        }
+        Update: {
+          additional_data?: Json | null
+          address_line1?: string | null
+          address_line2?: string | null
+          annual_income?: number | null
+          annual_revenue?: number | null
+          application_type?: string
+          assets_value?: number | null
+          business_address?: string | null
+          business_ein?: string | null
+          business_name?: string | null
+          business_phone?: string | null
+          business_type?: string | null
+          city?: string | null
+          collateral_description?: string | null
+          country?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          documents?: Json | null
+          email?: string | null
+          employer_name?: string | null
+          employment_length?: number | null
+          employment_status?: string | null
+          existing_debt?: number | null
+          first_name?: string | null
+          id?: string
+          id_verification_data?: Json | null
+          id_verification_status?: string | null
+          id_verification_url?: string | null
+          job_title?: string | null
+          last_name?: string | null
+          middle_name?: string | null
+          monthly_expenses?: number | null
+          monthly_income?: number | null
+          phone?: string | null
+          postal_code?: string | null
+          purpose?: string | null
+          requested_amount?: number | null
+          requested_limit?: number | null
+          review_notes?: string | null
+          reviewed_by_admin_id?: string | null
+          ssn_last4?: string | null
+          state?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          work_phone?: string | null
+          years_in_business?: number | null
+        }
+        Relationships: []
+      }
       cards: {
         Row: {
           account_id: string
@@ -206,6 +356,7 @@ export type Database = {
         Row: {
           address_line1: string | null
           address_line2: string | null
+          annual_income: number | null
           business_name: string | null
           business_type: string | null
           city: string | null
@@ -213,9 +364,14 @@ export type Database = {
           created_at: string
           dob: string | null
           email: string | null
+          employer_name: string | null
+          employment_status: string | null
           first_name: string | null
           id: string
+          job_title: string | null
           last_name: string | null
+          middle_name: string | null
+          monthly_income: number | null
           phone: string | null
           postal_code: string | null
           ssn_last4: string | null
@@ -225,6 +381,7 @@ export type Database = {
         Insert: {
           address_line1?: string | null
           address_line2?: string | null
+          annual_income?: number | null
           business_name?: string | null
           business_type?: string | null
           city?: string | null
@@ -232,9 +389,14 @@ export type Database = {
           created_at?: string
           dob?: string | null
           email?: string | null
+          employer_name?: string | null
+          employment_status?: string | null
           first_name?: string | null
           id: string
+          job_title?: string | null
           last_name?: string | null
+          middle_name?: string | null
+          monthly_income?: number | null
           phone?: string | null
           postal_code?: string | null
           ssn_last4?: string | null
@@ -244,6 +406,7 @@ export type Database = {
         Update: {
           address_line1?: string | null
           address_line2?: string | null
+          annual_income?: number | null
           business_name?: string | null
           business_type?: string | null
           city?: string | null
@@ -251,9 +414,14 @@ export type Database = {
           created_at?: string
           dob?: string | null
           email?: string | null
+          employer_name?: string | null
+          employment_status?: string | null
           first_name?: string | null
           id?: string
+          job_title?: string | null
           last_name?: string | null
+          middle_name?: string | null
+          monthly_income?: number | null
           phone?: string | null
           postal_code?: string | null
           ssn_last4?: string | null
