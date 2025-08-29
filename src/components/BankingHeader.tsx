@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import heritageLogoImage from "@/assets/heritage-logo.png";
 
 interface BankingHeaderProps {
   activeSection?: string;
@@ -39,9 +40,13 @@ export const BankingHeader = ({ activeSection, onSectionChange }: BankingHeaderP
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4 animate-fade-in">
-            <Building2 className="h-8 w-8 animate-float" />
+            <img 
+              src={heritageLogoImage} 
+              alt="Heritage Bank Logo" 
+              className="h-10 w-10 animate-float"
+            />
             <div>
-              <h1 className="text-xl font-bold">US Heritage & Investments Bank</h1>
+              <h1 className="text-xl font-bold">Heritage Bank</h1>
               <p className="text-sm text-primary-foreground/80">Your Financial Partner Since 1892</p>
             </div>
           </div>
@@ -60,10 +65,10 @@ export const BankingHeader = ({ activeSection, onSectionChange }: BankingHeaderP
               Transfers
             </button>
             <button 
-              onClick={() => handleNavClick('investments')}
-              className={`banking-link hover:text-accent-light transition-all duration-300 hover:scale-105 ${activeSection === 'investments' ? 'text-accent-light' : ''}`}
+              onClick={() => handleNavClick('crypto')}
+              className={`banking-link hover:text-accent-light transition-all duration-300 hover:scale-105 ${activeSection === 'crypto' ? 'text-accent-light' : ''}`}
             >
-              Investments
+              Crypto Wallet
             </button>
             <button 
               onClick={() => handleNavClick('cards')}
@@ -72,10 +77,16 @@ export const BankingHeader = ({ activeSection, onSectionChange }: BankingHeaderP
               Credit Cards
             </button>
             <button 
-              onClick={() => handleNavClick('loans')}
-              className={`banking-link hover:text-accent-light transition-all duration-300 hover:scale-105 ${activeSection === 'loans' ? 'text-accent-light' : ''}`}
+              onClick={() => handleNavClick('statements')}
+              className={`banking-link hover:text-accent-light transition-all duration-300 hover:scale-105 ${activeSection === 'statements' ? 'text-accent-light' : ''}`}
             >
-              Loans
+              Statements
+            </button>
+            <button 
+              onClick={() => handleNavClick('topup')}
+              className={`banking-link hover:text-accent-light transition-all duration-300 hover:scale-105 ${activeSection === 'topup' ? 'text-accent-light' : ''}`}
+            >
+              Top-Up
             </button>
           </nav>
           
