@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Label } from '@/components/ui/label';
 import { 
   CreditCard, 
   Send, 
@@ -103,34 +104,34 @@ export default function Dashboard() {
           const accountsToCreate = [
             {
               user_id: user.id,
-              type: 'personal_checking',
+              type: 'personal_checking' as const,
               account_number: `CHK${Math.random().toString().slice(2, 12)}`,
               balance: 59765,
-              status: 'active',
+              status: 'active' as const,
               currency: 'USD' as const
             },
             {
               user_id: user.id,
-              type: 'personal_savings',
+              type: 'personal_savings' as const,
               account_number: `SAV${Math.random().toString().slice(2, 12)}`,
               balance: 67899,
-              status: 'active',
+              status: 'active' as const,
               currency: 'USD' as const
             },
             {
               user_id: user.id,
-              type: 'business_checking',
+              type: 'business_savings' as const,
               account_number: `BSV${Math.random().toString().slice(2, 12)}`,
               balance: 786656,
-              status: 'active',
+              status: 'active' as const,
               currency: 'USD' as const
             },
             {
               user_id: user.id,
-              type: 'personal_checking',
+              type: 'personal_checking' as const,
               account_number: `MTG${Math.random().toString().slice(2, 12)}`,
               balance: -487890,
-              status: 'active',
+              status: 'active' as const,
               currency: 'USD' as const,
               metadata: { loan_progress: 84, total_amount: 580000 }
             }
@@ -153,10 +154,10 @@ export default function Dashboard() {
             .from('accounts')
             .insert([{
               user_id: user?.id,
-              type: 'personal_checking',
+              type: 'personal_checking' as const,
               account_number: `CHK${Math.random().toString().slice(2, 12)}`,
               balance: 1000,
-              status: 'active',
+              status: 'active' as const,
               currency: 'USD' as const
             }]);
 
