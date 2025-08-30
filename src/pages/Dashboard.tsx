@@ -33,6 +33,12 @@ import { useToast } from '@/hooks/use-toast';
 import { BankingHeader } from '@/components/BankingHeader';
 import { ApplicationForm } from '@/components/ApplicationForm';
 import { AdminPanel } from '@/components/AdminPanel';
+import { EnhancedCreditCards } from '@/components/EnhancedCreditCards';
+import { TransferSystem } from '@/components/TransferSystem';
+import { CryptoWallet } from '@/components/CryptoWallet';
+import { AccountTopUp } from '@/components/AccountTopUp';
+import { AccountStatements } from '@/components/AccountStatements';
+import { IDMeVerification } from '@/components/IDMeVerification';
 
 interface Account {
   id: string;
@@ -287,13 +293,16 @@ export default function Dashboard() {
 
         {/* Main Content Tabs */}
         <Tabs value={activeSection} onValueChange={setActiveSection} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-10">
             <TabsTrigger value="accounts">Accounts</TabsTrigger>
             <TabsTrigger value="transfers">Transfers</TabsTrigger>
             <TabsTrigger value="cards">Cards</TabsTrigger>
+            <TabsTrigger value="crypto">Crypto</TabsTrigger>
+            <TabsTrigger value="topup">Top Up</TabsTrigger>
+            <TabsTrigger value="statements">Statements</TabsTrigger>
+            <TabsTrigger value="kyc">ID Verify</TabsTrigger>
             <TabsTrigger value="investments">Investments</TabsTrigger>
             <TabsTrigger value="loans">Loans</TabsTrigger>
-            <TabsTrigger value="profile">Profile</TabsTrigger>
             {isAdmin && <TabsTrigger value="admin">Admin</TabsTrigger>}
           </TabsList>
 

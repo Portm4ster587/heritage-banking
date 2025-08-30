@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Label } from '@/components/ui/label';
 import { signIn, signUp } from '@/lib/auth';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 import { Loader2, ArrowLeft, Shield, CreditCard, Banknote } from 'lucide-react';
 
 export default function Auth() {
@@ -14,6 +15,8 @@ export default function Auth() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -59,11 +62,20 @@ export default function Auth() {
       });
       return;
     }
+
+    if (!firstName.trim() || !lastName.trim()) {
+      toast({
+        title: "Missing Information",
+        description: "Please provide your first and last name.",
+        variant: "destructive"
+      });
+      return;
+    }
     
     setLoading(true);
     
     try {
-      const { error } = await signUp(email, password);
+      const { data, error } = await signUp(email, password);
       
       if (error) {
         toast({
@@ -71,7 +83,15 @@ export default function Auth() {
           description: error.message,
           variant: "destructive"
         });
-      } else {
+      } else if (data.user) {
+        // Create profile with first and last name
+        await supabase.from('profiles').insert({
+          id: data.user.id,
+          first_name: firstName.trim(),
+          last_name: lastName.trim(),
+          email: email
+        });
+
         toast({
           title: "Account created!",
           description: "Please check your email to verify your account."
@@ -197,6 +217,32 @@ export default function Auth() {
                   
                   <TabsContent value="signup">
                     <form onSubmit={handleSignUp} className="space-y-4">
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="space-y-2">
+                          <Label htmlFor="first-name">First Name</Label>
+                          <Input
+                            id="first-name"
+                            type="text"
+                            placeholder="First name"
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            required
+                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="last-name">Last Name</Label>
+                          <Input
+                            id="last-name"
+                            type="text"
+                            placeholder="Last name"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                            required
+                            className="transition-all duration-200 focus:ring-2 focus:ring-primary/20"
+                          />
+                        </div>
+                      </div>
                       <div className="space-y-2">
                         <Label htmlFor="signup-email">Email</Label>
                         <Input
