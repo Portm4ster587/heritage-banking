@@ -83,6 +83,45 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          message: string
+          priority: string | null
+          read: boolean | null
+          reference_id: string | null
+          title: string
+          type: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          message: string
+          priority?: string | null
+          read?: boolean | null
+          reference_id?: string | null
+          title: string
+          type: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          message?: string
+          priority?: string | null
+          read?: boolean | null
+          reference_id?: string | null
+          title?: string
+          type?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       applications: {
         Row: {
           additional_data: Json | null
@@ -276,6 +315,101 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "cards_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crypto_wallets: {
+        Row: {
+          balance: number | null
+          created_at: string | null
+          id: string
+          is_primary: boolean | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+          wallet_address: string
+          wallet_type: string
+        }
+        Insert: {
+          balance?: number | null
+          created_at?: string | null
+          id?: string
+          is_primary?: boolean | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+          wallet_address: string
+          wallet_type: string
+        }
+        Update: {
+          balance?: number | null
+          created_at?: string | null
+          id?: string
+          is_primary?: boolean | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+          wallet_address?: string
+          wallet_type?: string
+        }
+        Relationships: []
+      }
+      deposit_requests: {
+        Row: {
+          account_id: string | null
+          admin_notes: string | null
+          amount: number
+          completed_at: string | null
+          created_at: string | null
+          currency: Database["public"]["Enums"]["currency"] | null
+          id: string
+          method: string
+          payment_details: Json | null
+          processed_by_admin_id: string | null
+          status: string | null
+          transaction_hash: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          account_id?: string | null
+          admin_notes?: string | null
+          amount: number
+          completed_at?: string | null
+          created_at?: string | null
+          currency?: Database["public"]["Enums"]["currency"] | null
+          id?: string
+          method: string
+          payment_details?: Json | null
+          processed_by_admin_id?: string | null
+          status?: string | null
+          transaction_hash?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          account_id?: string | null
+          admin_notes?: string | null
+          amount?: number
+          completed_at?: string | null
+          created_at?: string | null
+          currency?: Database["public"]["Enums"]["currency"] | null
+          id?: string
+          method?: string
+          payment_details?: Json | null
+          processed_by_admin_id?: string | null
+          status?: string | null
+          transaction_hash?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deposit_requests_account_id_fkey"
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "accounts"
@@ -514,11 +648,78 @@ export type Database = {
         }
         Relationships: []
       }
+      withdraw_requests: {
+        Row: {
+          account_id: string | null
+          admin_notes: string | null
+          amount: number
+          completed_at: string | null
+          created_at: string | null
+          currency: Database["public"]["Enums"]["currency"] | null
+          destination_details: Json
+          id: string
+          method: string
+          processed_by_admin_id: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          account_id?: string | null
+          admin_notes?: string | null
+          amount: number
+          completed_at?: string | null
+          created_at?: string | null
+          currency?: Database["public"]["Enums"]["currency"] | null
+          destination_details: Json
+          id?: string
+          method: string
+          processed_by_admin_id?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          account_id?: string | null
+          admin_notes?: string | null
+          amount?: number
+          completed_at?: string | null
+          created_at?: string | null
+          currency?: Database["public"]["Enums"]["currency"] | null
+          destination_details?: Json
+          id?: string
+          method?: string
+          processed_by_admin_id?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "withdraw_requests_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      create_admin_notification: {
+        Args: {
+          notification_message: string
+          notification_priority?: string
+          notification_title: string
+          notification_type: string
+          ref_user_id?: string
+          reference_id?: string
+        }
+        Returns: string
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
