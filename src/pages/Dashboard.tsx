@@ -39,6 +39,7 @@ import { CryptoWallet } from '@/components/CryptoWallet';
 import { AccountTopUp } from '@/components/AccountTopUp';
 import { AccountStatements } from '@/components/AccountStatements';
 import { IDMeVerification } from '@/components/IDMeVerification';
+import { EnhancedAdminPanel } from '@/components/EnhancedAdminPanel';
 
 interface Account {
   id: string;
@@ -498,157 +499,27 @@ export default function Dashboard() {
           </TabsContent>
 
           <TabsContent value="transfers" className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-semibold">Transfer History</h2>
-              <Button className="gap-2">
-                <Send className="w-4 h-4" />
-                New Transfer
-              </Button>
-            </div>
-            
-            <div className="space-y-4">
-              {transfers.length === 0 ? (
-                <Card>
-                  <CardContent className="text-center py-12">
-                    <Send className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                    <h3 className="text-lg font-semibold mb-2">No Transfers Yet</h3>
-                    <p className="text-muted-foreground mb-4">
-                      Your transfer history will appear here once you make your first transfer.
-                    </p>
-                    <Button>Make Your First Transfer</Button>
-                  </CardContent>
-                </Card>
-              ) : (
-                transfers.map((transfer) => (
-                  <Card key={transfer.id}>
-                    <CardContent className="pt-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 rounded-full bg-primary/10">
-                            <ArrowUpRight className="w-4 h-4 text-primary" />
-                          </div>
-                          <div>
-                            <p className="font-medium">${transfer.amount.toLocaleString()}</p>
-                            <p className="text-sm text-muted-foreground">
-                              {transfer.memo || 'Transfer'}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <Badge variant={transfer.status === 'completed' ? 'default' : 'secondary'}>
-                            {transfer.status}
-                          </Badge>
-                          {transfer.status === 'processing' && (
-                            <div className="mt-2">
-                              <Progress value={transfer.progress} className="w-20" />
-                              <p className="text-xs text-muted-foreground mt-1">
-                                {transfer.progress}%
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
-              )}
-            </div>
+            <TransferSystem />
           </TabsContent>
 
           <TabsContent value="cards" className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-semibold">Your Cards</h2>
-              <Button 
-                className="gap-2"
-                onClick={() => {
-                  setApplicationType('credit_card');
-                  setShowApplicationForm(true);
-                }}
-              >
-                <CreditCard className="w-4 h-4" />
-                Apply for Card
-              </Button>
-            </div>
-            
-            <div className="grid gap-4 md:grid-cols-3">
-              {/* Heritage Platinum Elite */}
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer banking-gradient-primary text-primary-foreground" onClick={() => {
-                setApplicationType('credit_card');
-                setShowApplicationForm(true);
-              }}>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Heritage Platinum Elite</span>
-                    <CreditCard className="w-6 h-6" />
-                  </CardTitle>
-                  <Badge className="bg-accent text-accent-foreground w-fit">Premium</Badge>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <p className="text-2xl font-bold">3% Cashback</p>
-                    <p className="text-sm opacity-90">$50K Credit Limit</p>
-                    <p className="text-sm opacity-90">Annual Fee: $495</p>
-                    <ul className="text-sm space-y-1 opacity-90">
-                      <li>• Airport Lounge Access</li>
-                      <li>• Concierge Service</li>
-                      <li>• Travel Insurance</li>
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
+            <EnhancedCreditCards />
+          </TabsContent>
 
-              {/* Heritage Gold Rewards */}
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-gradient-to-br from-yellow-600 to-yellow-800 text-white" onClick={() => {
-                setApplicationType('credit_card');
-                setShowApplicationForm(true);
-              }}>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Heritage Gold Rewards</span>
-                    <CreditCard className="w-6 h-6" />
-                  </CardTitle>
-                  <Badge className="bg-yellow-500 text-yellow-900 w-fit">Gold</Badge>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <p className="text-2xl font-bold">2% Cashback</p>
-                    <p className="text-sm opacity-90">$25K Credit Limit</p>
-                    <p className="text-sm opacity-90">Annual Fee: $195</p>
-                    <ul className="text-sm space-y-1 opacity-90">
-                      <li>• Cashback Rewards</li>
-                      <li>• Travel Benefits</li>
-                      <li>• Purchase Protection</li>
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
+          <TabsContent value="crypto" className="space-y-4">
+            <CryptoWallet />
+          </TabsContent>
 
-              {/* Heritage Classic */}
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer banking-gradient-secondary text-secondary-foreground" onClick={() => {
-                setApplicationType('credit_card');
-                setShowApplicationForm(true);
-              }}>
-                <CardHeader>
-                  <CardTitle className="flex items-center justify-between">
-                    <span>Heritage Classic</span>
-                    <CreditCard className="w-6 h-6" />
-                  </CardTitle>
-                  <Badge className="bg-muted text-muted-foreground w-fit">Standard</Badge>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <p className="text-2xl font-bold">1% Cashback</p>
-                    <p className="text-sm opacity-90">$10K Credit Limit</p>
-                    <p className="text-sm opacity-90">No Annual Fee</p>
-                    <ul className="text-sm space-y-1 opacity-90">
-                      <li>• No Annual Fee</li>
-                      <li>• Basic Rewards</li>
-                      <li>• Fraud Protection</li>
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+          <TabsContent value="topup" className="space-y-4">
+            <AccountTopUp />
+          </TabsContent>
+
+          <TabsContent value="statements" className="space-y-4">
+            <AccountStatements />
+          </TabsContent>
+
+          <TabsContent value="kyc" className="space-y-4">
+            <IDMeVerification />
           </TabsContent>
 
           <TabsContent value="profile" className="space-y-4">
@@ -699,7 +570,7 @@ export default function Dashboard() {
           {/* Admin Panel Tab */}
           {isAdmin && (
             <TabsContent value="admin" className="space-y-4">
-              <AdminPanel />
+              <EnhancedAdminPanel />
             </TabsContent>
           )}
         </Tabs>
