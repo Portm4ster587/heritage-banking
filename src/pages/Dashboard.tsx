@@ -40,6 +40,10 @@ import { AccountTopUp } from '@/components/AccountTopUp';
 import { AccountStatements } from '@/components/AccountStatements';
 import { IDMeVerification } from '@/components/IDMeVerification';
 import { EnhancedAdminPanel } from '@/components/EnhancedAdminPanel';
+import { CardManagement } from '@/components/CardManagement';
+import { RealTimeCryptoRates } from '@/components/RealTimeCryptoRates';
+import { WalletQRGenerator } from '@/components/WalletQRGenerator';
+import { MerchantPayments } from '@/components/MerchantPayments';
 
 interface Account {
   id: string;
@@ -294,11 +298,12 @@ export default function Dashboard() {
 
         {/* Main Content Tabs */}
         <Tabs value={activeSection} onValueChange={setActiveSection} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-10">
+          <TabsList className="grid w-full grid-cols-11">
             <TabsTrigger value="accounts">Accounts</TabsTrigger>
             <TabsTrigger value="transfers">Transfers</TabsTrigger>
             <TabsTrigger value="cards">Cards</TabsTrigger>
             <TabsTrigger value="crypto">Crypto</TabsTrigger>
+            <TabsTrigger value="payments">Payments</TabsTrigger>
             <TabsTrigger value="topup">Top Up</TabsTrigger>
             <TabsTrigger value="statements">Statements</TabsTrigger>
             <TabsTrigger value="kyc">ID Verify</TabsTrigger>
@@ -503,11 +508,23 @@ export default function Dashboard() {
           </TabsContent>
 
           <TabsContent value="cards" className="space-y-4">
-            <EnhancedCreditCards />
+            <CardManagement />
           </TabsContent>
 
-          <TabsContent value="crypto" className="space-y-4">
-            <CryptoWallet />
+          <TabsContent value="crypto" className="space-y-6">
+            <div className="grid gap-6 lg:grid-cols-2">
+              <div>
+                <RealTimeCryptoRates />
+              </div>
+              <div className="space-y-6">
+                <CryptoWallet />
+                {isAdmin && <WalletQRGenerator />}
+              </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="payments" className="space-y-4">
+            <MerchantPayments />
           </TabsContent>
 
           <TabsContent value="topup" className="space-y-4">

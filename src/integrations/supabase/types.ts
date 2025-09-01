@@ -152,6 +152,7 @@ export type Database = {
           id_verification_data: Json | null
           id_verification_status: string | null
           id_verification_url: string | null
+          is_guest: boolean
           job_title: string | null
           last_name: string | null
           middle_name: string | null
@@ -168,7 +169,7 @@ export type Database = {
           state: string | null
           status: string
           updated_at: string
-          user_id: string
+          user_id: string | null
           work_phone: string | null
           years_in_business: number | null
         }
@@ -201,6 +202,7 @@ export type Database = {
           id_verification_data?: Json | null
           id_verification_status?: string | null
           id_verification_url?: string | null
+          is_guest?: boolean
           job_title?: string | null
           last_name?: string | null
           middle_name?: string | null
@@ -217,7 +219,7 @@ export type Database = {
           state?: string | null
           status?: string
           updated_at?: string
-          user_id: string
+          user_id?: string | null
           work_phone?: string | null
           years_in_business?: number | null
         }
@@ -250,6 +252,7 @@ export type Database = {
           id_verification_data?: Json | null
           id_verification_status?: string | null
           id_verification_url?: string | null
+          is_guest?: boolean
           job_title?: string | null
           last_name?: string | null
           middle_name?: string | null
@@ -266,7 +269,7 @@ export type Database = {
           state?: string | null
           status?: string
           updated_at?: string
-          user_id?: string
+          user_id?: string | null
           work_phone?: string | null
           years_in_business?: number | null
         }
@@ -275,8 +278,12 @@ export type Database = {
       cards: {
         Row: {
           account_id: string
+          activation_code: string | null
+          activation_status: string
+          card_number_encrypted: string | null
           card_type: string
           created_at: string
+          cvv_encrypted: string | null
           embossed_name: string | null
           exp_month: number | null
           exp_year: number | null
@@ -288,8 +295,12 @@ export type Database = {
         }
         Insert: {
           account_id: string
+          activation_code?: string | null
+          activation_status?: string
+          card_number_encrypted?: string | null
           card_type: string
           created_at?: string
+          cvv_encrypted?: string | null
           embossed_name?: string | null
           exp_month?: number | null
           exp_year?: number | null
@@ -301,8 +312,12 @@ export type Database = {
         }
         Update: {
           account_id?: string
+          activation_code?: string | null
+          activation_status?: string
+          card_number_encrypted?: string | null
           card_type?: string
           created_at?: string
+          cvv_encrypted?: string | null
           embossed_name?: string | null
           exp_month?: number | null
           exp_year?: number | null
@@ -321,6 +336,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      crypto_assets: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          last_updated: string
+          market_cap: number | null
+          name: string
+          price_change_24h: number
+          price_usd: number
+          symbol: string
+          volume_24h: number | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_updated?: string
+          market_cap?: number | null
+          name: string
+          price_change_24h?: number
+          price_usd?: number
+          symbol: string
+          volume_24h?: number | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_updated?: string
+          market_cap?: number | null
+          name?: string
+          price_change_24h?: number
+          price_usd?: number
+          symbol?: string
+          volume_24h?: number | null
+        }
+        Relationships: []
       }
       crypto_wallets: {
         Row: {
@@ -486,6 +540,45 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_methods: {
+        Row: {
+          created_at: string
+          details: Json
+          external_id: string | null
+          id: string
+          is_active: boolean
+          is_verified: boolean
+          method_type: string
+          provider: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          details?: Json
+          external_id?: string | null
+          id?: string
+          is_active?: boolean
+          is_verified?: boolean
+          method_type: string
+          provider: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          details?: Json
+          external_id?: string | null
+          id?: string
+          is_active?: boolean
+          is_verified?: boolean
+          method_type?: string
+          provider?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           address_line1: string | null
@@ -644,6 +737,42 @@ export type Database = {
           created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallet_addresses: {
+        Row: {
+          address: string
+          created_at: string
+          crypto_wallet_id: string
+          id: string
+          is_active: boolean
+          network: string
+          qr_code_url: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          created_at?: string
+          crypto_wallet_id: string
+          id?: string
+          is_active?: boolean
+          network: string
+          qr_code_url?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          created_at?: string
+          crypto_wallet_id?: string
+          id?: string
+          is_active?: boolean
+          network?: string
+          qr_code_url?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []

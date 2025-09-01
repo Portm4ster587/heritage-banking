@@ -8,11 +8,13 @@ import { EnhancedCreditCards } from "../components/EnhancedCreditCards";
 import { ApplicationForm } from "../components/ApplicationForm";
 import { QuickActions } from "../components/QuickActions";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { GuestApplicationForm } from "../components/GuestApplicationForm";
 import { FileText, Home, Car, Building, DollarSign, CreditCard } from "lucide-react";
 import bankingHeroImage from "@/assets/banking-hero.jpg";
 
 const Index = () => {
   const [showApplicationForm, setShowApplicationForm] = useState(false);
+  const [showGuestApplication, setShowGuestApplication] = useState(false);
   const [applicationType, setApplicationType] = useState<'checking' | 'savings' | 'business' | 'credit_card' | 'personal_loan' | 'home_loan' | 'auto_loan' | 'business_loan'>('checking');
 
   const loanProducts = [
@@ -108,14 +110,16 @@ const Index = () => {
                 Your trusted partner for comprehensive banking solutions.
               </p>
               <div className="flex space-x-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                <Link to="/auth">
-                  <Button 
-                    size="lg" 
-                    className="bg-accent text-accent-foreground hover:bg-accent-light px-8 py-3 font-semibold banking-button pulse-glow"
-                  >
-                    Open Account
-                  </Button>
-                </Link>
+                <Button 
+                  size="lg" 
+                  onClick={() => {
+                    setApplicationType('checking');
+                    setShowGuestApplication(true);
+                  }}
+                  className="bg-accent text-accent-foreground hover:bg-accent-light px-8 py-3 font-semibold banking-button pulse-glow"
+                >
+                  Quick Apply (No Account Required)
+                </Button>
                 <Link to="/dashboard">
                   <Button 
                     variant="outline" 
@@ -180,11 +184,15 @@ const Index = () => {
                 <CardContent className="text-center">
                   <p className="text-2xl font-bold text-success mb-1">{loan.rate}</p>
                   <p className="text-sm text-muted-foreground mb-4">{loan.rateLabel}</p>
-                  <Button 
+                   <Button 
                     variant="outline" 
                     className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                    onClick={() => {
+                      setApplicationType(loan.type);
+                      setShowGuestApplication(true);
+                    }}
                   >
-                    Apply Now
+                    Quick Apply
                   </Button>
                 </CardContent>
               </Card>
@@ -233,11 +241,15 @@ const Index = () => {
                     ))}
                   </ul>
                   
-                  <Button 
+                   <Button 
                     variant="outline" 
                     className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                    onClick={() => {
+                      setApplicationType(account.type);
+                      setShowGuestApplication(true);
+                    }}
                   >
-                    Open Account
+                    Quick Apply
                   </Button>
                 </CardContent>
               </Card>
@@ -292,7 +304,20 @@ const Index = () => {
         </div>
       </footer>
 
-      {/* Application Form Modal */}
+      {/* Guest Application Modal */}
+      <Dialog open={showGuestApplication} onOpenChange={setShowGuestApplication}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Quick Application - No Account Required</DialogTitle>
+          </DialogHeader>
+          <GuestApplicationForm 
+            applicationType={applicationType}
+            onSuccess={() => setShowGuestApplication(false)}
+          />
+        </DialogContent>
+      </Dialog>
+
+      {/* Regular Application Form Modal */}
       <Dialog open={showApplicationForm} onOpenChange={setShowApplicationForm}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
