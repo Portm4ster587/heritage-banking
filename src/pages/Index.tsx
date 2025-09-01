@@ -1,12 +1,86 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BankingHeader } from "../components/BankingHeader";
 import { AccountOverview } from "../components/AccountOverview";
-import { CreditCardSection } from "../components/CreditCardSection";
+import { EnhancedCreditCards } from "../components/EnhancedCreditCards";
+import { ApplicationForm } from "../components/ApplicationForm";
 import { QuickActions } from "../components/QuickActions";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { FileText, Home, Car, Building, DollarSign, CreditCard } from "lucide-react";
 import bankingHeroImage from "@/assets/banking-hero.jpg";
 
 const Index = () => {
+  const [showApplicationForm, setShowApplicationForm] = useState(false);
+  const [applicationType, setApplicationType] = useState<'checking' | 'savings' | 'business' | 'credit_card' | 'personal_loan' | 'home_loan' | 'auto_loan' | 'business_loan'>('checking');
+
+  const loanProducts = [
+    {
+      type: 'personal_loan' as const,
+      title: 'Personal Loans',
+      description: 'Quick approval for personal expenses',
+      rate: '2.9% APR',
+      rateLabel: 'Starting rate',
+      icon: FileText,
+      color: 'bg-secondary'
+    },
+    {
+      type: 'home_loan' as const,
+      title: 'Home Loans', 
+      description: 'Competitive rates for home purchases',
+      rate: '3.2% APR',
+      rateLabel: '30-year fixed',
+      icon: Home,
+      color: 'bg-accent'
+    },
+    {
+      type: 'auto_loan' as const,
+      title: 'Auto Loans',
+      description: 'Finance your next vehicle',
+      rate: '2.5% APR', 
+      rateLabel: 'Starting rate',
+      icon: Car,
+      color: 'bg-primary'
+    },
+    {
+      type: 'business_loan' as const,
+      title: 'Business Loans',
+      description: 'Grow your business with flexible financing',
+      rate: '3.8% APR',
+      rateLabel: 'Starting rate', 
+      icon: Building,
+      color: 'bg-secondary'
+    }
+  ];
+
+  const accountProducts = [
+    {
+      type: 'checking' as const,
+      title: 'Personal Checking',
+      description: 'No minimum balance, unlimited transactions',
+      rate: '0.05% APY',
+      icon: DollarSign,
+      features: ['No monthly fees', 'Mobile deposit', 'Online banking']
+    },
+    {
+      type: 'savings' as const,
+      title: 'Personal Savings',
+      description: 'High yield savings with compound interest',
+      rate: '2.25% APY',
+      icon: DollarSign,
+      features: ['FDIC insured', 'Compound interest', 'Mobile banking']
+    },
+    {
+      type: 'business' as const,
+      title: 'Business Banking',
+      description: 'Banking solutions for your business',
+      rate: '2.50% APY',
+      icon: Building,
+      features: ['Business tools', 'ACH transfers', 'Treasury services']
+    }
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <BankingHeader />
@@ -62,10 +136,116 @@ const Index = () => {
         <div className="animate-fade-in" style={{ animationDelay: '0.6s' }}>
           <AccountOverview />
         </div>
+        
+        {/* Enhanced Credit Cards Section */}
         <div className="animate-fade-in" style={{ animationDelay: '0.8s' }}>
-          <CreditCardSection />
+          <EnhancedCreditCards 
+            onApplyClick={(cardId) => {
+              setApplicationType('credit_card');
+              setShowApplicationForm(true);
+            }}
+            onAccountTypeSelect={(accountType) => {
+              setApplicationType(accountType as any);
+              setShowApplicationForm(true);
+            }}
+          />
         </div>
-        <div className="animate-fade-in" style={{ animationDelay: '1s' }}>
+
+        {/* Loan Products Section */}
+        <section className="animate-fade-in" style={{ animationDelay: '1s' }}>
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-primary mb-4">Loan Solutions</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Competitive rates and flexible terms for all your financing needs
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {loanProducts.map((loan, index) => (
+              <Card 
+                key={loan.type} 
+                className="banking-card hover-lift cursor-pointer group"
+                onClick={() => {
+                  setApplicationType(loan.type);
+                  setShowApplicationForm(true);
+                }}
+              >
+                <CardHeader>
+                  <div className={`w-12 h-12 ${loan.color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
+                    <loan.icon className="w-6 h-6 text-white" />
+                  </div>
+                  <CardTitle className="text-center text-lg">{loan.title}</CardTitle>
+                  <CardDescription className="text-center">{loan.description}</CardDescription>
+                </CardHeader>
+                <CardContent className="text-center">
+                  <p className="text-2xl font-bold text-success mb-1">{loan.rate}</p>
+                  <p className="text-sm text-muted-foreground mb-4">{loan.rateLabel}</p>
+                  <Button 
+                    variant="outline" 
+                    className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                  >
+                    Apply Now
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        {/* Account Opening Section */}
+        <section className="animate-fade-in" style={{ animationDelay: '1.2s' }}>
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold text-primary mb-4">Open Your Account Today</h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Choose from our range of checking, savings, and business accounts
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {accountProducts.map((account, index) => (
+              <Card 
+                key={account.type} 
+                className="banking-card hover-lift cursor-pointer group"
+                onClick={() => {
+                  setApplicationType(account.type);
+                  setShowApplicationForm(true);
+                }}
+              >
+                <CardHeader>
+                  <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <account.icon className="w-6 h-6 text-primary-foreground" />
+                  </div>
+                  <CardTitle className="text-center text-xl">{account.title}</CardTitle>
+                  <CardDescription className="text-center">{account.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center mb-6">
+                    <p className="text-2xl font-bold text-success mb-1">{account.rate}</p>
+                    <p className="text-sm text-muted-foreground">Annual Percentage Yield</p>
+                  </div>
+                  
+                  <ul className="space-y-2 mb-6">
+                    {account.features.map((feature, idx) => (
+                      <li key={idx} className="text-sm text-muted-foreground flex items-center">
+                        <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2"></div>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                  
+                  <Button 
+                    variant="outline" 
+                    className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+                  >
+                    Open Account
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+
+        <div className="animate-fade-in" style={{ animationDelay: '1.4s' }}>
           <QuickActions />
         </div>
       </main>
@@ -111,6 +291,19 @@ const Index = () => {
           </div>
         </div>
       </footer>
+
+      {/* Application Form Modal */}
+      <Dialog open={showApplicationForm} onOpenChange={setShowApplicationForm}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Application Form</DialogTitle>
+          </DialogHeader>
+          <ApplicationForm 
+            applicationType={applicationType}
+            onSuccess={() => setShowApplicationForm(false)}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
