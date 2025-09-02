@@ -39,6 +39,7 @@ export const TransferSystem = () => {
   const [amount, setAmount] = useState<string>("");
   const [memo, setMemo] = useState<string>("");
   const [isTransferring, setIsTransferring] = useState(false);
+  const [transferProgress, setTransferProgress] = useState(0);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -150,16 +151,28 @@ export const TransferSystem = () => {
           .eq('id', toAccount);
       }
 
-      // Simulate transfer processing
-      setTimeout(async () => {
+      // Simulate transfer processing with animated progress
+      const animateProgress = async () => {
+        for (let i = 0; i <= 100; i += 10) {
+          setTransferProgress(i);
+          await supabase
+            .from('transfers')
+            .update({ progress: i })
+            .eq('id', data.id);
+          await new Promise(resolve => setTimeout(resolve, 200));
+        }
+        
         await supabase
           .from('transfers')
           .update({ status: 'completed', progress: 100 })
           .eq('id', data.id);
         
+        setTransferProgress(0);
         fetchTransfers();
         fetchAccounts();
-      }, 3000);
+      };
+      
+      animateProgress();
 
       toast({
         title: "Transfer Initiated",
@@ -296,10 +309,36 @@ export const TransferSystem = () => {
               className="w-full banking-button"
             >
               {isTransferring ? (
-                <>
-                  <Clock className="h-4 w-4 mr-2 animate-spin" />
-                  Processing Transfer...
-                </>
+                <div className="flex items-center space-x-3">
+                  <div className="relative w-6 h-6">
+                    <svg className="w-6 h-6 -rotate-90" viewBox="0 0 24 24">
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="8"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        fill="none"
+                        className="opacity-30"
+                      />
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="8"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        fill="none"
+                        strokeDasharray={50.27}
+                        strokeDashoffset={50.27 - (transferProgress / 100) * 50.27}
+                        className="transition-all duration-300"
+                      />
+                    </svg>
+                    <div className="absolute inset-0 flex items-center justify-center text-xs font-bold">
+                      {transferProgress}%
+                    </div>
+                  </div>
+                  <span>Processing Transfer...</span>
+                </div>
               ) : (
                 <>
                   <Send className="h-4 w-4 mr-2" />

@@ -44,6 +44,9 @@ import { CardManagement } from '@/components/CardManagement';
 import { RealTimeCryptoRates } from '@/components/RealTimeCryptoRates';
 import { WalletQRGenerator } from '@/components/WalletQRGenerator';
 import { MerchantPayments } from '@/components/MerchantPayments';
+import { ExternalBankTransfer } from '@/components/ExternalBankTransfer';
+import { MobileNavigation } from '@/components/MobileNavigation';
+import { ComprehensiveAdminPanel } from '@/components/ComprehensiveAdminPanel';
 
 interface Account {
   id: string;
@@ -115,9 +118,17 @@ export default function Dashboard() {
           const accountsToCreate = [
             {
               user_id: user.id,
-              type: 'personal_checking' as const,
-              account_number: `CHK${Math.random().toString().slice(2, 12)}`,
-              balance: 59765,
+              type: 'business_checking' as const,
+              account_number: `HBZ${Math.random().toString().slice(2, 12)}`,
+              balance: 130986,
+              status: 'active' as const,
+              currency: 'USD' as const
+            },
+            {
+              user_id: user.id,
+              type: 'business_savings' as const,
+              account_number: `HFX${Math.random().toString().slice(2, 12)}`,
+              balance: 28486,
               status: 'active' as const,
               currency: 'USD' as const
             },
@@ -125,26 +136,9 @@ export default function Dashboard() {
               user_id: user.id,
               type: 'personal_savings' as const,
               account_number: `SAV${Math.random().toString().slice(2, 12)}`,
-              balance: 67899,
+              balance: 37983,
               status: 'active' as const,
               currency: 'USD' as const
-            },
-            {
-              user_id: user.id,
-              type: 'business_savings' as const,
-              account_number: `BSV${Math.random().toString().slice(2, 12)}`,
-              balance: 786656,
-              status: 'active' as const,
-              currency: 'USD' as const
-            },
-            {
-              user_id: user.id,
-              type: 'personal_checking' as const,
-              account_number: `MTG${Math.random().toString().slice(2, 12)}`,
-              balance: -487890,
-              status: 'active' as const,
-              currency: 'USD' as const,
-              metadata: { loan_progress: 84, total_amount: 580000 }
             }
           ];
 
@@ -236,11 +230,13 @@ export default function Dashboard() {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/5">
       <BankingHeader activeSection={activeSection} onSectionChange={setActiveSection} />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 pb-20 md:pb-8">{/* Add bottom padding for mobile nav */}
         {/* Welcome Message */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">
-            Welcome back, {userProfile?.first_name || user?.email?.split('@')[0] || 'User'}
+            Welcome back, {userProfile?.first_name && userProfile?.last_name ? 
+              `${userProfile.first_name} ${userProfile.last_name}` : 
+              (user?.email === 'r.alcarezswo@gmail.com' ? 'Raul Alcarez' : user?.email?.split('@')[0] || 'User')}
           </h1>
           <p className="text-muted-foreground">Manage your accounts and banking services</p>
         </div>
@@ -298,7 +294,7 @@ export default function Dashboard() {
 
         {/* Main Content Tabs */}
         <Tabs value={activeSection} onValueChange={setActiveSection} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-11">
+          <TabsList className="hidden md:grid w-full grid-cols-11">
             <TabsTrigger value="accounts">Accounts</TabsTrigger>
             <TabsTrigger value="transfers">Transfers</TabsTrigger>
             <TabsTrigger value="cards">Cards</TabsTrigger>
@@ -339,7 +335,7 @@ export default function Dashboard() {
                     <CardHeader>
                       <div className="flex items-center justify-between">
                         <CardTitle className="text-lg capitalize">
-                          {account.type.replace('_', ' ').replace('heritage', 'Heritage')}
+                          {account.type.replace('_', ' ').replace('business checking', 'Heritage Business').replace('business savings', 'Heritage Fixed')}
                         </CardTitle>
                         <Badge variant={account.status === 'active' ? 'default' : 'secondary'}>
                           {account.status}
@@ -504,7 +500,10 @@ export default function Dashboard() {
           </TabsContent>
 
           <TabsContent value="transfers" className="space-y-4">
-            <TransferSystem />
+            <div className="space-y-6">
+              <TransferSystem />
+              <ExternalBankTransfer />
+            </div>
           </TabsContent>
 
           <TabsContent value="cards" className="space-y-4">
@@ -587,10 +586,13 @@ export default function Dashboard() {
           {/* Admin Panel Tab */}
           {isAdmin && (
             <TabsContent value="admin" className="space-y-4">
-              <EnhancedAdminPanel />
+              <ComprehensiveAdminPanel />
             </TabsContent>
           )}
         </Tabs>
+        
+        {/* Mobile Navigation - Only visible on mobile */}
+        <MobileNavigation activeSection={activeSection} onSectionChange={setActiveSection} />
       </div>
 
       {/* Application Form Modal */}
