@@ -589,13 +589,15 @@ export default function Dashboard() {
 
           {/* Admin Panel Tab */}
           {isAdmin && (
-          <TabsContent value="settings" className="space-y-4">
-            <AccountSettings />
-          </TabsContent>
+            <>
+              <TabsContent value="settings" className="space-y-4">
+                <AccountSettings />
+              </TabsContent>
 
-          <TabsContent value="admin" className="space-y-4">
-            <ComprehensiveAdminPanel />
-          </TabsContent>
+              <TabsContent value="admin" className="space-y-4">
+                <ComprehensiveAdminPanel />
+              </TabsContent>
+            </>
           )}
         </Tabs>
         
