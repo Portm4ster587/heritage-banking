@@ -40,6 +40,7 @@ export const TransferSystem = () => {
   const [memo, setMemo] = useState<string>("");
   const [isTransferring, setIsTransferring] = useState(false);
   const [transferProgress, setTransferProgress] = useState(0);
+  const [showTransferProgress, setShowTransferProgress] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -118,6 +119,7 @@ export const TransferSystem = () => {
     }
 
     setIsTransferring(true);
+    setShowTransferProgress(true);
 
     try {
       const { data, error } = await supabase
@@ -151,42 +153,20 @@ export const TransferSystem = () => {
           .eq('id', toAccount);
       }
 
-      // Simulate transfer processing with animated progress
-      const animateProgress = async () => {
-        for (let i = 0; i <= 100; i += 10) {
-          setTransferProgress(i);
-          await supabase
-            .from('transfers')
-            .update({ progress: i })
-            .eq('id', data.id);
-          await new Promise(resolve => setTimeout(resolve, 200));
-        }
+      // Simulate transfer processing - this will be handled by EnhancedTransferProgress
+      setTimeout(() => {
+        toast({
+          title: "Transfer Initiated",
+          description: `Transfer of $${transferAmount} has been started`,
+        });
         
-        await supabase
-          .from('transfers')
-          .update({ status: 'completed', progress: 100 })
-          .eq('id', data.id);
-        
-        setTransferProgress(0);
-        fetchTransfers();
-        fetchAccounts();
-      };
-      
-      animateProgress();
+        // Reset form
+        setFromAccount("");
+        setToAccount("");
+        setAmount("");
+        setMemo("");
+      }, 500);
 
-      toast({
-        title: "Transfer Initiated",
-        description: `Transfer of $${transferAmount} has been started`,
-      });
-
-      // Reset form
-      setFromAccount("");
-      setToAccount("");
-      setAmount("");
-      setMemo("");
-      
-      fetchTransfers();
-      fetchAccounts();
     } catch (error) {
       console.error('Transfer error:', error);
       toast({
@@ -197,6 +177,18 @@ export const TransferSystem = () => {
     } finally {
       setIsTransferring(false);
     }
+  };
+
+  const handleTransferComplete = async () => {
+    setShowTransferProgress(false);
+    setIsTransferring(false);
+    fetchTransfers();
+    fetchAccounts();
+    
+    toast({
+      title: "Transfer Completed!",
+      description: "Your transfer has been processed successfully",
+    });
   };
 
   const getStatusIcon = (status: string) => {

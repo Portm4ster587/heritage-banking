@@ -47,6 +47,8 @@ import { MerchantPayments } from '@/components/MerchantPayments';
 import { ExternalBankTransfer } from '@/components/ExternalBankTransfer';
 import { MobileNavigation } from '@/components/MobileNavigation';
 import { ComprehensiveAdminPanel } from '@/components/ComprehensiveAdminPanel';
+import { AccountSettings } from '@/components/AccountSettings';
+import { CryptoExchange } from '@/components/CryptoExchange';
 
 interface Account {
   id: string;
@@ -294,17 +296,19 @@ export default function Dashboard() {
 
         {/* Main Content Tabs */}
         <Tabs value={activeSection} onValueChange={setActiveSection} className="space-y-6">
-          <TabsList className="hidden md:grid w-full grid-cols-11">
+          <TabsList className="hidden md:grid w-full grid-cols-12">
             <TabsTrigger value="accounts">Accounts</TabsTrigger>
             <TabsTrigger value="transfers">Transfers</TabsTrigger>
             <TabsTrigger value="cards">Cards</TabsTrigger>
             <TabsTrigger value="crypto">Crypto</TabsTrigger>
+            <TabsTrigger value="exchange">Exchange</TabsTrigger>
             <TabsTrigger value="payments">Payments</TabsTrigger>
             <TabsTrigger value="topup">Top Up</TabsTrigger>
             <TabsTrigger value="statements">Statements</TabsTrigger>
             <TabsTrigger value="kyc">ID Verify</TabsTrigger>
             <TabsTrigger value="investments">Investments</TabsTrigger>
             <TabsTrigger value="loans">Loans</TabsTrigger>
+            <TabsTrigger value="settings">Settings</TabsTrigger>
             {isAdmin && <TabsTrigger value="admin">Admin</TabsTrigger>}
           </TabsList>
 
@@ -585,9 +589,13 @@ export default function Dashboard() {
 
           {/* Admin Panel Tab */}
           {isAdmin && (
-            <TabsContent value="admin" className="space-y-4">
-              <ComprehensiveAdminPanel />
-            </TabsContent>
+          <TabsContent value="settings" className="space-y-4">
+            <AccountSettings />
+          </TabsContent>
+
+          <TabsContent value="admin" className="space-y-4">
+            <ComprehensiveAdminPanel />
+          </TabsContent>
           )}
         </Tabs>
         
