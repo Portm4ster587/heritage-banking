@@ -135,131 +135,62 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-6 py-12 space-y-20">
-        <div className="animate-fade-in" style={{ animationDelay: '0.6s' }}>
-          <AccountOverview />
-        </div>
-        
-        {/* Enhanced Credit Cards Section */}
-        <div className="animate-fade-in" style={{ animationDelay: '0.8s' }}>
-          <EnhancedCreditCards 
-            onApplyClick={(cardId) => {
-              setApplicationType('credit_card');
-              setShowApplicationForm(true);
-            }}
-            onAccountTypeSelect={(accountType) => {
-              setApplicationType(accountType as any);
-              setShowApplicationForm(true);
-            }}
-          />
-        </div>
-
-        {/* Loan Products Section */}
-        <section className="animate-fade-in" style={{ animationDelay: '1s' }}>
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-primary mb-4">Loan Solutions</h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Competitive rates and flexible terms for all your financing needs
-            </p>
+      {/* Simplified Main Content */}
+      <main className="container mx-auto px-6 py-12 space-y-16">
+        {/* Quick Services Grid */}
+        <section className="animate-fade-in" style={{ animationDelay: '0.6s' }}>
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-primary mb-4">Banking Services</h2>
+            <p className="text-lg text-muted-foreground">Everything you need for modern banking</p>
           </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {loanProducts.map((loan, index) => (
-              <Card 
-                key={loan.type} 
-                className="banking-card hover-lift cursor-pointer group"
-                onClick={() => {
-                  setApplicationType(loan.type);
-                  setShowApplicationForm(true);
-                }}
-              >
-                <CardHeader>
-                  <div className={`w-12 h-12 ${loan.color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
-                    <loan.icon className="w-6 h-6 text-white" />
-                  </div>
-                  <CardTitle className="text-center text-lg">{loan.title}</CardTitle>
-                  <CardDescription className="text-center">{loan.description}</CardDescription>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <p className="text-2xl font-bold text-success mb-1">{loan.rate}</p>
-                  <p className="text-sm text-muted-foreground mb-4">{loan.rateLabel}</p>
-                   <Button 
-                    variant="outline" 
-                    className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                    onClick={() => {
-                      setApplicationType(loan.type);
-                      setShowGuestApplication(true);
-                    }}
-                  >
-                    Quick Apply
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        {/* Account Opening Section */}
-        <section className="animate-fade-in" style={{ animationDelay: '1.2s' }}>
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-primary mb-4">Open Your Account Today</h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Choose from our range of checking, savings, and business accounts
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {accountProducts.map((account, index) => (
-              <Card 
-                key={account.type} 
-                className="banking-card hover-lift cursor-pointer group"
-                onClick={() => {
-                  setApplicationType(account.type);
-                  setShowApplicationForm(true);
-                }}
-              >
-                <CardHeader>
-                  <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                    <account.icon className="w-6 h-6 text-primary-foreground" />
-                  </div>
-                  <CardTitle className="text-center text-xl">{account.title}</CardTitle>
-                  <CardDescription className="text-center">{account.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center mb-6">
-                    <p className="text-2xl font-bold text-success mb-1">{account.rate}</p>
-                    <p className="text-sm text-muted-foreground">Annual Percentage Yield</p>
-                  </div>
-                  
-                  <ul className="space-y-2 mb-6">
-                    {account.features.map((feature, idx) => (
-                      <li key={idx} className="text-sm text-muted-foreground flex items-center">
-                        <div className="w-1.5 h-1.5 bg-primary rounded-full mr-2"></div>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  
-                   <Button 
-                    variant="outline" 
-                    className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground"
-                    onClick={() => {
-                      setApplicationType(account.type);
-                      setShowGuestApplication(true);
-                    }}
-                  >
-                    Quick Apply
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </section>
-
-        <div className="animate-fade-in" style={{ animationDelay: '1.4s' }}>
           <QuickActions />
-        </div>
+        </section>
+
+        {/* Featured Products */}
+        <section className="animate-fade-in" style={{ animationDelay: '0.8s' }}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Quick Apply Card */}
+            <Card className="banking-card hover-lift cursor-pointer group">
+              <CardHeader>
+                <CardTitle className="text-xl text-center">Quick Account Opening</CardTitle>
+                <CardDescription className="text-center">Open an account in minutes with our streamlined process</CardDescription>
+              </CardHeader>
+              <CardContent className="text-center">
+                <Button 
+                  size="lg" 
+                  onClick={() => {
+                    setApplicationType('checking');
+                    setShowGuestApplication(true);
+                  }}
+                  className="w-full bg-accent text-accent-foreground hover:bg-accent-light font-semibold"
+                >
+                  Start Application
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Credit Cards Preview */}
+            <Card className="banking-card hover-lift cursor-pointer group">
+              <CardHeader>
+                <CardTitle className="text-xl text-center">Heritage Credit Cards</CardTitle>
+                <CardDescription className="text-center">Discover our range of premium credit cards with exclusive benefits</CardDescription>
+              </CardHeader>
+              <CardContent className="text-center">
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  onClick={() => {
+                    setApplicationType('credit_card');
+                    setShowGuestApplication(true);
+                  }}
+                  className="w-full border-primary text-primary hover:bg-primary hover:text-primary-foreground font-semibold"
+                >
+                  Explore Cards
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
       </main>
 
       {/* Footer */}

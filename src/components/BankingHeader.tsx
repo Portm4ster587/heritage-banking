@@ -1,16 +1,11 @@
-import { Building2, User, Bell, Settings, LogOut } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
 import heritageLogoImage from "@/assets/heritage-logo.png";
+import { ServicesMenu } from "./ServicesMenu";
+import { NotificationCenter } from "./NotificationCenter";
+import { ProfileMenu } from "./ProfileMenu";
+import { useState } from "react";
 
 interface BankingHeaderProps {
   activeSection?: string;
@@ -18,110 +13,75 @@ interface BankingHeaderProps {
 }
 
 export const BankingHeader = ({ activeSection, onSectionChange }: BankingHeaderProps) => {
-  const { user, signOut } = useAuth();
-  const { toast } = useToast();
+  const { user } = useAuth();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const handleSignOut = async () => {
-    await signOut();
-    toast({
-      title: "Signed out",
-      description: "You have been successfully signed out."
-    });
+  const handleServiceSelect = (service: string) => {
+    if (onSectionChange) {
+      onSectionChange(service);
+    }
+    setIsMobileMenuOpen(false);
   };
 
-  const handleNavClick = (section: string) => {
+  const handleProfileAction = (action: string) => {
     if (onSectionChange) {
-      onSectionChange(section);
+      onSectionChange(action);
     }
   };
 
+  const handleNotificationAction = (notificationId: string, action: string) => {
+    // Handle notification actions here
+    console.log('Notification action:', notificationId, action);
+  };
+
   return (
-    <header className="banking-gradient-primary text-primary-foreground shadow-lg border-b animate-slide-up">
-      <div className="container mx-auto px-6 py-4">
+    <header className="banking-gradient-primary text-primary-foreground shadow-lg border-b animate-slide-up sticky top-0 z-50">
+      <div className="container mx-auto px-4 lg:px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4 animate-fade-in">
+          {/* Logo */}
+          <div className="flex items-center space-x-3 animate-fade-in">
             <img 
               src={heritageLogoImage} 
               alt="Heritage Bank Logo" 
-              className="h-10 w-10 animate-float"
+              className="h-8 w-8 lg:h-10 lg:w-10 animate-float"
             />
-            <div>
-              <h1 className="text-xl font-bold">Heritage Bank</h1>
-              <p className="text-sm text-primary-foreground/80">Your Financial Partner Since 1892</p>
+            <div className="hidden sm:block">
+              <h1 className="text-lg lg:text-xl font-bold">Heritage Bank</h1>
+              <p className="text-xs lg:text-sm text-primary-foreground/80">Your Financial Partner Since 1892</p>
             </div>
           </div>
           
-          <nav className="hidden md:flex items-center space-x-8">
-            <button 
-              onClick={() => handleNavClick('accounts')}
-              className={`banking-link hover:text-accent-light transition-all duration-300 hover:scale-105 ${activeSection === 'accounts' ? 'text-accent-light' : ''}`}
-            >
-              Accounts
-            </button>
-            <button 
-              onClick={() => handleNavClick('transfers')}
-              className={`banking-link hover:text-accent-light transition-all duration-300 hover:scale-105 ${activeSection === 'transfers' ? 'text-accent-light' : ''}`}
-            >
-              Transfers
-            </button>
-            <button 
-              onClick={() => handleNavClick('crypto')}
-              className={`banking-link hover:text-accent-light transition-all duration-300 hover:scale-105 ${activeSection === 'crypto' ? 'text-accent-light' : ''}`}
-            >
-              Crypto Wallet
-            </button>
-            <button 
-              onClick={() => handleNavClick('cards')}
-              className={`banking-link hover:text-accent-light transition-all duration-300 hover:scale-105 ${activeSection === 'cards' ? 'text-accent-light' : ''}`}
-            >
-              Credit Cards
-            </button>
-            <button 
-              onClick={() => handleNavClick('statements')}
-              className={`banking-link hover:text-accent-light transition-all duration-300 hover:scale-105 ${activeSection === 'statements' ? 'text-accent-light' : ''}`}
-            >
-              Statements
-            </button>
-            <button 
-              onClick={() => handleNavClick('topup')}
-              className={`banking-link hover:text-accent-light transition-all duration-300 hover:scale-105 ${activeSection === 'topup' ? 'text-accent-light' : ''}`}
-            >
-              Top-Up
-            </button>
-          </nav>
+          {/* Desktop Services Menu */}
+          <div className="hidden lg:flex flex-1 justify-center px-8">
+            <ServicesMenu onServiceSelect={handleServiceSelect} />
+          </div>
           
-          <div className="flex items-center space-x-4 animate-fade-in">
-            <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-light banking-button">
-              <Bell className="h-5 w-5" />
+          {/* Right Side Actions */}
+          <div className="flex items-center space-x-2 lg:space-x-4">
+            {/* Mobile Menu Button */}
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="lg:hidden text-primary-foreground hover:bg-primary-light"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            >
+              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
             
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="text-primary-foreground hover:bg-primary-light banking-button">
-                  <User className="h-5 w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 animate-scale-in">
-                <DropdownMenuLabel>{user?.email || 'User'}</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem 
-                  className="hover:bg-muted transition-colors"
-                  onClick={() => handleNavClick('profile')}
-                >
-                  <Settings className="mr-2 h-4 w-4" />
-                  Account Settings
-                </DropdownMenuItem>
-                <DropdownMenuItem 
-                  className="hover:bg-muted transition-colors"
-                  onClick={handleSignOut}
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Sign Out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            {/* Notifications */}
+            <NotificationCenter onNotificationAction={handleNotificationAction} />
+            
+            {/* Profile Menu */}
+            <ProfileMenu onMenuAction={handleProfileAction} />
           </div>
         </div>
+        
+        {/* Mobile Services Menu */}
+        {isMobileMenuOpen && (
+          <div className="lg:hidden mt-4 pb-4 border-t border-primary-foreground/20">
+            <ServicesMenu onServiceSelect={handleServiceSelect} isMobile={true} />
+          </div>
+        )}
       </div>
     </header>
   );
