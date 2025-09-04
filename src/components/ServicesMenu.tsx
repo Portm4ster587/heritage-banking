@@ -95,19 +95,21 @@ export const ServicesMenu = ({ onServiceSelect, isMobile = false }: ServicesMenu
 
   if (isMobile) {
     return (
-      <div className="grid grid-cols-2 gap-3 p-4">
-        {Object.entries(serviceCategories).map(([key, category]) => (
-          <Card key={key} className="banking-card cursor-pointer hover-lift" onClick={() => setActiveCategory(activeCategory === key ? null : key)}>
-            <CardContent className="p-4 text-center">
-              <category.icon className={`w-6 h-6 mx-auto mb-2 ${category.color}`} />
-              <p className="text-sm font-medium">{category.title}</p>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="p-4 space-y-4">
+        <div className="grid grid-cols-2 gap-3">
+          {Object.entries(serviceCategories).map(([key, category]) => (
+            <Card key={key} className="banking-card cursor-pointer hover-lift transition-all duration-200" onClick={() => setActiveCategory(activeCategory === key ? null : key)}>
+              <CardContent className="p-3 text-center">
+                <category.icon className={`w-5 h-5 mx-auto mb-2 ${category.color}`} />
+                <p className="text-xs font-medium text-foreground">{category.title}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
         
         {activeCategory && (
-          <div className="col-span-2 mt-4 space-y-2">
-            <h4 className="font-semibold text-foreground mb-3">
+          <div className="space-y-3 animate-fade-in">
+            <h4 className="font-semibold text-foreground text-sm">
               {serviceCategories[activeCategory as keyof typeof serviceCategories].title}
             </h4>
             <div className="grid grid-cols-1 gap-2">
@@ -115,12 +117,12 @@ export const ServicesMenu = ({ onServiceSelect, isMobile = false }: ServicesMenu
                 <Button
                   key={service.id}
                   variant="ghost"
-                  className="justify-start h-auto p-3"
+                  className="justify-start h-auto p-3 hover:bg-muted/70 transition-all duration-200"
                   onClick={() => handleServiceClick(service.id)}
                 >
-                  <service.icon className="w-4 h-4 mr-3" />
+                  <service.icon className="w-4 h-4 mr-3 text-muted-foreground" />
                   <div className="text-left">
-                    <p className="font-medium">{service.title}</p>
+                    <p className="font-medium text-sm">{service.title}</p>
                     <p className="text-xs text-muted-foreground">{service.description}</p>
                   </div>
                 </Button>
