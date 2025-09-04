@@ -7,19 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Building2, Plus, ArrowRightLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-
-const majorBanks = [
-  { name: 'Bank of America', code: 'BAC', logo: '🏛️' },
-  { name: 'Wells Fargo', code: 'WFC', logo: '🐎' },
-  { name: 'JPMorgan Chase', code: 'JPM', logo: '🏦' },
-  { name: 'Citibank', code: 'CITI', logo: '🌐' },
-  { name: 'U.S. Bank', code: 'USB', logo: '🏛️' },
-  { name: 'PNC Bank', code: 'PNC', logo: '🏢' },
-  { name: 'Capital One', code: 'COF', logo: '🏦' },
-  { name: 'TD Bank', code: 'TD', logo: '🍁' },
-  { name: 'Regions Bank', code: 'RF', logo: '🏛️' },
-  { name: 'Fifth Third Bank', code: '53', logo: '🏦' }
-];
+import { BankIcon, modernBanks } from './ModernBankIcons';
 
 interface ExternalAccount {
   id: string;
@@ -187,9 +175,7 @@ export const ExternalBankTransfer = () => {
                 {externalAccounts.map((account) => (
                   <div key={account.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center space-x-3">
-                      <div className="text-2xl">
-                        {majorBanks.find(b => b.name === account.bank_name)?.logo || '🏦'}
-                      </div>
+                      <BankIcon bankName={account.bank_name} className="w-8 h-8" />
                       <div>
                         <p className="font-medium">{account.bank_name}</p>
                         <p className="text-sm text-muted-foreground">
@@ -221,7 +207,7 @@ export const ExternalBankTransfer = () => {
                 <Label>Select Bank</Label>
                 <Select value={selectedBank} onValueChange={(value) => {
                   setSelectedBank(value);
-                  const bank = majorBanks.find(b => b.code === value);
+                  const bank = modernBanks.find(b => b.code === value);
                   if (bank) {
                     setNewAccount(prev => ({ ...prev, bank_name: bank.name }));
                   }
@@ -230,11 +216,11 @@ export const ExternalBankTransfer = () => {
                     <SelectValue placeholder="Choose your bank" />
                   </SelectTrigger>
                   <SelectContent>
-                    {majorBanks.map((bank) => (
+                  {modernBanks.map((bank) => (
                       <SelectItem key={bank.code} value={bank.code}>
-                        <div className="flex items-center space-x-2">
-                          <span className="text-lg">{bank.logo}</span>
-                          <span>{bank.name}</span>
+                        <div className="flex items-center space-x-3">
+                          <BankIcon bankName={bank.name} className="w-5 h-5" />
+                          <span className="font-medium">{bank.name}</span>
                         </div>
                       </SelectItem>
                     ))}

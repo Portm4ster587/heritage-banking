@@ -407,6 +407,15 @@ export const TransferSystem = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Enhanced Transfer Progress */}
+      <EnhancedTransferProgress
+        isVisible={showTransferProgress}
+        onComplete={handleTransferComplete}
+        amount={parseFloat(amount || '0')}
+        fromAccount={accounts.find(acc => acc.id === fromAccount)?.type || 'Account'}
+        toAccount={accounts.find(acc => acc.id === toAccount)?.type || 'Account'}
+      />
     </div>
   );
 };
