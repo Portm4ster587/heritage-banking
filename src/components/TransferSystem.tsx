@@ -10,6 +10,7 @@ import { ArrowRightLeft, Send, Clock, CheckCircle, AlertCircle } from "lucide-re
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { EnhancedTransferProgress } from "@/components/EnhancedTransferProgress";
 
 interface Account {
   id: string;
@@ -412,9 +413,6 @@ export const TransferSystem = () => {
       <EnhancedTransferProgress
         isVisible={showTransferProgress}
         onComplete={handleTransferComplete}
-        amount={parseFloat(amount || '0')}
-        fromAccount={accounts.find(acc => acc.id === fromAccount)?.type || 'Account'}
-        toAccount={accounts.find(acc => acc.id === toAccount)?.type || 'Account'}
       />
     </div>
   );
