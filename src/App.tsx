@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
+import ModernDashboard from "./pages/ModernDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,14 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route 
               path="/dashboard" 
+              element={
+                <ProtectedRoute>
+                  <ModernDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/dashboard-old" 
               element={
                 <ProtectedRoute>
                   <Dashboard />
