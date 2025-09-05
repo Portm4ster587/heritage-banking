@@ -1,10 +1,10 @@
-import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 import heritageLogoImage from "@/assets/heritage-logo.png";
 import { ServicesMenu } from "./ServicesMenu";
 import { NotificationCenter } from "./NotificationCenter";
 import { ProfileMenu } from "./ProfileMenu";
+import { MenuIcon, CloseIcon } from "./UltraModernIcons";
 import { useState } from "react";
 
 interface BankingHeaderProps {
@@ -35,19 +35,30 @@ export const BankingHeader = ({ activeSection, onSectionChange }: BankingHeaderP
   };
 
   return (
-    <header className="banking-gradient-primary text-primary-foreground shadow-lg border-b animate-slide-up sticky top-0 z-50">
+    <header className="bg-gradient-to-r from-background via-muted to-background backdrop-blur-xl border-b border-primary/20 text-foreground shadow-neon animate-slide-up sticky top-0 z-50">
       <div className="container mx-auto px-4 lg:px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center space-x-3 animate-fade-in">
-            <img 
-              src={heritageLogoImage} 
-              alt="Heritage Bank Logo" 
-              className="h-8 w-8 lg:h-10 lg:w-10 animate-float"
-            />
+            <div className="relative w-8 h-8 lg:w-10 lg:h-10">
+              <img 
+                src={heritageLogoImage} 
+                alt="Heritage Bank Logo" 
+                className="w-full h-full object-contain animate-float drop-shadow-lg"
+                style={{ 
+                  filter: 'drop-shadow(0 0 8px rgba(54, 121, 245, 0.6)) brightness(1.1) contrast(1.2)',
+                  mixBlendMode: 'screen'
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full blur-md -z-10"></div>
+            </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg lg:text-xl font-bold">Heritage Bank</h1>
-              <p className="text-xs lg:text-sm text-primary-foreground/80">Your Financial Partner Since 1892</p>
+              <h1 className="text-lg lg:text-xl font-bold bg-gradient-to-r from-primary-foreground to-accent bg-clip-text text-transparent">
+                Heritage Bank
+              </h1>
+              <p className="text-xs lg:text-sm text-primary-foreground/90 font-medium">
+                Ultra-Modern Banking Solutions
+              </p>
             </div>
           </div>
           
@@ -62,10 +73,13 @@ export const BankingHeader = ({ activeSection, onSectionChange }: BankingHeaderP
             <Button 
               variant="ghost" 
               size="icon" 
-              className="lg:hidden text-primary-foreground hover:bg-primary-light"
+              className="lg:hidden text-foreground hover:bg-muted/50 hover:shadow-neon transition-all duration-300"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              {isMobileMenuOpen ? 
+                <CloseIcon size={20} glowEffect={true} /> : 
+                <MenuIcon size={20} glowEffect={true} />
+              }
             </Button>
             
             {/* Notifications */}
@@ -78,7 +92,7 @@ export const BankingHeader = ({ activeSection, onSectionChange }: BankingHeaderP
         
         {/* Mobile Services Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden mt-4 pb-4 border-t border-primary-foreground/20">
+          <div className="lg:hidden mt-4 pb-4 border-t border-primary/20 bg-gradient-to-r from-muted/30 to-background/30 backdrop-blur-sm rounded-lg">
             <ServicesMenu onServiceSelect={handleServiceSelect} isMobile={true} />
           </div>
         )}

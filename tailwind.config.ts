@@ -185,6 +185,7 @@ export default {
 				// Banking-specific Animations
 				'balance-pulse': 'balance-pulse 3s ease-in-out infinite',
 				'float': 'float 3s ease-in-out infinite',
+				'spin-slow': 'spin 3s linear infinite',
 				
 				// Combined Animations
 				'enter': 'fade-in 0.4s ease-out, scale-in 0.3s ease-out',
