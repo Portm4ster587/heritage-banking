@@ -15,9 +15,13 @@ import { EnhancedTransferProgress } from "@/components/EnhancedTransferProgress"
 interface Account {
   id: string;
   account_number: string;
-  type: string;
-  balance: number;
-  currency: string;
+  account_type: string;
+  routing_number: string;
+  balance: number | null;
+  status: string | null;
+  user_id: string;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 interface Transfer {
