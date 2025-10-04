@@ -54,21 +54,25 @@ import { CryptoExchange } from '@/components/CryptoExchange';
 interface Account {
   id: string;
   account_number: string;
-  type: string;
+  account_type: string;
   status: string;
   balance: number;
-  currency: 'USD' | 'EUR' | 'GBP' | 'JPY' | 'CAD' | 'AUD' | 'USDT';
-  metadata?: any;
+  routing_number: string;
+  user_id: string;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 interface Transfer {
   id: string;
   amount: number;
-  currency: string;
-  status: string;
-  progress: number;
+  status: string | null;
+  description: string | null;
   created_at: string;
-  memo?: string;
+  user_id: string;
+  transfer_type: string;
+  from_account_id: string | null;
+  to_account_id: string | null;
 }
 
 export default function Dashboard() {
@@ -123,18 +127,18 @@ export default function Dashboard() {
             {
               user_id: user.id,
               account_number: `CHK${Date.now()}`,
-              type: 'personal_checking' as const,
+              account_type: 'personal_checking',
+              routing_number: '123456789',
               balance: 2500.00,
-              currency: 'USD' as const,
-              status: 'active' as const
+              status: 'active'
             },
             {
               user_id: user.id,
               account_number: `SAV${Date.now()}`,
-              type: 'personal_savings' as const,
+              account_type: 'personal_savings',
+              routing_number: '123456789',
               balance: 15000.00,
-              currency: 'USD' as const,
-              status: 'active' as const
+              status: 'active'
             }
           ]);
         
@@ -161,7 +165,7 @@ export default function Dashboard() {
         supabase
           .from('transfers')
           .select('*')
-          .eq('created_by_user_id', user.id)
+          .eq('user_id', user.id)
           .order('created_at', { ascending: false })
           .limit(10)
       ]);
@@ -342,7 +346,7 @@ export default function Dashboard() {
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg capitalize">
-                        {account.type.replace('_', ' ').replace('personal checking', 'Heritage Checking').replace('personal savings', 'Heritage Savings')}
+                        {account.account_type.replace('_', ' ').replace('personal checking', 'Heritage Checking').replace('personal savings', 'Heritage Savings')}
                       </CardTitle>
                       <Badge variant={account.status === 'active' ? 'default' : 'secondary'}>
                         {account.status}
@@ -506,16 +510,7 @@ export default function Dashboard() {
                   ✕
                 </Button>
               </div>
-              <ApplicationForm
-                applicationType={applicationType}
-                onSuccess={() => {
-                  setShowApplicationForm(false);
-                  toast({
-                    title: "Application Submitted",
-                    description: "Your application has been submitted successfully!"
-                  });
-                }}
-              />
+              <ApplicationForm />
             </div>
           </div>
         </div>

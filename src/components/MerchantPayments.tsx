@@ -298,7 +298,7 @@ export const MerchantPayments = () => {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {paymentMethods
-              .filter(method => method.is_active)
+              .filter(method => method.status === 'active')
               .map((method) => {
                 const provider = getProviderInfo(method.provider);
                 return (
@@ -318,43 +318,29 @@ export const MerchantPayments = () => {
                     <CardContent className="space-y-3">
                       {/* Method Details */}
                       <div className="bg-muted/20 rounded-lg p-3 space-y-2 text-sm">
-                        {method.details.account_number && (
+                        {method.account_number && (
                           <div className="flex justify-between">
                             <span className="text-muted-foreground">Account:</span>
-                            <span className="font-mono">****{method.details.account_number.slice(-4)}</span>
-                          </div>
-                        )}
-                        {method.details.card_number && (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Card:</span>
-                            <span className="font-mono">****{method.details.card_number.slice(-4)}</span>
-                          </div>
-                        )}
-                        {method.details.email && (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground">Email:</span>
-                            <span>{method.details.email}</span>
+                            <span className="font-mono">****{method.account_number.slice(-4)}</span>
                           </div>
                         )}
                         <div className="flex justify-between">
+                          <span className="text-muted-foreground">Type:</span>
+                          <span className="capitalize">{method.type}</span>
+                        </div>
+                        <div className="flex justify-between">
                           <span className="text-muted-foreground">Added:</span>
-                          <span>{new Date(method.created_at).toLocaleDateString()}</span>
+                          <span>{new Date(method.created_at || Date.now()).toLocaleDateString()}</span>
                         </div>
                       </div>
 
                       {/* Actions */}
                       <div className="flex gap-2">
-                        {!method.is_verified && (
-                          <Button variant="outline" size="sm" className="flex-1 gap-2">
-                            <Shield className="w-4 h-4" />
-                            Verify
-                          </Button>
-                        )}
                         <Button 
                           variant="outline" 
                           size="sm"
                           onClick={() => removePaymentMethod(method.id)}
-                          className="gap-2 text-destructive hover:text-destructive"
+                          className="flex-1 gap-2 text-destructive hover:text-destructive"
                         >
                           <Trash2 className="w-4 h-4" />
                           Remove

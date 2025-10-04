@@ -38,11 +38,13 @@ import {
 interface Account {
   id: string;
   account_number: string;
-  type: string;
+  account_type: string;
   status: string;
   balance: number;
-  currency: string;
-  metadata?: any;
+  routing_number: string;
+  user_id: string;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 interface Transaction {
@@ -108,17 +110,17 @@ export default function ModernDashboard() {
             {
               user_id: user.id,
               account_number: `CHK${Date.now()}`,
-              type: 'personal_checking',
+              account_type: 'personal_checking',
+              routing_number: '123456789',
               balance: 12547.83,
-              currency: 'USD',
               status: 'active'
             },
             {
               user_id: user.id,
               account_number: `SAV${Date.now()}`,
-              type: 'personal_savings',
+              account_type: 'personal_savings',
+              routing_number: '123456789',
               balance: 45680.92,
-              currency: 'USD',
               status: 'active'
             }
           ]);
@@ -180,8 +182,8 @@ export default function ModernDashboard() {
     }
   };
 
-  const getAccountDisplayName = (type: string) => {
-    switch (type) {
+  const getAccountDisplayName = (accountType: string) => {
+    switch (accountType) {
       case 'personal_checking':
         return 'Heritage Checking';
       case 'personal_savings':
@@ -189,7 +191,7 @@ export default function ModernDashboard() {
       case 'business':
         return 'Business Account';
       default:
-        return type.replace('_', ' ');
+        return accountType.replace('_', ' ');
     }
   };
 
@@ -341,7 +343,7 @@ export default function ModernDashboard() {
               </div>
 
               {accounts.map((account) => {
-                const IconComponent = getAccountIcon(account.type);
+                const IconComponent = getAccountIcon(account.account_type);
                 return (
                   <Card key={account.id} className="hover:shadow-md transition-shadow cursor-pointer">
                     <CardContent className="p-6">
@@ -352,7 +354,7 @@ export default function ModernDashboard() {
                           </div>
                           <div>
                             <h3 className="font-semibold text-slate-900">
-                              {getAccountDisplayName(account.type)}
+                              {getAccountDisplayName(account.account_type)}
                             </h3>
                             <p className="text-sm text-slate-500">
                               ••••{account.account_number.slice(-4)}

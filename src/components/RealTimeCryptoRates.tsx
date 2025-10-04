@@ -226,8 +226,8 @@ export const RealTimeCryptoRates = () => {
                   <p className="font-semibold">{formatMarketCap(asset.market_cap)}</p>
                 </div>
                 <div>
-                  <p className="text-muted-foreground">24h Volume</p>
-                  <p className="font-semibold">{formatMarketCap(asset.volume_24h)}</p>
+                  <p className="text-muted-foreground">Symbol</p>
+                  <p className="font-semibold">{asset.symbol}</p>
                 </div>
               </div>
 
