@@ -22,14 +22,14 @@ interface Account {
 
 interface Transfer {
   id: string;
-  from_account_id: string;
-  to_account_id: string;
+  from_account_id: string | null;
+  to_account_id: string | null;
   amount: number;
-  currency: string;
-  status: string;
-  memo?: string;
+  status: string | null;
+  description: string | null;
   created_at: string;
-  progress: number;
+  user_id: string;
+  transfer_type: string;
 }
 
 export const TransferSystem = () => {

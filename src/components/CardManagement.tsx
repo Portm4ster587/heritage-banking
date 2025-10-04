@@ -23,15 +23,18 @@ interface UserCard {
   id: string;
   account_id: string;
   card_type: string;
-  network: string;
+  card_network: string;
   last4: string;
-  embossed_name: string;
-  status: string;
-  activation_status: string;
-  activation_code: string;
-  exp_month: number;
-  exp_year: number;
-  created_at: string;
+  status: string | null;
+  activation_status: string | null;
+  expiry_date: string;
+  cvv: string;
+  card_number: string;
+  credit_limit: number | null;
+  available_credit: number | null;
+  created_at: string | null;
+  updated_at: string | null;
+  user_id: string;
 }
 
 export const CardManagement = () => {

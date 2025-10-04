@@ -22,17 +22,20 @@ interface CryptoAsset {
   id: string;
   symbol: string;
   name: string;
-  price_usd: number;
-  price_change_24h: number;
-  market_cap: number;
-  volume_24h: number;
+  current_price: number;
+  price_change_24h: number | null;
+  market_cap: number | null;
+  updated_at: string | null;
 }
 
 interface CryptoWallet {
   id: string;
-  wallet_type: string;
-  balance: number;
-  wallet_address: string;
+  asset_symbol: string;
+  balance: number | null;
+  wallet_address: string | null;
+  user_id: string;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 export const CryptoExchange = () => {

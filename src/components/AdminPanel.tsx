@@ -36,13 +36,26 @@ interface Application {
   last_name: string;
   email: string;
   phone: string;
-  annual_income: number;
-  monthly_income: number;
-  requested_amount: number;
-  requested_limit: number;
+  address: string;
+  city: string;
+  state: string;
+  zip_code: string;
+  ssn_last4: string;
+  date_of_birth: string;
+  annual_income: number | null;
+  monthly_income: number | null;
+  employment_status: string | null;
+  employer_name: string | null;
+  loan_amount: number | null;
+  loan_purpose: string | null;
+  annual_revenue: number | null;
+  business_name: string | null;
+  business_type: string | null;
+  business_tax_id: string | null;
+  years_in_business: number | null;
   created_at: string;
-  id_verification_status: string;
-  review_notes: string;
+  review_notes: string | null;
+  reviewed_by_admin_id: string | null;
 }
 
 interface User {

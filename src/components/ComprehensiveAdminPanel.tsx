@@ -40,24 +40,40 @@ interface Application {
   last_name: string;
   email: string;
   phone: string;
-  annual_income: number;
-  requested_amount: number;
-  requested_limit: number;
+  address: string;
+  city: string;
+  state: string;
+  zip_code: string;
+  ssn_last4: string;
+  date_of_birth: string;
+  annual_income: number | null;
+  monthly_income: number | null;
+  employment_status: string | null;
+  employer_name: string | null;
+  loan_amount: number | null;
+  loan_purpose: string | null;
+  annual_revenue: number | null;
+  business_name: string | null;
+  business_type: string | null;
+  business_tax_id: string | null;
+  years_in_business: number | null;
   created_at: string;
-  review_notes: string;
-  is_guest: boolean;
+  review_notes: string | null;
+  reviewed_by_admin_id: string | null;
 }
 
 interface Transfer {
   id: string;
-  from_account_id: string;
-  to_account_id: string;
+  from_account_id: string | null;
+  to_account_id: string | null;
   amount: number;
-  currency: string;
-  status: string;
-  progress: number;
-  memo: string;
+  status: string | null;
+  description: string | null;
   created_at: string;
+  user_id: string;
+  transfer_type: string;
+  recipient_name: string | null;
+  recipient_account: string | null;
 }
 
 interface Card {
@@ -65,21 +81,29 @@ interface Card {
   account_id: string;
   card_type: string;
   last4: string;
-  embossed_name: string;
-  activation_status: string;
-  status: string;
-  network: string;
-  exp_month: number;
-  exp_year: number;
+  card_network: string;
+  activation_status: string | null;
+  status: string | null;
+  expiry_date: string;
+  cvv: string;
+  card_number: string;
+  user_id: string;
+  created_at: string | null;
+  updated_at: string | null;
+  credit_limit: number | null;
+  available_credit: number | null;
 }
 
 interface PaymentMethod {
   id: string;
-  method_type: string;
-  provider: string;
-  details: any;
-  is_active: boolean;
-  created_at: string;
+  user_id: string;
+  type: string;
+  provider: string | null;
+  account_number: string | null;
+  status: string | null;
+  is_default: boolean | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 const statusColors = {

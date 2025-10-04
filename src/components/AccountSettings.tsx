@@ -25,23 +25,21 @@ import {
 
 interface UserProfile {
   id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone: string;
-  address_line1: string;
-  address_line2: string;
-  city: string;
-  state: string;
-  postal_code: string;
-  country: string;
-  dob: string;
-  ssn_last4: string;
-  employment_status: string;
-  employer_name: string;
-  job_title: string;
-  annual_income: number;
-  monthly_income: number;
+  user_id: string;
+  first_name: string | null;
+  last_name: string | null;
+  phone: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  zip_code: string | null;
+  date_of_birth: string | null;
+  ssn_last4: string | null;
+  employment_status: string | null;
+  employer_name: string | null;
+  annual_income: number | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 interface SecurityQuestion {
@@ -111,8 +109,8 @@ export const AccountSettings = () => {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user?.id)
-        .single();
+        .eq('user_id', user?.id)
+        .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
         throw error;
@@ -143,9 +141,8 @@ export const AccountSettings = () => {
       const { error } = await supabase
         .from('profiles')
         .upsert({
-          id: user.id,
-          ...profileForm,
-          updated_at: new Date().toISOString()
+          user_id: user.id,
+          ...profileForm
         });
 
       if (error) throw error;
@@ -337,8 +334,8 @@ export const AccountSettings = () => {
                   <Input
                     id="email"
                     type="email"
-                    value={profileForm.email || user?.email || ''}
-                    onChange={(e) => setProfileForm({...profileForm, email: e.target.value})}
+                    value={user?.email || ''}
+                    disabled
                     placeholder="Enter your email"
                   />
                 </div>
@@ -354,11 +351,11 @@ export const AccountSettings = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="address_line1">Address Line 1</Label>
+                <Label htmlFor="address">Address</Label>
                 <Input
-                  id="address_line1"
-                  value={profileForm.address_line1 || ''}
-                  onChange={(e) => setProfileForm({...profileForm, address_line1: e.target.value})}
+                  id="address"
+                  value={profileForm.address || ''}
+                  onChange={(e) => setProfileForm({...profileForm, address: e.target.value})}
                   placeholder="Enter your street address"
                 />
               </div>
@@ -383,11 +380,11 @@ export const AccountSettings = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="postal_code">ZIP Code</Label>
+                  <Label htmlFor="zip_code">ZIP Code</Label>
                   <Input
-                    id="postal_code"
-                    value={profileForm.postal_code || ''}
-                    onChange={(e) => setProfileForm({...profileForm, postal_code: e.target.value})}
+                    id="zip_code"
+                    value={profileForm.zip_code || ''}
+                    onChange={(e) => setProfileForm({...profileForm, zip_code: e.target.value})}
                     placeholder="Enter your ZIP code"
                   />
                 </div>
