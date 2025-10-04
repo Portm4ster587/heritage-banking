@@ -29,26 +29,24 @@ export const AutoCardGeneration = ({ userId, accountId, accountType }: AutoCardG
         const cvv = Math.random().toString().slice(2, 5).padStart(3, '0');
         const expiryDate = new Date();
         expiryDate.setFullYear(expiryDate.getFullYear() + 4);
-
+        const expiryText = `${String(expiryDate.getMonth() + 1).padStart(2, '0')}/${String(expiryDate.getFullYear()).slice(-2)}`;
         const cardType = getCardType(accountType);
         const network = Math.random() > 0.5 ? 'VISA' : 'MASTERCARD';
 
         const { error } = await supabase
           .from('cards')
-          .insert({
+          .insert([{ 
             account_id: accountId,
+            user_id: userId,
             card_type: cardType,
-            card_number_encrypted: cardNumber, // In production, this should be properly encrypted
-            cvv_encrypted: cvv, // In production, this should be properly encrypted
+            card_number: cardNumber,
+            cvv: cvv,
             last4: cardNumber.slice(-4),
-            embossed_name: 'HERITAGE BANK CUSTOMER',
-            network: network,
-            exp_month: expiryDate.getMonth() + 1,
-            exp_year: expiryDate.getFullYear(),
+            card_network: network,
+            expiry_date: expiryText,
             activation_status: 'inactive',
-            status: 'pending',
-            activation_code: Math.random().toString().slice(2, 8)
-          });
+            status: 'pending'
+          }]);
 
         if (error) throw error;
 

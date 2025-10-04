@@ -115,58 +115,13 @@ export const GuestApplicationForm = ({ applicationType, onSuccess }: GuestApplic
 
   const onSubmit = async (data: GuestApplicationFormData) => {
     setLoading(true);
-    
     try {
-      const applicationData = {
-        user_id: null, // Guest application
-        is_guest: true,
-        application_type: applicationType,
-        first_name: data.firstName,
-        last_name: data.lastName,
-        date_of_birth: data.dateOfBirth,
-        ssn_last4: data.ssnLast4,
-        phone: data.phone,
-        email: data.email,
-        address_line1: data.addressLine1,
-        city: data.city,
-        state: data.state,
-        postal_code: data.postalCode,
-        country: 'US',
-        employment_status: data.employmentStatus,
-        annual_income: data.annualIncome ? parseFloat(data.annualIncome) : null,
-        requested_amount: data.requestedAmount ? parseFloat(data.requestedAmount) : null,
-        status: 'pending',
-      };
-
-      const { error } = await supabase
-        .from('applications')
-        .insert([applicationData]);
-
-      if (error) throw error;
-
-      // Create admin notification for new guest application
-      await supabase.rpc('create_admin_notification', {
-        notification_type: 'guest_application',
-        notification_title: `New Guest Application: ${config.title}`,
-        notification_message: `${data.firstName} ${data.lastName} applied for ${config.title} as a guest. Email: ${data.email}`,
-        ref_user_id: null,
-        notification_priority: 'normal'
-      });
-
       toast({
-        title: "Application Submitted Successfully!",
-        description: "We'll review your application and contact you within 1-2 business days. You'll receive updates via email.",
+        title: "Sign in required",
+        description: "Please create an account or sign in to submit an application.",
       });
-
       form.reset();
       onSuccess?.();
-    } catch (error) {
-      console.error('Error submitting guest application:', error);
-      toast({
-        title: "Submission Failed",
-        description: "There was an error submitting your application. Please try again.",
-        variant: "destructive"
-      });
     } finally {
       setLoading(false);
     }

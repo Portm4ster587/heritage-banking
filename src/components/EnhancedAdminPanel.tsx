@@ -39,8 +39,9 @@ interface AdminNotification {
   title: string;
   message: string;
   user_id?: string;
-  reference_id?: string;
-  read: boolean;
+  related_id?: string;
+  related_type?: string;
+  is_read: boolean;
   priority: 'low' | 'normal' | 'high' | 'urgent';
   created_at: string;
 }
@@ -50,12 +51,13 @@ interface DepositRequest {
   user_id: string;
   account_id: string;
   amount: number;
-  currency: string;
   method: string;
   status: string;
-  payment_details: any;
   created_at: string;
-  admin_notes?: string;
+  notes?: string;
+  processed_by_admin_id?: string;
+  processed_at?: string;
+  reference_number?: string;
 }
 
 interface WithdrawRequest {
@@ -63,24 +65,26 @@ interface WithdrawRequest {
   user_id: string;
   account_id: string;
   amount: number;
-  currency: string;
   method: string;
   status: string;
-  destination_details: any;
+  destination: string;
   created_at: string;
-  admin_notes?: string;
+  notes?: string;
+  processed_by_admin_id?: string;
+  processed_at?: string;
+  reference_number?: string;
 }
 
 interface Transaction {
   id: string;
-  from_account_id: string;
-  to_account_id: string;
+  from_account_id: string | null;
+  to_account_id: string | null;
   amount: number;
-  currency: string;
-  status: string;
-  memo?: string;
+  status: string | null;
+  description: string | null;
   created_at: string;
-  created_by_user_id: string;
+  user_id: string;
+  transfer_type: string;
 }
 
 export const EnhancedAdminPanel = () => {
@@ -206,7 +210,7 @@ export const EnhancedAdminPanel = () => {
     try {
       const { error } = await supabase
         .from('admin_notifications')
-        .update({ read: true })
+        .update({ is_read: true })
         .eq('id', notificationId);
 
       if (error) throw error;
@@ -222,9 +226,9 @@ export const EnhancedAdminPanel = () => {
         .from('deposit_requests')
         .update({
           status,
-          admin_notes: notes,
+          notes: notes,
           processed_by_admin_id: user?.id,
-          ...(status === 'completed' && { completed_at: new Date().toISOString() })
+          ...(status === 'completed' && { processed_at: new Date().toISOString() })
         })
         .eq('id', depositId);
 
@@ -252,9 +256,9 @@ export const EnhancedAdminPanel = () => {
         .from('withdraw_requests')
         .update({
           status,
-          admin_notes: notes,
+          notes: notes,
           processed_by_admin_id: user?.id,
-          ...(status === 'completed' && { completed_at: new Date().toISOString() })
+          ...(status === 'completed' && { processed_at: new Date().toISOString() })
         })
         .eq('id', withdrawId);
 
@@ -295,7 +299,7 @@ export const EnhancedAdminPanel = () => {
     );
   }
 
-  const unreadNotifications = notifications.filter(n => !n.read).length;
+  const unreadNotifications = notifications.filter(n => !n.is_read).length;
   const pendingDeposits = depositRequests.filter(d => d.status === 'pending').length;
   const pendingWithdraws = withdrawRequests.filter(w => w.status === 'pending').length;
   const recentTransactions = transactions.filter(t => 
@@ -390,7 +394,7 @@ export const EnhancedAdminPanel = () => {
               <CardContent>
                 <div className="space-y-3">
                   {notifications.slice(0, 5).map((notification) => (
-                    <div key={notification.id} className={`p-3 rounded-lg border ${!notification.read ? 'bg-primary/5 border-primary/20' : 'bg-muted/20'}`}>
+                    <div key={notification.id} className={`p-3 rounded-lg border ${!notification.is_read ? 'bg-primary/5 border-primary/20' : 'bg-muted/20'}`}>
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <p className="font-medium text-sm">{notification.title}</p>
@@ -453,7 +457,7 @@ export const EnhancedAdminPanel = () => {
                 {notifications.map((notification) => (
                   <div 
                     key={notification.id} 
-                    className={`p-4 rounded-lg border ${!notification.read ? 'bg-primary/5 border-primary/20' : 'bg-muted/20'}`}
+                    className={`p-4 rounded-lg border ${!notification.is_read ? 'bg-primary/5 border-primary/20' : 'bg-muted/20'}`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
@@ -469,7 +473,7 @@ export const EnhancedAdminPanel = () => {
                           {new Date(notification.created_at).toLocaleString()}
                         </p>
                       </div>
-                      {!notification.read && (
+                      {!notification.is_read && (
                         <Button 
                           size="sm" 
                           variant="outline"
@@ -501,7 +505,7 @@ export const EnhancedAdminPanel = () => {
                         <ArrowDownCircle className="w-5 h-5 text-green-500" />
                         <div>
                           <p className="font-semibold">${deposit.amount.toLocaleString()}</p>
-                          <p className="text-sm text-muted-foreground">{deposit.method} • {deposit.currency}</p>
+                          <p className="text-sm text-muted-foreground">{deposit.method}</p>
                         </div>
                       </div>
                       <Badge variant={deposit.status === 'pending' ? 'secondary' : 'default'}>
@@ -559,7 +563,7 @@ export const EnhancedAdminPanel = () => {
                         <ArrowUpCircle className="w-5 h-5 text-red-500" />
                         <div>
                           <p className="font-semibold">${withdraw.amount.toLocaleString()}</p>
-                          <p className="text-sm text-muted-foreground">{withdraw.method} • {withdraw.currency}</p>
+                          <p className="text-sm text-muted-foreground">{withdraw.method}</p>
                         </div>
                       </div>
                       <Badge variant={withdraw.status === 'pending' ? 'secondary' : 'default'}>
@@ -618,7 +622,7 @@ export const EnhancedAdminPanel = () => {
                         <div>
                           <p className="font-medium">${transaction.amount.toLocaleString()}</p>
                           <p className="text-sm text-muted-foreground">
-                            {transaction.memo || 'Transfer'} • {transaction.currency}
+                            {transaction.description || 'Transfer'}
                           </p>
                         </div>
                       </div>

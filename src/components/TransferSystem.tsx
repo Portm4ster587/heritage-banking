@@ -81,7 +81,7 @@ export const TransferSystem = () => {
       const { data, error } = await supabase
         .from('transfers')
         .select('*')
-        .eq('created_by_user_id', user?.id)
+        .eq('user_id', user?.id)
         .order('created_at', { ascending: false })
         .limit(10);
 
@@ -129,16 +129,15 @@ export const TransferSystem = () => {
     try {
       const { data, error } = await supabase
         .from('transfers')
-        .insert({
+        .insert([{ 
           from_account_id: fromAccount,
           to_account_id: toAccount,
           amount: transferAmount,
-          currency: 'USD',
-          memo: memo || null,
-          created_by_user_id: user?.id,
-          status: 'pending',
-          progress: 0
-        })
+          description: memo || null,
+          user_id: user?.id as string,
+          transfer_type: 'internal',
+          status: 'pending'
+        }])
         .select()
         .single();
 
@@ -223,8 +222,8 @@ export const TransferSystem = () => {
   };
 
   const formatAccountDisplay = (account: Account) => {
-    const typeDisplay = account.type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
-    return `${typeDisplay} (...${account.account_number.slice(-4)}) - $${account.balance.toLocaleString()}`;
+    const typeDisplay = account.account_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    return `${typeDisplay} (...${account.account_number.slice(-4)}) - $${(account.balance ?? 0).toLocaleString()}`;
   };
 
   return (
@@ -366,7 +365,7 @@ export const TransferSystem = () => {
                       <div>
                         <p className="font-medium">${transfer.amount.toLocaleString()}</p>
                         <p className="text-sm text-muted-foreground">
-                          {transfer.memo || 'Internal Transfer'}
+                          {transfer.description || 'Internal Transfer'}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {new Date(transfer.created_at).toLocaleDateString()}
@@ -395,10 +394,10 @@ export const TransferSystem = () => {
               <div key={account.id} className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
                 <div className="flex items-center justify-between mb-2">
                   <h4 className="font-medium">
-                    {account.type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                    {account.account_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
                   </h4>
                   <Badge variant="outline">
-                    {account.currency}
+                    USD
                   </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground mb-2">

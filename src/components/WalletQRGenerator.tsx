@@ -19,11 +19,11 @@ import {
 
 interface CryptoWallet {
   id: string;
-  wallet_type: string;
-  wallet_address: string;
-  balance: number;
-  is_primary: boolean;
-  status: string;
+  asset_symbol: string;
+  wallet_address: string | null;
+  balance: number | null;
+  created_at: string;
+  updated_at: string;
 }
 
 interface WalletAddress {
@@ -70,8 +70,7 @@ export const WalletQRGenerator = () => {
       const { data, error } = await supabase
         .from('crypto_wallets')
         .select('*')
-        .eq('user_id', user?.id)
-        .eq('status', 'active');
+        .eq('user_id', user?.id);
 
       if (error) throw error;
       setWallets(data || []);
@@ -238,7 +237,7 @@ export const WalletQRGenerator = () => {
                 <SelectContent>
                   {wallets.map((wallet) => (
                     <SelectItem key={wallet.id} value={wallet.id}>
-                      {wallet.wallet_type.toUpperCase()} Wallet
+                      {wallet.asset_symbol.toUpperCase()} Wallet
                     </SelectItem>
                   ))}
                 </SelectContent>

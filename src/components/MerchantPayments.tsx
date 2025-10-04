@@ -23,13 +23,14 @@ import {
 
 interface PaymentMethod {
   id: string;
-  method_type: string;
-  provider: string;
-  external_id: string;
-  details: any;
-  is_verified: boolean;
-  is_active: boolean;
-  created_at: string;
+  provider: string | null;
+  type: string;
+  account_number: string | null;
+  status: string | null;
+  is_default: boolean | null;
+  user_id: string;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 const paymentProviders = [
@@ -139,14 +140,13 @@ export const MerchantPayments = () => {
       
       const { error } = await supabase
         .from('payment_methods')
-        .insert([{
-          user_id: user?.id,
-          method_type: provider?.type || 'card',
+        .insert([{ 
+          user_id: user?.id as string,
+          type: provider?.type || 'card',
           provider: selectedProvider,
-          external_id: `${selectedProvider}_${Date.now()}`,
-          details: methodDetails,
-          is_verified: selectedProvider === 'heleket', // Auto-verify Heleket
-          is_active: true
+          account_number: methodDetails.account_number || methodDetails.card_number || '',
+          status: 'active',
+          is_default: false
         }]);
 
       if (error) throw error;
@@ -169,14 +169,6 @@ export const MerchantPayments = () => {
       });
       fetchPaymentMethods();
       
-      // Create admin notification for new payment method
-      await supabase.rpc('create_admin_notification', {
-        notification_type: 'payment_method_added',
-        notification_title: 'New Payment Method Added',
-        notification_message: `User added ${provider?.name} payment method`,
-        ref_user_id: user?.id,
-        notification_priority: 'normal'
-      });
     } catch (error) {
       console.error('Error adding payment method:', error);
       toast({
@@ -191,7 +183,7 @@ export const MerchantPayments = () => {
     try {
       const { error } = await supabase
         .from('payment_methods')
-        .update({ is_active: false })
+        .update({ status: 'inactive' })
         .eq('id', methodId);
 
       if (error) throw error;
@@ -217,13 +209,13 @@ export const MerchantPayments = () => {
   };
 
   const getStatusBadge = (method: PaymentMethod) => {
-    if (!method.is_active) {
+    if (method.status !== 'active') {
       return <Badge variant="outline">Inactive</Badge>;
     }
-    if (method.is_verified) {
-      return <Badge className="bg-success text-success-foreground">Verified</Badge>;
+    if (method.is_default) {
+      return <Badge className="bg-success text-success-foreground">Default</Badge>;
     }
-    return <Badge variant="secondary">Pending Verification</Badge>;
+    return <Badge variant="secondary">Active</Badge>;
   };
 
   if (loading) {

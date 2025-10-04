@@ -112,12 +112,11 @@ export default function EnhancedAuthFlow() {
           variant: "destructive"
         });
       } else if (data.user) {
-        await supabase.from('profiles').insert({
-          id: data.user.id,
+        await supabase.from('profiles').insert([{ 
+          user_id: data.user.id,
           first_name: firstName.trim(),
-          last_name: lastName.trim(),
-          email: email
-        });
+          last_name: lastName.trim()
+        }]);
 
         setAuthSuccess(true);
         toast({
