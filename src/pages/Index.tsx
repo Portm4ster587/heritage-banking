@@ -18,13 +18,6 @@ const Index = () => {
   const [applicationType, setApplicationType] = useState<'checking' | 'savings' | 'business' | 'credit_card' | 'personal_loan' | 'home_loan' | 'auto_loan' | 'business_loan'>('checking');
   const [showCards, setShowCards] = useState(false);
 
-  // Redirect authenticated users to dashboard
-  useEffect(() => {
-    if (user) {
-      window.location.href = '/dashboard';
-    }
-  }, [user]);
-
   const features = [
     {
       title: 'Secure Banking',
@@ -97,15 +90,26 @@ const Index = () => {
                 >
                   Explore Our Cards
                 </Button>
-                <Link to="/auth">
-                  <Button 
-                    variant="outline" 
-                    size="lg"
-                    className="border-2 border-heritage-gold text-heritage-gold hover:bg-heritage-gold hover:text-heritage-blue px-8 py-4 font-semibold text-lg banking-button w-full sm:w-auto"
-                  >
-                    Sign In / Register
-                  </Button>
-                </Link>
+                {user ? (
+                  <Link to="/dashboard">
+                    <Button 
+                      size="lg"
+                      className="bg-white/20 backdrop-blur-sm text-white hover:bg-white/30 px-8 py-4 font-semibold text-lg banking-button w-full sm:w-auto border-2 border-white/40"
+                    >
+                      Go to Dashboard
+                    </Button>
+                  </Link>
+                ) : (
+                  <Link to="/auth">
+                    <Button 
+                      variant="outline" 
+                      size="lg"
+                      className="border-2 border-heritage-gold text-heritage-gold hover:bg-heritage-gold hover:text-heritage-blue px-8 py-4 font-semibold text-lg banking-button w-full sm:w-auto"
+                    >
+                      Sign In / Register
+                    </Button>
+                  </Link>
+                )}
               </div>
             </div>
             
