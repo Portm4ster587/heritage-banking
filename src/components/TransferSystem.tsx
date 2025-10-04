@@ -11,6 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { EnhancedTransferProgress } from "@/components/EnhancedTransferProgress";
+import { TransferSuccessScreen } from "@/components/TransferSuccessScreen";
+import { AlertSystem } from "@/components/AlertSystem";
 
 interface Account {
   id: string;
@@ -46,6 +48,8 @@ export const TransferSystem = () => {
   const [isTransferring, setIsTransferring] = useState(false);
   const [transferProgress, setTransferProgress] = useState(0);
   const [showTransferProgress, setShowTransferProgress] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successData, setSuccessData] = useState<any>(null);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -186,13 +190,28 @@ export const TransferSystem = () => {
   const handleTransferComplete = async () => {
     setShowTransferProgress(false);
     setIsTransferring(false);
+    
+    const fromAcc = accounts.find(a => a.id === fromAccount);
+    const toAcc = accounts.find(a => a.id === toAccount);
+    
+    setSuccessData({
+      amount: parseFloat(amount),
+      fromAccount: `${fromAcc?.account_type.replace('_', ' ')} - ${fromAcc?.account_number?.slice(-4)}`,
+      toAccount: `${toAcc?.account_type.replace('_', ' ')} - ${toAcc?.account_number?.slice(-4)}`
+    });
+    
+    setShowSuccess(true);
+  };
+
+  const handleSuccessClose = () => {
+    setShowSuccess(false);
+    setSuccessData(null);
     fetchTransfers();
     fetchAccounts();
-    
-    toast({
-      title: "Transfer Completed!",
-      description: "Your transfer has been processed successfully",
-    });
+    setFromAccount("");
+    setToAccount("");
+    setAmount("");
+    setMemo("");
   };
 
   const getStatusIcon = (status: string) => {
@@ -228,6 +247,23 @@ export const TransferSystem = () => {
 
   return (
     <div className="space-y-8 animate-fade-in">
+      {showSuccess && successData && (
+        <TransferSuccessScreen
+          amount={successData.amount}
+          fromAccount={successData.fromAccount}
+          toAccount={successData.toAccount}
+          onClose={handleSuccessClose}
+        />
+      )}
+      
+      {accounts.length === 0 && (
+        <AlertSystem
+          type="info"
+          title="No Accounts Found"
+          message="You need accounts before making transfers. Default accounts will be created for you automatically."
+        />
+      )}
+      
       <div className="animate-slide-up">
         <h2 className="text-3xl font-bold text-primary mb-2">Transfer Funds</h2>
         <p className="text-muted-foreground">Transfer money between your Heritage Bank accounts</p>

@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { HeritageLoadingScreen } from '@/components/HeritageLoadingScreen';
 import { 
   Eye, 
   EyeOff, 
@@ -198,6 +199,7 @@ export default function ModernDashboard() {
   const totalBalance = accounts.reduce((sum, account) => sum + account.balance, 0);
 
   if (loading) {
+    return <HeritageLoadingScreen message="Loading your dashboard..." />;
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
         <div className="text-center space-y-4">
