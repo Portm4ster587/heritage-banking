@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle, ArrowRightLeft } from 'lucide-react';
+import { AnimatedHeritageLogo } from './AnimatedHeritageLogo';
 
 interface TransferProgressProps {
   isVisible: boolean;
@@ -50,12 +51,13 @@ export const EnhancedTransferProgress = ({ isVisible, onComplete }: TransferProg
     <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md animate-scale-in">
         <CardContent className="p-8 text-center space-y-6">
-          {/* Animated Logo */}
-          <div className="relative w-16 h-16 mx-auto">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary to-secondary animate-spin"></div>
-            <div className="absolute inset-2 rounded-full bg-background flex items-center justify-center">
-              <ArrowRightLeft className="w-6 h-6 text-primary animate-pulse" />
-            </div>
+          {/* Animated Heritage Logo */}
+          <div className="relative mx-auto mb-4">
+            <AnimatedHeritageLogo 
+              size="lg" 
+              isActive={true} 
+              variant="transfer"
+            />
           </div>
 
           <div className="space-y-4">

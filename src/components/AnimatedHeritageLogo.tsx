@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
+import heritageLogoImage from '@/assets/heritage-logo.png';
 
 interface AnimatedHeritageLogoProps {
   isActive?: boolean;
@@ -53,7 +54,7 @@ export const AnimatedHeritageLogo = ({
       logoSize,
       className
     )}>
-      {/* Outer Shield Frame with Gradient */}
+      {/* Outer Glow Ring */}
       <div 
         className={cn(
           "absolute inset-0 rounded-full transition-all duration-1000",
@@ -65,97 +66,35 @@ export const AnimatedHeritageLogo = ({
             hsl(var(--heritage-blue)), 
             hsl(var(--heritage-gold))
           )`,
-          padding: '3px',
+          padding: '2px',
           animation: isActive ? 'spin 4s linear infinite' : 'none'
         }}
       >
-        {/* Inner Shield Background */}
+        {/* Inner Background */}
         <div 
           className={cn(
             "w-full h-full rounded-full flex items-center justify-center relative overflow-hidden transition-all duration-500",
-            "shadow-2xl border border-heritage-gold/30"
+            "shadow-2xl"
           )}
           style={{
-            background: `linear-gradient(135deg, 
-              hsl(var(--heritage-blue)), 
-              hsl(var(--heritage-blue-dark))
-            )`
+            background: 'transparent'
           }}
         >
-          {/* Crown Symbol */}
-          <div className={cn(
-            "absolute top-3 left-1/2 transform -translate-x-1/2 transition-all duration-500",
-            size === 'sm' && "top-2 scale-50",
-            size === 'lg' && "top-4 scale-125",
-            size === 'xl' && "top-6 scale-150",
-            isActive && variant === 'success' && "scale-110 text-heritage-gold"
-          )}>
-            <svg 
-              viewBox="0 0 24 24" 
-              className={cn(
-                "fill-heritage-gold transition-all duration-500",
-                size === 'sm' && "w-3 h-3",
-                size === 'md' && "w-4 h-4",
-                size === 'lg' && "w-5 h-5",
-                size === 'xl' && "w-6 h-6"
-              )}
-            >
-              <path d="M3 8l9-6 9 6-2 8-7-2-7 2z"/>
-              <circle cx="12" cy="12" r="1"/>
-            </svg>
-          </div>
-
-          {/* Heritage Text with HIH */}
-          <div className="text-center">
-            {/* HIH Letters */}
-            <div className={cn(
-              "font-bold text-heritage-gold mb-1 transition-all duration-500 tracking-wider",
-              size === 'sm' && "text-xs",
-              size === 'md' && "text-sm", 
-              size === 'lg' && "text-lg",
-              size === 'xl' && "text-2xl",
+          {/* Actual Heritage Logo Image */}
+          <img 
+            src={heritageLogoImage} 
+            alt="Heritage Bank Logo" 
+            className={cn(
+              "w-full h-full object-contain transition-all duration-500 p-1",
               isActive && "animate-pulse"
             )}
             style={{
-              fontFamily: 'serif',
-              textShadow: '0 2px 4px rgba(0,0,0,0.3)',
-              transform: isActive ? `scale(${1 + animationPhase * 0.05})` : 'none'
-            }}>
-              HIH
-            </div>
-            
-            {/* Heritage Text */}
-            <div className={cn(
-              "font-bold text-heritage-gold transition-all duration-500",
-              size === 'sm' && "text-xs leading-tight",
-              size === 'md' && "text-sm leading-tight", 
-              size === 'lg' && "text-base leading-tight",
-              size === 'xl' && "text-xl leading-tight",
-              isActive && variant === 'success' && "text-success scale-105"
-            )}
-            style={{
-              fontFamily: 'serif',
-              textShadow: '0 2px 4px rgba(0,0,0,0.3)',
-              transform: isActive ? `rotateY(${animationPhase * 10}deg)` : 'none'
-            }}>
-              HERITAGE
-            </div>
-            
-            {/* Bank Text */}
-            <div className={cn(
-              "font-semibold text-heritage-gold/90 transition-all duration-500",
-              size === 'sm' && "text-xs",
-              size === 'md' && "text-sm", 
-              size === 'lg' && "text-base",
-              size === 'xl' && "text-lg"
-            )}
-            style={{
-              fontFamily: 'serif',
-              textShadow: '0 1px 2px rgba(0,0,0,0.3)'
-            }}>
-              BANK
-            </div>
-          </div>
+              filter: isActive 
+                ? 'drop-shadow(0 0 12px rgba(212, 175, 55, 0.8)) brightness(1.2)' 
+                : 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
+              transform: isActive ? `scale(${1 + animationPhase * 0.03}) rotate(${animationPhase * 2}deg)` : 'scale(1)',
+            }}
+          />
 
           {/* Success Checkmark Overlay */}
           {variant === 'success' && showSuccess && (
