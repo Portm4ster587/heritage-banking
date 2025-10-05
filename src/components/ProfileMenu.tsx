@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { User, Settings, LogOut, Shield, CreditCard, FileText, Bell, HelpCircle, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -13,6 +13,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { UserProfileModal } from './UserProfileModal';
 
 interface ProfileMenuProps {
   onMenuAction?: (action: string) => void;
@@ -22,15 +24,35 @@ export const ProfileMenu = ({ onMenuAction }: ProfileMenuProps) => {
   const { user, signOut, isAdmin } = useAuth();
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profile, setProfile] = useState<any>(null);
 
-  // Mock user data - in real app this would come from user profile
+  useEffect(() => {
+    if (user) {
+      fetchUserProfile();
+    }
+  }, [user]);
+
+  const fetchUserProfile = async () => {
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('user_id', user?.id)
+        .maybeSingle();
+      setProfile(data);
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+    }
+  };
+
   const userData = {
-    firstName: 'Raul',
-    lastName: 'Alcarez',
-    email: user?.email || 'r.alcarezswo@gmail.com',
+    firstName: profile?.first_name || user?.email?.split('@')[0] || 'User',
+    lastName: profile?.last_name || '',
+    email: user?.email || '',
     accountType: 'Heritage Business',
-    memberSince: '2019',
-    avatar: undefined // No avatar image for now
+    memberSince: profile?.created_at ? new Date(profile.created_at).getFullYear().toString() : '2024',
+    avatar: undefined
   };
 
   const handleSignOut = async () => {
@@ -52,18 +74,25 @@ export const ProfileMenu = ({ onMenuAction }: ProfileMenuProps) => {
   };
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-10 w-10 rounded-full text-primary-foreground hover:bg-primary-light">
-          <Avatar className="h-9 w-9">
-            <AvatarImage src={userData.avatar} alt={`${userData.firstName} ${userData.lastName}`} />
-            <AvatarFallback className="bg-accent text-accent-foreground font-semibold">
-              {getUserInitials()}
-            </AvatarFallback>
-          </Avatar>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-80" align="end" forceMount>
+    <>
+      <UserProfileModal 
+        open={showProfileModal} 
+        onOpenChange={setShowProfileModal}
+        onNavigateToSettings={() => handleMenuClick('settings')}
+      />
+      
+      <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="relative h-10 w-10 rounded-full text-primary-foreground hover:bg-primary-light">
+            <Avatar className="h-9 w-9">
+              <AvatarImage src={userData.avatar} alt={`${userData.firstName} ${userData.lastName}`} />
+              <AvatarFallback className="bg-accent text-accent-foreground font-semibold">
+                {getUserInitials()}
+              </AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-80" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <div className="flex items-center space-x-3">
@@ -93,12 +122,15 @@ export const ProfileMenu = ({ onMenuAction }: ProfileMenuProps) => {
         <DropdownMenuGroup>
           <DropdownMenuItem 
             className="cursor-pointer"
-            onClick={() => handleMenuClick('profile')}
+            onClick={() => {
+              setIsOpen(false);
+              setShowProfileModal(true);
+            }}
           >
             <User className="mr-2 h-4 w-4" />
             <div className="flex-1">
               <div className="text-sm">My Profile</div>
-              <div className="text-xs text-muted-foreground">Personal information</div>
+              <div className="text-xs text-muted-foreground">View complete account information</div>
             </div>
           </DropdownMenuItem>
           
@@ -206,5 +238,6 @@ export const ProfileMenu = ({ onMenuAction }: ProfileMenuProps) => {
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
+    </>
   );
 };
