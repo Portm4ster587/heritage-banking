@@ -251,6 +251,21 @@
   animation: slide-up 0.8s ease-out;
 }
 
+/* New logo motion effects */
+@keyframes slide-horizontal {
+  0%, 100% { transform: translateX(-6%); }
+  50% { transform: translateX(6%); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.animate-slide-horizontal { animation: slide-horizontal 2.2s ease-in-out infinite; }
+.animate-shake { animation: shake 0.7s ease-in-out infinite; }
+
 @layer base {
   * {
     @apply border-border;

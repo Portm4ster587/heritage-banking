@@ -106,7 +106,7 @@ const Index = () => {
                       size="lg"
                       className="border-2 border-heritage-gold text-heritage-gold hover:bg-heritage-gold hover:text-heritage-blue px-8 py-4 font-semibold text-lg banking-button w-full sm:w-auto"
                     >
-                      Sign In / Register
+                      Sign In
                     </Button>
                   </Link>
                 )}

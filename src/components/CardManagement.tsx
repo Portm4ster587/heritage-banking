@@ -49,10 +49,13 @@ export const CardManagement = () => {
           <h2 className="text-3xl font-bold text-primary mb-2">My Cards</h2>
           <p className="text-muted-foreground">Manage your Heritage Bank cards</p>
         </div>
-        <Button className="banking-button">
-          <Plus className="w-4 h-4 mr-2" />
-          Request New Card
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button className="banking-button">
+            <Plus className="w-4 h-4 mr-2" />
+            Request New Card
+          </Button>
+          <Button variant="outline" className="banking-button">Activate Card</Button>
+        </div>
       </div>
 
       {cards.length === 0 ? (

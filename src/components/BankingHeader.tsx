@@ -6,6 +6,7 @@ import { NotificationCenter } from "./NotificationCenter";
 import { ProfileMenu } from "./ProfileMenu";
 import { MenuIcon, CloseIcon } from "./UltraModernIcons";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 interface BankingHeaderProps {
   activeSection?: string;
@@ -81,12 +82,20 @@ export const BankingHeader = ({ activeSection, onSectionChange }: BankingHeaderP
                 <MenuIcon size={20} glowEffect={true} />
               }
             </Button>
-            
-            {/* Notifications */}
-            <NotificationCenter onNotificationAction={handleNotificationAction} />
-            
-            {/* Profile Menu */}
-            <ProfileMenu onMenuAction={handleProfileAction} />
+            {user ? (
+              <>
+                {/* Notifications */}
+                <NotificationCenter onNotificationAction={handleNotificationAction} />
+                {/* Profile Menu */}
+                <ProfileMenu onMenuAction={handleProfileAction} />
+              </>
+            ) : (
+              <>
+                <a href="/auth">
+                  <Button className="banking-button">Sign In</Button>
+                </a>
+              </>
+            )}
           </div>
         </div>
         

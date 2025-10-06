@@ -67,7 +67,7 @@ export const AnimatedHeritageLogo = ({
             hsl(var(--heritage-gold))
           )`,
           padding: '2px',
-          animation: isActive ? 'spin 4s linear infinite' : 'none'
+          animation: 'none'
         }}
       >
         {/* Inner Background */}
@@ -85,14 +85,14 @@ export const AnimatedHeritageLogo = ({
             src={heritageLogoImage} 
             alt="Heritage Bank Logo" 
             className={cn(
-              "w-full h-full object-contain transition-all duration-500 p-1",
-              isActive && "animate-pulse"
+              "w-full h-full object-contain transition-all duration-500 p-1 animate-slide-horizontal",
+              isActive && "animate-shake"
             )}
             style={{
               filter: isActive 
                 ? 'drop-shadow(0 0 12px rgba(212, 175, 55, 0.8)) brightness(1.2)' 
                 : 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
-              transform: isActive ? `scale(${1 + animationPhase * 0.03}) rotate(${animationPhase * 2}deg)` : 'scale(1)',
+              transform: isActive ? `scale(${1 + animationPhase * 0.03})` : 'scale(1)',
             }}
           />
 

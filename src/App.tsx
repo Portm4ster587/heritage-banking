@@ -10,6 +10,12 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ModernDashboard from "./pages/ModernDashboard";
 import NotFound from "./pages/NotFound";
+import Transfers from "./pages/dashboard/Transfers";
+import TopUp from "./pages/dashboard/TopUp";
+import Crypto from "./pages/dashboard/Crypto";
+import Settings from "./pages/dashboard/Settings";
+import IDMe from "./pages/dashboard/IDMe";
+import History from "./pages/dashboard/History";
 
 const queryClient = new QueryClient();
 
@@ -75,6 +81,57 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
+
+            {/* Dashboard sub-routes */}
+            <Route 
+              path="/dashboard/transfers" 
+              element={
+                <ProtectedRoute>
+                  <Transfers />
+                </ProtectedRoute>
+              }
+            />
+            <Route 
+              path="/dashboard/topup" 
+              element={
+                <ProtectedRoute>
+                  <TopUp />
+                </ProtectedRoute>
+              }
+            />
+            <Route 
+              path="/dashboard/crypto" 
+              element={
+                <ProtectedRoute>
+                  <Crypto />
+                </ProtectedRoute>
+              }
+            />
+            <Route 
+              path="/dashboard/settings" 
+              element={
+                <ProtectedRoute>
+                  <Settings />
+                </ProtectedRoute>
+              }
+            />
+            <Route 
+              path="/dashboard/idme" 
+              element={
+                <ProtectedRoute>
+                  <IDMe />
+                </ProtectedRoute>
+              }
+            />
+            <Route 
+              path="/dashboard/history" 
+              element={
+                <ProtectedRoute>
+                  <History />
+                </ProtectedRoute>
+              }
+            />
+
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

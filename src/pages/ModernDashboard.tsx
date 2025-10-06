@@ -226,18 +226,27 @@ export default function ModernDashboard() {
 
             {/* Navigation */}
             <nav className="hidden md:flex space-x-8">
-              <button className="text-blue-600 font-medium border-b-2 border-blue-600 pb-4">
+              <a href="/dashboard" className="text-blue-600 font-medium border-b-2 border-blue-600 pb-4">
                 Accounts
-              </button>
-              <button className="text-slate-600 hover:text-slate-900 pb-4">
+              </a>
+              <a href="/dashboard/transfers" className="text-slate-600 hover:text-slate-900 pb-4">
                 Transfer
-              </button>
-              <button className="text-slate-600 hover:text-slate-900 pb-4">
-                Pay Bills
-              </button>
-              <button className="text-slate-600 hover:text-slate-900 pb-4">
-                Deposit
-              </button>
+              </a>
+              <a href="/dashboard/topup" className="text-slate-600 hover:text-slate-900 pb-4">
+                Top Up
+              </a>
+              <a href="/dashboard/crypto" className="text-slate-600 hover:text-slate-900 pb-4">
+                Crypto
+              </a>
+              <a href="/dashboard/settings" className="text-slate-600 hover:text-slate-900 pb-4">
+                Settings
+              </a>
+              <a href="/dashboard/idme" className="text-slate-600 hover:text-slate-900 pb-4">
+                ID.me
+              </a>
+              <a href="/dashboard/history" className="text-slate-600 hover:text-slate-900 pb-4">
+                History
+              </a>
             </nav>
 
             {/* User Menu */}
@@ -387,18 +396,24 @@ export default function ModernDashboard() {
                 <CardTitle className="text-lg">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                <Button className="w-full justify-start bg-green-600 hover:bg-green-700 text-white">
-                  <Send className="w-4 h-4 mr-3" />
-                  Send Money
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <ArrowDownRight className="w-4 h-4 mr-3" />
-                  Deposit Check
-                </Button>
-                <Button variant="outline" className="w-full justify-start">
-                  <CreditCard className="w-4 h-4 mr-3" />
-                  Pay Bills
-                </Button>
+                <a href="/dashboard/transfers">
+                  <Button className="w-full justify-start bg-green-600 hover:bg-green-700 text-white">
+                    <Send className="w-4 h-4 mr-3" />
+                    Send Money
+                  </Button>
+                </a>
+                <a href="/dashboard/topup">
+                  <Button variant="outline" className="w-full justify-start">
+                    <ArrowDownRight className="w-4 h-4 mr-3" />
+                    Deposit / Top Up
+                  </Button>
+                </a>
+                <a href="/dashboard/history">
+                  <Button variant="outline" className="w-full justify-start">
+                    <CreditCard className="w-4 h-4 mr-3" />
+                    View Bills & History
+                  </Button>
+                </a>
               </CardContent>
             </Card>
 

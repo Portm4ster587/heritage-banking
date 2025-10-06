@@ -62,9 +62,15 @@ export const CardDisplay = ({ card, className }: CardDisplayProps) => {
         <div className="relative">
           {/* Card Visual */}
           <div className={cn(
-            "relative h-56 bg-gradient-to-br p-6 flex flex-col justify-between rounded-t-lg",
+            "relative h-56 bg-gradient-to-br p-6 flex flex-col justify-between rounded-t-lg overflow-hidden",
             getCardGradient(card.card_type)
           )}>
+            <img
+              src={premiumCardImage}
+              alt="Heritage premium card background"
+              className="absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-overlay pointer-events-none"
+              loading="lazy"
+            />
             {/* Background Pattern */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full -mr-32 -mt-32"></div>
