@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,14 +10,27 @@ import { signIn, signUp } from '@/lib/auth';
 import { AnimatedHeritageLogo } from '@/components/AnimatedHeritageLogo';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import heritageBg1 from '@/assets/heritage-bg-1.jpg';
+import heritageBg2 from '@/assets/heritage-bg-2.jpg';
+import heritageBg3 from '@/assets/heritage-bg-3.jpg';
 
 const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+  const [currentBgIndex, setCurrentBgIndex] = useState(0);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  const backgroundImages = [heritageBg1, heritageBg2, heritageBg3];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentBgIndex((prev) => (prev + 1) % backgroundImages.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -94,22 +107,33 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-heritage-blue via-heritage-blue-dark to-heritage-blue">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Background Slideshow */}
+      <div className="absolute inset-0">
+        {backgroundImages.map((bg, index) => (
+          <div
+            key={index}
+            className="absolute inset-0 transition-opacity duration-1000"
+            style={{
+              backgroundImage: `url(${bg})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              opacity: currentBgIndex === index ? 1 : 0,
+            }}
+          />
+        ))}
+        {/* Dark overlay for better readability */}
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+      </div>
+
       {/* Back to Home Button */}
       <div className="absolute top-6 left-6 z-10">
         <Link to="/">
-          <Button variant="ghost" className="text-white hover:bg-white/10">
+          <Button variant="ghost" className="text-white hover:bg-white/20 backdrop-blur-sm">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Home
           </Button>
         </Link>
-      </div>
-
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-heritage-gold/10 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-heritage-gold/5 rounded-full blur-2xl animate-float" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute top-1/2 right-1/3 w-32 h-32 bg-heritage-gold/8 rounded-full blur-xl animate-float" style={{ animationDelay: '4s' }}></div>
       </div>
 
       <div className="relative flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">

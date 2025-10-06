@@ -1,14 +1,19 @@
+import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CreditCard, Wallet } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { CreditCard, Wallet, Eye } from 'lucide-react';
 import premiumCardImage from '@/assets/premium-card.jpg';
 import { cn } from '@/lib/utils';
+import { CardDetailsModal } from './CardDetailsModal';
 
 interface CardDisplayProps {
   card: {
     id: string;
     card_type: string;
     card_network: string;
+    card_number?: string;
+    cvv?: string;
     last4: string;
     expiry_date: string;
     status: string;
@@ -19,6 +24,8 @@ interface CardDisplayProps {
 }
 
 export const CardDisplay = ({ card, className }: CardDisplayProps) => {
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+
   const getCardGradient = (type: string) => {
     switch (type.toLowerCase()) {
       case 'platinum':
@@ -136,6 +143,17 @@ export const CardDisplay = ({ card, className }: CardDisplayProps) => {
               )}
             </div>
 
+            {card.status === 'active' && card.card_number && card.cvv && (
+              <Button
+                onClick={() => setShowDetailsModal(true)}
+                variant="outline"
+                className="w-full"
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                View Full Card Details
+              </Button>
+            )}
+
             {card.available_credit !== undefined && (
               <div>
                 <div className="flex justify-between text-sm mb-2">
@@ -157,6 +175,22 @@ export const CardDisplay = ({ card, className }: CardDisplayProps) => {
           </div>
         </div>
       </CardContent>
+
+      {card.card_number && card.cvv && (
+        <CardDetailsModal
+          open={showDetailsModal}
+          onOpenChange={setShowDetailsModal}
+          card={{
+            id: card.id,
+            card_number: card.card_number,
+            cvv: card.cvv,
+            expiry_date: card.expiry_date,
+            card_type: card.card_type,
+            card_network: card.card_network,
+            last4: card.last4,
+          }}
+        />
+      )}
     </Card>
   );
 };
