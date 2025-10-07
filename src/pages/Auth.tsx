@@ -52,20 +52,9 @@ const Auth = () => {
       const { data, error } = await signIn(email, password);
       
       if (error) {
-        let errorMessage = error.message;
-        
-        // Provide more specific error messages
-        if (error.message.includes('Invalid login credentials')) {
-          errorMessage = "Invalid email or password. Please check your credentials and try again, or sign up if you don't have an account yet.";
-        } else if (error.message.includes('Email not confirmed')) {
-          errorMessage = "Please verify your email address before signing in. Check your inbox for the confirmation link.";
-        } else if (error.message.includes('User not found')) {
-          errorMessage = "No account found with this email. Please sign up first.";
-        }
-        
         toast({
           title: "Authentication Failed",
-          description: errorMessage,
+          description: error.message,
           variant: "destructive"
         });
         return;
@@ -98,32 +87,12 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      // Validate password strength
-      if (password.length < 8) {
-        toast({
-          title: "Weak Password",
-          description: "Password must be at least 8 characters long.",
-          variant: "destructive"
-        });
-        setLoading(false);
-        return;
-      }
-
       const { data, error } = await signUp(email, password);
       
       if (error) {
-        let errorMessage = error.message;
-        
-        // Provide more specific error messages
-        if (error.message.includes('already registered')) {
-          errorMessage = "This email is already registered. Please sign in instead or use a different email.";
-        } else if (error.message.includes('password')) {
-          errorMessage = "Password must be at least 8 characters with a mix of letters, numbers, and symbols.";
-        }
-        
         toast({
           title: "Registration Failed",
-          description: errorMessage,
+          description: error.message,
           variant: "destructive"
         });
         return;
@@ -132,8 +101,7 @@ const Auth = () => {
       if (data.user) {
         toast({
           title: "Account Created Successfully!",
-          description: "You can now sign in with your credentials. Note: Email confirmation may be required depending on settings.",
-          duration: 5000
+          description: "Please check your email to verify your account."
         });
         setEmail('');
         setPassword('');
@@ -218,11 +186,6 @@ const Auth = () => {
 
                   <TabsContent value="signin">
                     <form onSubmit={handleSignIn} className="space-y-6">
-                      <div className="bg-heritage-blue/5 border border-heritage-gold/20 rounded-md p-3 mb-4">
-                        <p className="text-xs text-heritage-blue/70">
-                          <strong>First time here?</strong> Please use the Sign Up tab to create your account first.
-                        </p>
-                      </div>
                       <div className="space-y-4">
                         <div className="space-y-2">
                           <Label htmlFor="email" className="text-heritage-blue font-medium">Email Address</Label>
