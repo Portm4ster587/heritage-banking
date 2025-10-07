@@ -9,12 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { GuestApplicationForm } from "../components/GuestApplicationForm";
 import { useAuth } from "@/hooks/useAuth";
 import { Sparkles, Shield, Zap, Users } from "lucide-react";
-import { CustomerChatWidget } from "../components/CustomerChatWidget";
 import bankingHeroImage from "@/assets/banking-hero.jpg";
-import cardsShowcaseImage from "@/assets/cards-showcase.jpg";
-import heritageAtmImage from "@/assets/heritage-atm.jpg";
-import bankInterior1 from "@/assets/bank-interior-1.jpg";
-import bankInterior2 from "@/assets/bank-interior-2.jpg";
 
 const Index = () => {
   const { user } = useAuth();
@@ -143,20 +138,19 @@ const Index = () => {
       <main className="container mx-auto px-6 py-16 space-y-20">
         {/* Quick Apply Section */}
         <section className="text-center animate-fade-in" style={{ animationDelay: '0.8s' }}>
-          <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-primary mb-6">Open Your Heritage Account</h2>
-            <p className="text-xl text-muted-foreground mb-12">
-              Choose from our comprehensive range of banking products designed for your financial success.
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-4xl font-bold text-primary mb-6">Start Your Banking Journey</h2>
+            <p className="text-xl text-muted-foreground mb-8">
+              No account required. Apply in minutes and get approved instantly.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {/* Personal Checking */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Card className="banking-card hover-lift cursor-pointer group border-2 hover:border-heritage-gold transition-all duration-300">
                 <CardHeader className="text-center">
                   <div className="w-16 h-16 bg-heritage-blue rounded-full flex items-center justify-center mx-auto mb-4">
                     <Shield className="w-8 h-8 text-heritage-gold" />
                   </div>
-                  <CardTitle className="text-lg">Personal Checking</CardTitle>
-                  <CardDescription>No monthly fees</CardDescription>
+                  <CardTitle className="text-xl">Checking Account</CardTitle>
+                  <CardDescription>No fees, unlimited transactions</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                   <Button 
@@ -172,14 +166,13 @@ const Index = () => {
                 </CardContent>
               </Card>
 
-              {/* Personal Savings */}
               <Card className="banking-card hover-lift cursor-pointer group border-2 hover:border-heritage-gold transition-all duration-300">
                 <CardHeader className="text-center">
                   <div className="w-16 h-16 bg-heritage-blue rounded-full flex items-center justify-center mx-auto mb-4">
                     <Sparkles className="w-8 h-8 text-heritage-gold" />
                   </div>
-                  <CardTitle className="text-lg">Personal Savings</CardTitle>
-                  <CardDescription>High yield rates</CardDescription>
+                  <CardTitle className="text-xl">Savings Account</CardTitle>
+                  <CardDescription>High yield with competitive rates</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                   <Button 
@@ -195,126 +188,24 @@ const Index = () => {
                 </CardContent>
               </Card>
 
-              {/* Business Checking */}
-              <Card className="banking-card hover-lift cursor-pointer group border-2 hover:border-heritage-gold transition-all duration-300">
-                <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-heritage-blue rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Users className="w-8 h-8 text-heritage-gold" />
-                  </div>
-                  <CardTitle className="text-lg">Business Checking</CardTitle>
-                  <CardDescription>Designed for business</CardDescription>
-                </CardHeader>
-                <CardContent className="text-center">
-                  <Button 
-                    size="lg" 
-                    onClick={() => {
-                      setApplicationType('business');
-                      setShowGuestApplication(true);
-                    }}
-                    className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-semibold"
-                  >
-                    Apply Now
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {/* Business Savings */}
               <Card className="banking-card hover-lift cursor-pointer group border-2 hover:border-heritage-gold transition-all duration-300">
                 <CardHeader className="text-center">
                   <div className="w-16 h-16 bg-heritage-blue rounded-full flex items-center justify-center mx-auto mb-4">
                     <Zap className="w-8 h-8 text-heritage-gold" />
                   </div>
-                  <CardTitle className="text-lg">Business Savings</CardTitle>
-                  <CardDescription>Grow your business</CardDescription>
+                  <CardTitle className="text-xl">Credit Cards</CardTitle>
+                  <CardDescription>Premium rewards and benefits</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                   <Button 
                     size="lg" 
-                    onClick={() => {
-                      setApplicationType('savings');
-                      setShowGuestApplication(true);
-                    }}
+                    onClick={() => setShowCards(true)}
                     className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-semibold"
                   >
-                    Apply Now
+                    Explore Cards
                   </Button>
                 </CardContent>
               </Card>
-            </div>
-
-            {/* Loan Products */}
-            <div className="mt-12">
-              <h3 className="text-2xl font-bold text-primary mb-6">Loan Products & Services</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="banking-card hover-lift border-2 hover:border-heritage-gold transition-all">
-                  <CardHeader className="text-center">
-                    <CardTitle>Mortgage Loans</CardTitle>
-                    <CardDescription>Home financing solutions</CardDescription>
-                  </CardHeader>
-                  <CardContent className="text-center">
-                    <Button 
-                      onClick={() => {
-                        setApplicationType('home_loan');
-                        setShowGuestApplication(true);
-                      }}
-                      className="w-full bg-heritage-blue hover:bg-heritage-blue-dark text-white"
-                    >
-                      Learn More
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="banking-card hover-lift border-2 hover:border-heritage-gold transition-all">
-                  <CardHeader className="text-center">
-                    <CardTitle>IRA Accounts</CardTitle>
-                    <CardDescription>Retirement planning</CardDescription>
-                  </CardHeader>
-                  <CardContent className="text-center">
-                    <Button 
-                      onClick={() => setShowGuestApplication(true)}
-                      className="w-full bg-heritage-blue hover:bg-heritage-blue-dark text-white"
-                    >
-                      Open IRA
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                <Card className="banking-card hover-lift border-2 hover:border-heritage-gold transition-all">
-                  <CardHeader className="text-center">
-                    <CardTitle>Credit Cards</CardTitle>
-                    <CardDescription>Premium rewards cards</CardDescription>
-                  </CardHeader>
-                  <CardContent className="text-center">
-                    <Button 
-                      onClick={() => setShowCards(true)}
-                      className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90"
-                    >
-                      Explore Cards
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Banking Services Showcase */}
-        <section className="py-16 bg-muted/30 rounded-3xl">
-          <div className="max-w-6xl mx-auto px-6">
-            <h2 className="text-3xl font-bold text-center mb-12">Experience Heritage Banking</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="relative h-64 rounded-lg overflow-hidden">
-                <img src={bankInterior1} alt="Heritage Bank Interior" className="w-full h-full object-cover" />
-              </div>
-              <div className="relative h-64 rounded-lg overflow-hidden">
-                <img src={bankInterior2} alt="Heritage Bank Customer Service" className="w-full h-full object-cover" />
-              </div>
-              <div className="relative h-64 rounded-lg overflow-hidden">
-                <img src={cardsShowcaseImage} alt="Heritage Bank Cards" className="w-full h-full object-cover" />
-              </div>
-              <div className="relative h-64 rounded-lg overflow-hidden">
-                <img src={heritageAtmImage} alt="Heritage Bank ATM" className="w-full h-full object-cover" />
-              </div>
             </div>
           </div>
         </section>
@@ -323,7 +214,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="bg-heritage-blue text-white py-16">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-3 mb-4">
                 <AnimatedHeritageLogo size="sm" />
@@ -332,73 +223,48 @@ const Index = () => {
                   <p className="text-xs text-white/80">Excellence Since 1892</p>
                 </div>
               </div>
-              <p className="text-white/80 text-sm mb-4">
-                Your trusted financial partner with bank-level security and personalized service.
-              </p>
-              <p className="text-xs text-white/60">
-                FDIC insured up to $250,000. Member FDIC. Equal Housing Lender.
+              <p className="text-white/80 text-sm">
+                Your trusted financial partner with bank-level security and personalized service. 
+                FDIC insured up to $250,000.
               </p>
             </div>
             <div>
-              <h4 className="font-semibold mb-4 text-heritage-gold">Account Types</h4>
+              <h4 className="font-semibold mb-4 text-heritage-gold">Services</h4>
               <ul className="space-y-2 text-sm text-white/80">
-                <li>Personal Checking</li>
-                <li>Personal Savings</li>
-                <li>Business Checking</li>
-                <li>Business Savings</li>
-                <li>IRA Accounts</li>
-                <li>Money Market</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4 text-heritage-gold">Loan Products</h4>
-              <ul className="space-y-2 text-sm text-white/80">
-                <li>Mortgage Loans</li>
-                <li>Home Equity</li>
-                <li>Personal Loans</li>
-                <li>Auto Loans</li>
-                <li>Business Loans</li>
+                <li>Personal Banking</li>
+                <li>Business Banking</li>
+                <li>Investment Services</li>
+                <li>Mortgage Lending</li>
                 <li>Credit Cards</li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4 text-heritage-gold">Locations</h4>
+              <h4 className="font-semibold mb-4 text-heritage-gold">Support</h4>
               <ul className="space-y-2 text-sm text-white/80">
-                <li>Dallas, Texas</li>
-                <li>Austin, Texas</li>
-                <li>Houston, Texas</li>
-                <li>Oklahoma City, OK</li>
-                <li>Atlanta, Georgia</li>
-                <li>Find an ATM</li>
+                <li>24/7 Customer Service</li>
+                <li>Find ATM/Branch</li>
+                <li>Security Center</li>
+                <li>Mobile Banking App</li>
+                <li>Contact Us</li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-4 text-heritage-gold">Contact Us</h4>
+              <h4 className="font-semibold mb-4 text-heritage-gold">Contact</h4>
               <ul className="space-y-2 text-sm text-white/80">
                 <li>1-800-HERITAGE</li>
-                <li>(1-800-437-4824)</li>
                 <li>support@heritage.bank</li>
-                <li>24/7 Customer Service</li>
-                <li>Routing: 123456789</li>
-                <li>FDIC #123456</li>
+                <li>24/7 Phone Support</li>
+                <li>FDIC Member #123456</li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-white/20 mt-12 pt-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center md:text-left">
-              <p className="text-white/60 text-sm">
-                © 2024 Heritage Bank. All rights reserved. 
-              </p>
-              <p className="text-white/60 text-sm md:text-right">
-                Privacy Policy | Terms of Service | Accessibility | Security
-              </p>
-            </div>
+          <div className="border-t border-white/20 mt-8 pt-8 text-center">
+            <p className="text-white/60 text-sm">
+              © 2024 Heritage Bank. All rights reserved. Member FDIC. Equal Housing Lender.
+            </p>
           </div>
         </div>
       </footer>
-
-      {/* Chat Widget */}
-      <CustomerChatWidget />
 
       {/* Card Showcase Modal */}
       <Dialog open={showCards} onOpenChange={setShowCards}>

@@ -141,33 +141,14 @@ export const AccountStatements = () => {
       description: `Preparing your ${format.toUpperCase()} statement...`,
     });
 
-    // Generate downloadable statement
+    // Simulate statement generation
     setTimeout(() => {
-      // Create statement content
-      const statementData = mockTransactions.map(t => 
-        `${t.date},${t.description},${t.amount},${t.type},${t.balance}`
-      ).join('\n');
-      
-      const header = 'Date,Description,Amount,Type,Balance\n';
-      const csvContent = header + statementData;
-      
-      // Create download link
-      const blob = new Blob([csvContent], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `heritage-bank-statement-${selectedPeriod}.${format}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-      
       toast({
-        title: "Statement Downloaded",
+        title: "Statement Ready",
         description: `Your ${format.toUpperCase()} statement has been downloaded successfully.`,
       });
       setIsGenerating(false);
-    }, 1500);
+    }, 2000);
   };
 
   const handleEmailStatement = () => {

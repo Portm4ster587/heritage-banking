@@ -13,10 +13,6 @@ import { Link } from 'react-router-dom';
 import heritageBg1 from '@/assets/heritage-bg-1.jpg';
 import heritageBg2 from '@/assets/heritage-bg-2.jpg';
 import heritageBg3 from '@/assets/heritage-bg-3.jpg';
-import heritageHorses from '@/assets/heritage-horses.jpg';
-import heritageFamily from '@/assets/heritage-family.jpg';
-import bankInterior1 from '@/assets/bank-interior-1.jpg';
-import bankInterior2 from '@/assets/bank-interior-2.jpg';
 
 const Auth = () => {
   const [loading, setLoading] = useState(false);
@@ -27,20 +23,12 @@ const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const backgroundImages = [
-    heritageBg1, 
-    heritageBg2, 
-    heritageBg3, 
-    heritageHorses, 
-    heritageFamily,
-    bankInterior1,
-    bankInterior2
-  ];
+  const backgroundImages = [heritageBg1, heritageBg2, heritageBg3];
 
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentBgIndex((prev) => (prev + 1) % backgroundImages.length);
-    }, 3000); // Faster transitions for more images
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
