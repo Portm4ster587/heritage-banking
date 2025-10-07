@@ -35,6 +35,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { AnimatedHeritageLogo } from '@/components/AnimatedHeritageLogo';
 
 interface Account {
   id: string;
@@ -218,10 +219,11 @@ export default function ModernDashboard() {
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
-                <span className="text-white font-bold text-sm">H</span>
+              <AnimatedHeritageLogo size="sm" isActive={true} variant="loading" />
+              <div>
+                <span className="text-xl font-bold text-heritage-blue">HERITAGE</span>
+                <p className="text-xs text-heritage-blue/70">BANK</p>
               </div>
-              <span className="text-xl font-semibold text-slate-900">Heritage Bank</span>
             </div>
 
             {/* Navigation */}
