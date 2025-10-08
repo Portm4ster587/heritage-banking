@@ -15,6 +15,7 @@ import cardsShowcaseImage from "@/assets/cards-showcase.jpg";
 import heritageAtmImage from "@/assets/heritage-atm.jpg";
 import heritageAtmImage2 from "@/assets/heritage-atm-2.png";
 import bankInterior1 from "@/assets/bank-interior-1.jpg";
+import bankInterior2 from "@/assets/bank-interior-2.jpg";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const Index = () => {
