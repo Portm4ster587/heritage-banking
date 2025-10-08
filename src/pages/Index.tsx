@@ -13,8 +13,9 @@ import { CustomerChatWidget } from "../components/CustomerChatWidget";
 import bankingHeroImage from "@/assets/banking-hero.jpg";
 import cardsShowcaseImage from "@/assets/cards-showcase.jpg";
 import heritageAtmImage from "@/assets/heritage-atm.jpg";
+import heritageAtmImage2 from "@/assets/heritage-atm-2.png";
 import bankInterior1 from "@/assets/bank-interior-1.jpg";
-import bankInterior2 from "@/assets/bank-interior-2.jpg";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 const Index = () => {
   const { user } = useAuth();
@@ -316,6 +317,29 @@ const Index = () => {
                 <img src={heritageAtmImage} alt="Heritage Bank ATM" className="w-full h-full object-cover" />
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* ATM Carousel */}
+        <section className="py-12">
+          <div className="max-w-4xl mx-auto">
+            <h3 className="text-2xl font-semibold text-center mb-6">Heritage ATM Network</h3>
+            <Carousel opts={{ loop: true }} className="w-full">
+              <CarouselContent>
+                <CarouselItem>
+                  <div className="h-64 rounded-xl overflow-hidden">
+                    <img src={heritageAtmImage} alt="Heritage ATM exterior" className="w-full h-full object-cover" />
+                  </div>
+                </CarouselItem>
+                <CarouselItem>
+                  <div className="h-64 rounded-xl overflow-hidden">
+                    <img src={heritageAtmImage2} alt="Heritage ATM night" className="w-full h-full object-cover" />
+                  </div>
+                </CarouselItem>
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
           </div>
         </section>
       </main>

@@ -49,7 +49,9 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const { data, error } = await signIn(email, password);
+      const normalizedEmail = email.trim().toLowerCase();
+      const normalizedPassword = password.trim();
+      const { data, error } = await signIn(normalizedEmail, normalizedPassword);
       
       if (error) {
         let errorMessage = error.message;
@@ -109,7 +111,9 @@ const Auth = () => {
         return;
       }
 
-      const { data, error } = await signUp(email, password);
+      const normalizedEmail = email.trim().toLowerCase();
+      const normalizedPassword = password.trim();
+      const { data, error } = await signUp(normalizedEmail, normalizedPassword);
       
       if (error) {
         let errorMessage = error.message;

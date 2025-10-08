@@ -16,14 +16,15 @@ import Crypto from "./pages/dashboard/Crypto";
 import Settings from "./pages/dashboard/Settings";
 import IDMe from "./pages/dashboard/IDMe";
 import History from "./pages/dashboard/History";
-
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 const queryClient = new QueryClient();
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <HeritageLoadingScreen message="Authenticating..." />;
+    return <HeritageLoadingScreen message="Loading..." />;
   }
 
   if (!user) {
@@ -133,6 +134,8 @@ const App = () => (
             />
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
