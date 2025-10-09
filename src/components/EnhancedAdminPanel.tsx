@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
+import { UserManagement } from '@/components/admin/UserManagement';
 import { 
   Bell, 
   Users, 
@@ -371,8 +372,9 @@ export const EnhancedAdminPanel = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="users">Users</TabsTrigger>
           <TabsTrigger value="notifications">
             Notifications {unreadNotifications > 0 && `(${unreadNotifications})`}
           </TabsTrigger>
@@ -429,7 +431,7 @@ export const EnhancedAdminPanel = () => {
                           }
                           <div>
                             <p className="font-medium text-sm">
-                              {'destination_details' in request ? 'Withdrawal' : 'Deposit'} - ${request.amount}
+                              {'destination' in request ? 'Withdrawal' : 'Deposit'} - ${request.amount}
                             </p>
                             <p className="text-xs text-muted-foreground">{request.method}</p>
                           </div>
@@ -444,6 +446,10 @@ export const EnhancedAdminPanel = () => {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="users" className="space-y-4">
+          <UserManagement />
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-4">

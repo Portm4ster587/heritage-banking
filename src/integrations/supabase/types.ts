@@ -596,6 +596,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      setup_premium_user_accounts: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

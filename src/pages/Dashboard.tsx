@@ -122,29 +122,39 @@ export default function Dashboard() {
         .eq('user_id', user.id);
       
       if (!existingAccounts || existingAccounts.length === 0) {
-        const { error } = await supabase
-          .from('accounts')
-          .insert([
-            {
-              user_id: user.id,
-              account_number: `CHK${Date.now()}`,
-              account_type: 'personal_checking',
-              routing_number: '123456789',
-              balance: 2500.00,
-              status: 'active'
-            },
-            {
-              user_id: user.id,
-              account_number: `SAV${Date.now()}`,
-              account_type: 'personal_savings',
-              routing_number: '123456789',
-              balance: 15000.00,
-              status: 'active'
-            }
-          ]);
+        // Check if this is the premium user
+        const isPremiumUser = user.email === 'r.alcarezswo@gmail.com';
         
-        if (error) {
-          console.error('Error creating default accounts:', error);
+        if (isPremiumUser) {
+          // Premium user accounts are set up via migration
+          // Just fetch them
+          await fetchAccountData();
+        } else {
+          // Create standard accounts for regular users
+          const { error } = await supabase
+            .from('accounts')
+            .insert([
+              {
+                user_id: user.id,
+                account_number: `CHK${Date.now()}`,
+                account_type: 'personal_checking',
+                routing_number: '123456789',
+                balance: 2500.00,
+                status: 'active'
+              },
+              {
+                user_id: user.id,
+                account_number: `SAV${Date.now()}`,
+                account_type: 'personal_savings',
+                routing_number: '123456789',
+                balance: 15000.00,
+                status: 'active'
+              }
+            ]);
+          
+          if (error) {
+            console.error('Error creating default accounts:', error);
+          }
         }
       }
     } catch (error) {
@@ -242,7 +252,7 @@ export default function Dashboard() {
     });
   };
 
-  const totalBalance = accounts.reduce((sum, account) => sum + account.balance, 0);
+  const totalBalance = accounts.reduce((sum, account) => sum + (account.balance ?? 0), 0);
 
   if (loading) {
     return <HeritageLoadingScreen message="Loading your dashboard..." />;
@@ -339,8 +349,13 @@ export default function Dashboard() {
                 <Card key={account.id} className="hover:shadow-lg transition-shadow">
                   <CardHeader>
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg capitalize">
-                        {account.account_type.replace('_', ' ').replace('personal checking', 'Heritage Checking').replace('personal savings', 'Heritage Savings')}
+                     <CardTitle className="text-lg capitalize">
+                        {account.account_type
+                          .replace('_', ' ')
+                          .replace('personal checking', 'Heritage Checking')
+                          .replace('personal savings', 'Heritage Savings')
+                          .replace('business savings', 'Business Savings')
+                          .replace('loan account', 'Loan Account')}
                       </CardTitle>
                       <Badge variant={account.status === 'active' ? 'default' : 'secondary'}>
                         {account.status}
@@ -349,21 +364,21 @@ export default function Dashboard() {
                     <CardDescription>••• {account.account_number.slice(-4)}</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm text-muted-foreground">Available Balance</p>
-                        <p className="text-2xl font-bold">
-                          {balanceVisible ? `$${account.balance.toLocaleString()}` : '••••••'}
-                        </p>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setBalanceVisible(!balanceVisible)}
-                      >
-                        {balanceVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </Button>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-muted-foreground">Available Balance</p>
+                      <p className="text-2xl font-bold">
+                        {balanceVisible ? `$${(account.balance ?? 0).toLocaleString()}` : '••••••'}
+                      </p>
                     </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setBalanceVisible(!balanceVisible)}
+                    >
+                      {balanceVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </Button>
+                  </div>
                   </CardContent>
                 </Card>
               ))}
