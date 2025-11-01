@@ -16,6 +16,7 @@ import Crypto from "./pages/dashboard/Crypto";
 import Settings from "./pages/dashboard/Settings";
 import IDMe from "./pages/dashboard/IDMe";
 import History from "./pages/dashboard/History";
+import Withdraw from "./pages/dashboard/Withdraw";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 const queryClient = new QueryClient();
@@ -121,6 +122,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <IDMe />
+                </ProtectedRoute>
+              }
+            />
+            <Route 
+              path="/dashboard/withdraw" 
+              element={
+                <ProtectedRoute>
+                  <Withdraw />
                 </ProtectedRoute>
               }
             />

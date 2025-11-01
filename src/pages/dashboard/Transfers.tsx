@@ -56,7 +56,7 @@ export default function Transfers() {
         </TabsContent>
         
         <TabsContent value="external">
-          <ExternalBankTransfer />
+          <ExternalBankTransfer accounts={accounts} onSuccess={fetchAccounts} />
         </TabsContent>
       </Tabs>
     </main>

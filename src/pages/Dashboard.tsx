@@ -497,7 +497,7 @@ export default function Dashboard() {
         )}
 
         {activeSection === 'external-transfer' && (
-          <ExternalBankTransfer />
+          <ExternalBankTransfer accounts={accounts} onSuccess={fetchAccountData} />
         )}
         
         {/* Mobile Navigation - Only visible on mobile */}

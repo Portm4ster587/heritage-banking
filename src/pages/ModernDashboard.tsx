@@ -410,6 +410,12 @@ export default function ModernDashboard() {
                     Deposit / Top Up
                   </Button>
                 </a>
+                <a href="/dashboard/withdraw">
+                  <Button variant="outline" className="w-full justify-start">
+                    <ArrowUpRight className="w-4 h-4 mr-3" />
+                    Withdraw
+                  </Button>
+                </a>
                 <a href="/dashboard/history">
                   <Button variant="outline" className="w-full justify-start">
                     <CreditCard className="w-4 h-4 mr-3" />
