@@ -36,6 +36,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { AnimatedHeritageLogo } from '@/components/AnimatedHeritageLogo';
+import { MobileNavMenu } from '@/components/MobileNavMenu';
 
 interface Account {
   id: string;
@@ -214,54 +215,56 @@ export default function ModernDashboard() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Modern Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-50">
+      <header className="bg-background border-b border-border sticky top-0 z-50 backdrop-blur-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo */}
-            <div className="flex items-center space-x-3">
+            <a href="/dashboard" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
               <AnimatedHeritageLogo size="sm" isActive={true} variant="loading" />
               <div>
                 <span className="text-xl font-bold text-heritage-blue">HERITAGE</span>
                 <p className="text-xs text-heritage-blue/70">BANK</p>
               </div>
-            </div>
+            </a>
 
             {/* Navigation */}
-            <nav className="hidden md:flex space-x-8">
-              <a href="/dashboard" className="text-blue-600 font-medium border-b-2 border-blue-600 pb-4">
+            <nav className="hidden md:flex space-x-6">
+              <a href="/dashboard" className="text-heritage-blue font-medium border-b-2 border-heritage-blue pb-4 hover:text-heritage-blue-dark transition-colors">
                 Accounts
               </a>
-              <a href="/dashboard/transfers" className="text-slate-600 hover:text-slate-900 pb-4">
+              <a href="/dashboard/transfers" className="text-muted-foreground hover:text-foreground pb-4 transition-colors">
                 Transfer
               </a>
-              <a href="/dashboard/topup" className="text-slate-600 hover:text-slate-900 pb-4">
-                Top Up
+              <a href="/dashboard/topup" className="text-muted-foreground hover:text-foreground pb-4 transition-colors">
+                Deposit
               </a>
-              <a href="/dashboard/crypto" className="text-slate-600 hover:text-slate-900 pb-4">
+              <a href="/dashboard/withdraw" className="text-muted-foreground hover:text-foreground pb-4 transition-colors">
+                Withdraw
+              </a>
+              <a href="/dashboard/crypto" className="text-muted-foreground hover:text-foreground pb-4 transition-colors">
                 Crypto
               </a>
-              <a href="/dashboard/settings" className="text-slate-600 hover:text-slate-900 pb-4">
-                Settings
-              </a>
-              <a href="/dashboard/idme" className="text-slate-600 hover:text-slate-900 pb-4">
-                ID.me
-              </a>
-              <a href="/dashboard/history" className="text-slate-600 hover:text-slate-900 pb-4">
+              <a href="/dashboard/history" className="text-muted-foreground hover:text-foreground pb-4 transition-colors">
                 History
+              </a>
+              <a href="/dashboard/settings" className="text-muted-foreground hover:text-foreground pb-4 transition-colors">
+                Settings
               </a>
             </nav>
 
             {/* User Menu */}
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="sm">
-                <Bell className="w-5 h-5" />
+            <div className="flex items-center space-x-2">
+              <MobileNavMenu />
+              
+              <Button variant="ghost" size="icon" className="hover:bg-muted hidden sm:flex">
+                <Bell className="w-5 h-5 text-muted-foreground" />
               </Button>
               
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+                  <Button variant="ghost" className="relative h-9 w-9 rounded-full hover:bg-muted">
                     <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-blue-600 text-white">
+                      <AvatarFallback className="bg-heritage-blue text-white">
                         {userProfile?.first_name?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
                       </AvatarFallback>
                     </Avatar>
@@ -316,11 +319,11 @@ export default function ModernDashboard() {
           {/* Accounts Section */}
           <div className="lg:col-span-2 space-y-6">
             {/* Account Summary */}
-            <Card className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+            <Card className="bg-gradient-to-r from-heritage-blue to-heritage-blue-dark text-white shadow-lg">
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-lg font-medium text-blue-100">
+                    <CardTitle className="text-lg font-medium text-white/90">
                       Total Balance
                     </CardTitle>
                     <div className="flex items-center mt-2">
@@ -348,11 +351,13 @@ export default function ModernDashboard() {
             {/* Accounts List */}
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <h2 className="text-lg font-semibold text-slate-900">Your Accounts</h2>
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Open Account
-                </Button>
+                <h2 className="text-lg font-semibold">Your Accounts</h2>
+                <a href="/">
+                  <Button className="bg-heritage-blue hover:bg-heritage-blue-dark text-white">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Open Account
+                  </Button>
+                </a>
               </div>
 
               {accounts.map((account) => {
@@ -399,7 +404,7 @@ export default function ModernDashboard() {
               </CardHeader>
               <CardContent className="space-y-3">
                 <a href="/dashboard/transfers">
-                  <Button className="w-full justify-start bg-green-600 hover:bg-green-700 text-white">
+                  <Button className="w-full justify-start bg-heritage-blue hover:bg-heritage-blue-dark text-white">
                     <Send className="w-4 h-4 mr-3" />
                     Send Money
                   </Button>
