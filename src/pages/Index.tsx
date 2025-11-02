@@ -345,78 +345,107 @@ const Index = () => {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="bg-heritage-blue text-white py-16">
+      {/* Enhanced Footer */}
+      <footer className="bg-gradient-to-br from-heritage-blue via-heritage-blue-dark to-heritage-blue text-white py-16">
         <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+            <div className="lg:col-span-1">
               <div className="flex items-center space-x-3 mb-4">
                 <AnimatedHeritageLogo size="sm" />
                 <div>
-                  <h3 className="text-lg font-bold text-heritage-gold">HERITAGE BANK</h3>
-                  <p className="text-xs text-white/80">Excellence Since 1892</p>
+                  <h3 className="text-xl font-bold text-heritage-gold">HERITAGE BANK</h3>
+                  <p className="text-xs text-heritage-gold/80">Excellence Since 1892</p>
                 </div>
               </div>
-              <p className="text-white/80 text-sm mb-4">
-                Your trusted financial partner with bank-level security and personalized service.
+              <p className="text-white/90 text-sm mb-4 leading-relaxed">
+                💼 <strong>Banking You Can Trust</strong><br />
+                Join over 100,000 satisfied customers who've chosen Heritage Bank for security, innovation, and exceptional service.
               </p>
-              <p className="text-xs text-white/60">
-                FDIC insured up to $250,000. Member FDIC. Equal Housing Lender.
+              <p className="text-xs text-heritage-gold/90 font-semibold mb-2">
+                🛡️ FDIC Insured up to $250,000
+              </p>
+              <p className="text-xs text-white/70">
+                Member FDIC | Equal Housing Lender | NMLS #123456
               </p>
             </div>
+            
             <div>
-              <h4 className="font-semibold mb-4 text-heritage-gold">Account Types</h4>
-              <ul className="space-y-2 text-sm text-white/80">
-                <li>Personal Checking</li>
-                <li>Personal Savings</li>
-                <li>Business Checking</li>
-                <li>Business Savings</li>
-                <li>IRA Accounts</li>
-                <li>Money Market</li>
+              <h4 className="font-bold mb-4 text-heritage-gold text-lg">🏦 Banking Services</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link to="/auth" className="hover:text-heritage-gold transition-colors">Personal Checking</Link></li>
+                <li><Link to="/auth" className="hover:text-heritage-gold transition-colors">High-Yield Savings</Link></li>
+                <li><Link to="/auth" className="hover:text-heritage-gold transition-colors">Business Banking</Link></li>
+                <li><Link to="/auth" className="hover:text-heritage-gold transition-colors">Credit Cards</Link></li>
+                <li><Link to="/auth" className="hover:text-heritage-gold transition-colors">Home Loans</Link></li>
+                <li><Link to="/auth" className="hover:text-heritage-gold transition-colors">Auto Financing</Link></li>
               </ul>
             </div>
+
             <div>
-              <h4 className="font-semibold mb-4 text-heritage-gold">Loan Products</h4>
-              <ul className="space-y-2 text-sm text-white/80">
-                <li>Mortgage Loans</li>
-                <li>Home Equity</li>
-                <li>Personal Loans</li>
-                <li>Auto Loans</li>
-                <li>Business Loans</li>
-                <li>Credit Cards</li>
-              </ul>
+              <h4 className="font-bold mb-4 text-heritage-gold text-lg">📞 Contact Us</h4>
+              <div className="space-y-3 text-sm">
+                <div>
+                  <p className="font-semibold text-heritage-gold">Customer Service</p>
+                  <p className="text-white/90">📱 1-800-HERITAGE</p>
+                  <p className="text-white/90">📱 (800) 437-4824</p>
+                  <p className="text-white/70 text-xs">Available 24/7</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-heritage-gold">Email</p>
+                  <p className="text-white/90">✉️ support@heritagebank.com</p>
+                  <p className="text-white/90">✉️ business@heritagebank.com</p>
+                </div>
+                <div>
+                  <p className="font-semibold text-heritage-gold">Headquarters</p>
+                  <p className="text-white/90">🏛️ 123 Heritage Plaza</p>
+                  <p className="text-white/90">New York, NY 10001</p>
+                </div>
+              </div>
             </div>
+
             <div>
-              <h4 className="font-semibold mb-4 text-heritage-gold">Locations</h4>
-              <ul className="space-y-2 text-sm text-white/80">
-                <li>Dallas, Texas</li>
-                <li>Austin, Texas</li>
-                <li>Houston, Texas</li>
-                <li>Oklahoma City, OK</li>
-                <li>Atlanta, Georgia</li>
-                <li>Find an ATM</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4 text-heritage-gold">Contact Us</h4>
-              <ul className="space-y-2 text-sm text-white/80">
-                <li>1-800-HERITAGE</li>
-                <li>(1-800-437-4824)</li>
-                <li>support@heritage.bank</li>
-                <li>24/7 Customer Service</li>
-                <li>Routing: 123456789</li>
-                <li>FDIC #123456</li>
+              <h4 className="font-bold mb-4 text-heritage-gold text-lg">⚡ Quick Links</h4>
+              <ul className="space-y-2 text-sm">
+                <li><Link to="/auth" className="hover:text-heritage-gold transition-colors">Online Banking Login</Link></li>
+                <li><Link to="/auth" className="hover:text-heritage-gold transition-colors">Open an Account</Link></li>
+                <li><Link to="/dashboard" className="hover:text-heritage-gold transition-colors">Dashboard</Link></li>
+                <li><Link to="/about" className="hover:text-heritage-gold transition-colors">About Us</Link></li>
+                <li><Link to="/contact" className="hover:text-heritage-gold transition-colors">Contact</Link></li>
+                <li><button onClick={() => setShowCards(true)} className="hover:text-heritage-gold transition-colors text-left">View Cards</button></li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-white/20 mt-12 pt-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center md:text-left">
-              <p className="text-white/60 text-sm">
-                © 2024 Heritage Bank. All rights reserved. 
+
+          {/* Call-to-Action Banner */}
+          <div className="mt-12 bg-heritage-gold/10 border border-heritage-gold/30 rounded-xl p-6 text-center">
+            <h4 className="text-2xl font-bold text-heritage-gold mb-2">🌟 Ready to Experience Premium Banking?</h4>
+            <p className="text-white/90 mb-4">Join Heritage Bank today and discover why we're America's fastest-growing bank!</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/auth">
+                <Button size="lg" className="bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-bold">
+                  Open Account Now
+                </Button>
+              </Link>
+              <Button size="lg" variant="outline" className="border-heritage-gold text-heritage-gold hover:bg-heritage-gold hover:text-heritage-blue">
+                Contact Us
+              </Button>
+            </div>
+          </div>
+
+          <div className="border-t border-heritage-gold/30 mt-12 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+              <p className="text-white/80 text-sm">
+                © 2025 Heritage Bank. All rights reserved. | Banking Excellence Since 1892
               </p>
-              <p className="text-white/60 text-sm md:text-right">
-                Privacy Policy | Terms of Service | Accessibility | Security
-              </p>
+              <div className="flex gap-4 text-sm text-white/80">
+                <a href="#" className="hover:text-heritage-gold transition-colors">Privacy Policy</a>
+                <span>•</span>
+                <a href="#" className="hover:text-heritage-gold transition-colors">Terms of Service</a>
+                <span>•</span>
+                <a href="#" className="hover:text-heritage-gold transition-colors">Accessibility</a>
+                <span>•</span>
+                <a href="#" className="hover:text-heritage-gold transition-colors">Security</a>
+              </div>
             </div>
           </div>
         </div>
