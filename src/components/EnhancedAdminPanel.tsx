@@ -88,6 +88,21 @@ interface Transaction {
   transfer_type: string;
 }
 
+interface AccountApplication {
+  id: string;
+  user_id: string | null;
+  application_type: string;
+  status: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  application_number: string;
+  submitted_at: string;
+  annual_income: number | null;
+  initial_deposit_amount: number | null;
+}
+
 export const EnhancedAdminPanel = () => {
   const { user, isAdmin } = useAuth();
   const { toast } = useToast();
@@ -95,6 +110,7 @@ export const EnhancedAdminPanel = () => {
   const [depositRequests, setDepositRequests] = useState<DepositRequest[]>([]);
   const [withdrawRequests, setWithdrawRequests] = useState<WithdrawRequest[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [applications, setApplications] = useState<AccountApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -141,7 +157,8 @@ export const EnhancedAdminPanel = () => {
       fetchNotifications(),
       fetchDepositRequests(),
       fetchWithdrawRequests(),
-      fetchTransactions()
+      fetchTransactions(),
+      fetchApplications()
     ]);
     setLoading(false);
   };
@@ -204,6 +221,51 @@ export const EnhancedAdminPanel = () => {
       setTransactions(data || []);
     } catch (error) {
       console.error('Error fetching transactions:', error);
+    }
+  };
+
+  const fetchApplications = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('account_applications')
+        .select('id, user_id, application_type, status, first_name, last_name, email, phone, application_number, submitted_at, annual_income, initial_deposit_amount')
+        .order('submitted_at', { ascending: false });
+
+      if (error) throw error;
+      setApplications(data || []);
+    } catch (error) {
+      console.error('Error fetching applications:', error);
+    }
+  };
+
+  const updateApplicationStatus = async (appId: string, status: string, notes?: string) => {
+    try {
+      const { error } = await supabase
+        .from('account_applications')
+        .update({
+          status,
+          admin_notes: notes,
+          reviewed_by: user?.id,
+          reviewed_at: new Date().toISOString(),
+          ...(status === 'approved' && { approval_date: new Date().toISOString() })
+        })
+        .eq('id', appId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Application Updated",
+        description: `Application ${status}`,
+      });
+
+      fetchApplications();
+    } catch (error) {
+      console.error('Error updating application:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update application",
+        variant: "destructive"
+      });
     }
   };
 
@@ -303,6 +365,7 @@ export const EnhancedAdminPanel = () => {
   const unreadNotifications = notifications.filter(n => !n.is_read).length;
   const pendingDeposits = depositRequests.filter(d => d.status === 'pending').length;
   const pendingWithdraws = withdrawRequests.filter(w => w.status === 'pending').length;
+  const pendingApplications = applications.filter(a => a.status === 'pending').length;
   const recentTransactions = transactions.filter(t => 
     new Date(t.created_at) > new Date(Date.now() - 24 * 60 * 60 * 1000)
   ).length;
@@ -372,9 +435,12 @@ export const EnhancedAdminPanel = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="users">Users</TabsTrigger>
+          <TabsTrigger value="applications">
+            Applications {pendingApplications > 0 && `(${pendingApplications})`}
+          </TabsTrigger>
           <TabsTrigger value="notifications">
             Notifications {unreadNotifications > 0 && `(${unreadNotifications})`}
           </TabsTrigger>
@@ -450,6 +516,105 @@ export const EnhancedAdminPanel = () => {
 
         <TabsContent value="users" className="space-y-4">
           <UserManagement />
+        </TabsContent>
+
+        <TabsContent value="applications" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Account Applications</CardTitle>
+              <CardDescription>Review and approve account opening applications</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {applications.map((app) => (
+                  <div key={app.id} className="p-4 border rounded-lg bg-card">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <FileText className="w-5 h-5 text-primary" />
+                        <div>
+                          <p className="font-semibold text-lg">
+                            {app.first_name} {app.last_name}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {app.application_type.replace('_', ' ')}
+                          </p>
+                          <p className="text-xs text-muted-foreground font-mono mt-1">
+                            #{app.application_number}
+                          </p>
+                        </div>
+                      </div>
+                      <Badge 
+                        variant={
+                          app.status === 'approved' ? 'default' : 
+                          app.status === 'rejected' ? 'destructive' : 
+                          'secondary'
+                        }
+                      >
+                        {app.status}
+                      </Badge>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-2 gap-2 text-sm mb-3">
+                      <div>
+                        <span className="text-muted-foreground">Email:</span> {app.email}
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Phone:</span> {app.phone}
+                      </div>
+                      {app.annual_income && (
+                        <div>
+                          <span className="text-muted-foreground">Income:</span> ${app.annual_income.toLocaleString()}
+                        </div>
+                      )}
+                      {app.initial_deposit_amount && (
+                        <div>
+                          <span className="text-muted-foreground">Initial Deposit:</span> ${app.initial_deposit_amount.toLocaleString()}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-center justify-between pt-3 border-t">
+                      <p className="text-xs text-muted-foreground">
+                        Submitted: {new Date(app.submitted_at).toLocaleString()}
+                      </p>
+                      {app.status === 'pending' && (
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => updateApplicationStatus(app.id, 'under_review')}
+                          >
+                            Review
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => updateApplicationStatus(app.id, 'approved')}
+                            className="bg-green-600 hover:bg-green-700"
+                          >
+                            <CheckCircle className="w-4 h-4 mr-1" />
+                            Approve
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="destructive"
+                            onClick={() => updateApplicationStatus(app.id, 'rejected', 'Application rejected by admin')}
+                          >
+                            <XCircle className="w-4 h-4 mr-1" />
+                            Reject
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                {applications.length === 0 && (
+                  <div className="text-center py-8 text-muted-foreground">
+                    No applications found
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="notifications" className="space-y-4">

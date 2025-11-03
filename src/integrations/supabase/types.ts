@@ -14,6 +14,207 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_applications: {
+        Row: {
+          admin_notes: string | null
+          alternate_phone: string | null
+          annual_income: number | null
+          application_number: string
+          application_type: string
+          approval_date: string | null
+          apt_unit: string | null
+          citizenship: string
+          city: string
+          consent_credit_check: boolean | null
+          consent_electronic_communications: boolean | null
+          consent_privacy: boolean | null
+          consent_terms: boolean | null
+          country: string
+          created_at: string | null
+          date_of_birth: string
+          email: string
+          employer_name: string | null
+          employer_phone: string | null
+          employment_status: string
+          first_name: string
+          funding_source: string | null
+          generated_account_number: string | null
+          generated_routing_number: string | null
+          id: string
+          id_document_url: string | null
+          id_expiration_date: string | null
+          id_number_encrypted: string | null
+          id_state: string | null
+          id_type: string | null
+          initial_deposit_amount: number | null
+          last_name: string
+          middle_name: string | null
+          occupation: string | null
+          other_income_amount: number | null
+          other_income_source: string | null
+          phone: string
+          prev_city: string | null
+          prev_state: string | null
+          prev_street_address: string | null
+          prev_zip_code: string | null
+          proof_of_address_url: string | null
+          proof_of_income_url: string | null
+          rejection_reason: string | null
+          requested_amount: number | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          security_answer_1_encrypted: string
+          security_answer_2_encrypted: string
+          security_answer_3_encrypted: string | null
+          security_question_1: string
+          security_question_2: string
+          security_question_3: string | null
+          ssn_encrypted: string
+          ssn_last_4: string
+          state: string
+          status: string
+          street_address: string
+          submitted_at: string | null
+          updated_at: string | null
+          user_id: string | null
+          years_at_address: number | null
+          years_employed: number | null
+          zip_code: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          alternate_phone?: string | null
+          annual_income?: number | null
+          application_number: string
+          application_type: string
+          approval_date?: string | null
+          apt_unit?: string | null
+          citizenship?: string
+          city: string
+          consent_credit_check?: boolean | null
+          consent_electronic_communications?: boolean | null
+          consent_privacy?: boolean | null
+          consent_terms?: boolean | null
+          country?: string
+          created_at?: string | null
+          date_of_birth: string
+          email: string
+          employer_name?: string | null
+          employer_phone?: string | null
+          employment_status: string
+          first_name: string
+          funding_source?: string | null
+          generated_account_number?: string | null
+          generated_routing_number?: string | null
+          id?: string
+          id_document_url?: string | null
+          id_expiration_date?: string | null
+          id_number_encrypted?: string | null
+          id_state?: string | null
+          id_type?: string | null
+          initial_deposit_amount?: number | null
+          last_name: string
+          middle_name?: string | null
+          occupation?: string | null
+          other_income_amount?: number | null
+          other_income_source?: string | null
+          phone: string
+          prev_city?: string | null
+          prev_state?: string | null
+          prev_street_address?: string | null
+          prev_zip_code?: string | null
+          proof_of_address_url?: string | null
+          proof_of_income_url?: string | null
+          rejection_reason?: string | null
+          requested_amount?: number | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          security_answer_1_encrypted: string
+          security_answer_2_encrypted: string
+          security_answer_3_encrypted?: string | null
+          security_question_1: string
+          security_question_2: string
+          security_question_3?: string | null
+          ssn_encrypted: string
+          ssn_last_4: string
+          state: string
+          status?: string
+          street_address: string
+          submitted_at?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          years_at_address?: number | null
+          years_employed?: number | null
+          zip_code: string
+        }
+        Update: {
+          admin_notes?: string | null
+          alternate_phone?: string | null
+          annual_income?: number | null
+          application_number?: string
+          application_type?: string
+          approval_date?: string | null
+          apt_unit?: string | null
+          citizenship?: string
+          city?: string
+          consent_credit_check?: boolean | null
+          consent_electronic_communications?: boolean | null
+          consent_privacy?: boolean | null
+          consent_terms?: boolean | null
+          country?: string
+          created_at?: string | null
+          date_of_birth?: string
+          email?: string
+          employer_name?: string | null
+          employer_phone?: string | null
+          employment_status?: string
+          first_name?: string
+          funding_source?: string | null
+          generated_account_number?: string | null
+          generated_routing_number?: string | null
+          id?: string
+          id_document_url?: string | null
+          id_expiration_date?: string | null
+          id_number_encrypted?: string | null
+          id_state?: string | null
+          id_type?: string | null
+          initial_deposit_amount?: number | null
+          last_name?: string
+          middle_name?: string | null
+          occupation?: string | null
+          other_income_amount?: number | null
+          other_income_source?: string | null
+          phone?: string
+          prev_city?: string | null
+          prev_state?: string | null
+          prev_street_address?: string | null
+          prev_zip_code?: string | null
+          proof_of_address_url?: string | null
+          proof_of_income_url?: string | null
+          rejection_reason?: string | null
+          requested_amount?: number | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          security_answer_1_encrypted?: string
+          security_answer_2_encrypted?: string
+          security_answer_3_encrypted?: string | null
+          security_question_1?: string
+          security_question_2?: string
+          security_question_3?: string | null
+          ssn_encrypted?: string
+          ssn_last_4?: string
+          state?: string
+          status?: string
+          street_address?: string
+          submitted_at?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          years_at_address?: number | null
+          years_employed?: number | null
+          zip_code?: string
+        }
+        Relationships: []
+      }
       accounts: {
         Row: {
           account_number: string
@@ -354,6 +555,92 @@ export type Database = {
           },
         ]
       }
+      external_bank_accounts: {
+        Row: {
+          account_holder_name: string
+          account_number_encrypted: string
+          account_number_last_4: string
+          account_type: string
+          bank_code: string | null
+          bank_id: string | null
+          bank_name: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          is_primary: boolean | null
+          last_used_at: string | null
+          linked_at: string | null
+          micro_deposit_amount_1: number | null
+          micro_deposit_amount_2: number | null
+          nickname: string | null
+          routing_number: string
+          updated_at: string | null
+          user_id: string
+          verification_attempts: number | null
+          verification_date: string | null
+          verification_method: string | null
+          verification_status: string
+        }
+        Insert: {
+          account_holder_name: string
+          account_number_encrypted: string
+          account_number_last_4: string
+          account_type: string
+          bank_code?: string | null
+          bank_id?: string | null
+          bank_name: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_primary?: boolean | null
+          last_used_at?: string | null
+          linked_at?: string | null
+          micro_deposit_amount_1?: number | null
+          micro_deposit_amount_2?: number | null
+          nickname?: string | null
+          routing_number: string
+          updated_at?: string | null
+          user_id: string
+          verification_attempts?: number | null
+          verification_date?: string | null
+          verification_method?: string | null
+          verification_status?: string
+        }
+        Update: {
+          account_holder_name?: string
+          account_number_encrypted?: string
+          account_number_last_4?: string
+          account_type?: string
+          bank_code?: string | null
+          bank_id?: string | null
+          bank_name?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_primary?: boolean | null
+          last_used_at?: string | null
+          linked_at?: string | null
+          micro_deposit_amount_1?: number | null
+          micro_deposit_amount_2?: number | null
+          nickname?: string | null
+          routing_number?: string
+          updated_at?: string | null
+          user_id?: string
+          verification_attempts?: number | null
+          verification_date?: string | null
+          verification_method?: string | null
+          verification_status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "external_bank_accounts_bank_id_fkey"
+            columns: ["bank_id"]
+            isOneToOne: false
+            referencedRelation: "usa_banks_directory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payment_methods: {
         Row: {
           account_number: string | null
@@ -510,6 +797,51 @@ export type Database = {
           },
         ]
       }
+      usa_banks_directory: {
+        Row: {
+          bank_code: string
+          bank_name: string
+          bank_type: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          logo_url: string | null
+          primary_color: string | null
+          routing_number: string | null
+          secondary_color: string | null
+          supports_instant_verification: boolean | null
+          swift_code: string | null
+        }
+        Insert: {
+          bank_code: string
+          bank_name: string
+          bank_type: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          primary_color?: string | null
+          routing_number?: string | null
+          secondary_color?: string | null
+          supports_instant_verification?: boolean | null
+          swift_code?: string | null
+        }
+        Update: {
+          bank_code?: string
+          bank_name?: string
+          bank_type?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          logo_url?: string | null
+          primary_color?: string | null
+          routing_number?: string | null
+          secondary_color?: string | null
+          supports_instant_verification?: boolean | null
+          swift_code?: string | null
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -589,6 +921,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_application_number: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -596,10 +929,7 @@ export type Database = {
         }
         Returns: boolean
       }
-      setup_premium_user_accounts: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
+      setup_premium_user_accounts: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

@@ -19,6 +19,10 @@ import History from "./pages/dashboard/History";
 import Withdraw from "./pages/dashboard/Withdraw";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import OpenAccount from "./pages/OpenAccount";
+import LinkExternalBank from "./pages/LinkExternalBank";
+import ConnectExternalBank from "./pages/ConnectExternalBank";
+
 const queryClient = new QueryClient();
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -142,9 +146,30 @@ const App = () => (
               }
             />
 
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            {/* Public Routes */}
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/open-account" element={<OpenAccount />} />
+            
+            {/* Protected Account Routes */}
+            <Route 
+              path="/link-external-bank" 
+              element={
+                <ProtectedRoute>
+                  <LinkExternalBank />
+                </ProtectedRoute>
+              }
+            />
+            <Route 
+              path="/link-external-bank/connect" 
+              element={
+                <ProtectedRoute>
+                  <ConnectExternalBank />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

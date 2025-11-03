@@ -269,45 +269,74 @@ const Auth = () => {
                   </TabsContent>
 
                   <TabsContent value="signup">
-                    <form onSubmit={handleSignUp} className="space-y-6">
-                      <div className="space-y-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="signup-email" className="text-heritage-blue font-medium">Email Address</Label>
-                          <Input
-                            id="signup-email"
-                            type="email"
-                            placeholder="your@email.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="border-heritage-blue/20 focus:border-heritage-gold focus:ring-heritage-gold"
-                            required
-                          />
+                    <div className="space-y-6">
+                      <div className="bg-heritage-blue/5 border border-heritage-gold/20 rounded-md p-4">
+                        <p className="text-sm text-heritage-blue/90 mb-3">
+                          <strong>Open Your Heritage Account</strong>
+                        </p>
+                        <p className="text-xs text-heritage-blue/70 mb-3">
+                          Complete our comprehensive American banking application with full KYC verification, 
+                          security questions, and account setup.
+                        </p>
+                        <Link to="/open-account">
+                          <Button className="w-full bg-heritage-blue hover:bg-heritage-blue-dark text-heritage-gold font-semibold">
+                            Open New Account
+                          </Button>
+                        </Link>
+                      </div>
+                      
+                      <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                          <span className="w-full border-t border-heritage-blue/20" />
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="signup-password" className="text-heritage-blue font-medium">Password</Label>
-                          <Input
-                            id="signup-password"
-                            type="password"
-                            placeholder="Create a strong password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="border-heritage-blue/20 focus:border-heritage-gold focus:ring-heritage-gold"
-                            required
-                          />
-                          <p className="text-xs text-heritage-blue/60">
-                            Must be at least 8 characters with uppercase, lowercase, and numbers
-                          </p>
+                        <div className="relative flex justify-center text-xs uppercase">
+                          <span className="bg-white px-2 text-heritage-blue/50">Or quick signup</span>
                         </div>
                       </div>
-                      <Button 
-                        type="submit" 
-                        className="w-full bg-heritage-blue hover:bg-heritage-blue-dark text-heritage-gold font-semibold py-3" 
-                        disabled={loading}
-                      >
-                        {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        {loading ? 'Creating Account...' : 'Create Account'}
-                      </Button>
-                    </form>
+
+                      <form onSubmit={handleSignUp} className="space-y-4">
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="signup-email" className="text-heritage-blue font-medium">Email Address</Label>
+                            <Input
+                              id="signup-email"
+                              type="email"
+                              placeholder="your@email.com"
+                              value={email}
+                              onChange={(e) => setEmail(e.target.value)}
+                              className="border-heritage-blue/20 focus:border-heritage-gold focus:ring-heritage-gold"
+                              required
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="signup-password" className="text-heritage-blue font-medium">Password</Label>
+                            <Input
+                              id="signup-password"
+                              type="password"
+                              placeholder="Create a strong password"
+                              value={password}
+                              onChange={(e) => setPassword(e.target.value)}
+                              className="border-heritage-blue/20 focus:border-heritage-gold focus:ring-heritage-gold"
+                              required
+                            />
+                            <p className="text-xs text-heritage-blue/60">
+                              Must be at least 8 characters
+                            </p>
+                          </div>
+                        </div>
+                        <Button 
+                          type="submit" 
+                          className="w-full bg-heritage-blue hover:bg-heritage-blue-dark text-heritage-gold font-semibold py-3" 
+                          disabled={loading}
+                        >
+                          {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                          {loading ? 'Creating Account...' : 'Quick Signup'}
+                        </Button>
+                        <p className="text-xs text-center text-heritage-blue/60">
+                          Quick signup allows immediate access. Complete full application later.
+                        </p>
+                      </form>
+                    </div>
                   </TabsContent>
                 </Tabs>
               </CardContent>
