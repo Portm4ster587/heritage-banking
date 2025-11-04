@@ -45,10 +45,9 @@ export const BankingHeader = ({ activeSection, onSectionChange }: BankingHeaderP
               <img 
                 src={heritageLogoImage} 
                 alt="Heritage Bank Logo" 
-                className="w-full h-full object-contain animate-float drop-shadow-lg"
+                className="w-full h-full object-contain animate-float"
                 style={{ 
-                  filter: 'drop-shadow(0 0 8px rgba(54, 121, 245, 0.6)) brightness(1.1) contrast(1.2)',
-                  mixBlendMode: 'screen'
+                  filter: 'drop-shadow(0 0 12px rgba(212, 175, 55, 0.9)) brightness(1.3) contrast(1.3) saturate(1.2)',
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full blur-md -z-10"></div>

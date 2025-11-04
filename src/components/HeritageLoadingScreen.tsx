@@ -41,8 +41,6 @@ export const HeritageLoadingScreen = ({
         </div>
         
         <div className="text-center space-y-4">
-          <p className="text-heritage-gold text-xl font-semibold animate-pulse tracking-wide">{message}</p>
-          
           {/* Enhanced loading dots */}
           <div className="flex space-x-2 justify-center">
             {[...Array(3)].map((_, i) => (

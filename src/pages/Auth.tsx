@@ -168,9 +168,9 @@ const Auth = () => {
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
               opacity: currentBgIndex === index ? 1 : 0,
-              imageRendering: 'crisp-edges',
               WebkitBackfaceVisibility: 'hidden',
               backfaceVisibility: 'hidden',
+              filter: 'contrast(1.15) saturate(1.25) brightness(1.05)',
             }}
           />
         ))}
@@ -190,11 +190,11 @@ const Auth = () => {
 
       <div className="relative flex items-center justify-center min-h-screen py-8 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md">
-          <Card className="bg-white/95 backdrop-blur-md shadow-2xl border-0">
-            <CardHeader className="text-center space-y-4">
+          <Card className="bg-white/95 backdrop-blur-md shadow-2xl border-0 max-w-sm mx-auto">
+            <CardHeader className="text-center space-y-3 py-4">
               <div className="flex justify-center">
                 <AnimatedHeritageLogo 
-                  size="lg" 
+                  size="md" 
                   isActive={true} 
                   variant={showSuccess ? "success" : "login"}
                   onAnimationComplete={() => {
@@ -205,9 +205,9 @@ const Auth = () => {
                 />
               </div>
               <div>
-                <CardTitle className="text-2xl font-bold text-heritage-blue">Heritage Bank</CardTitle>
-                <CardDescription className="text-heritage-blue/70">
-                  Secure access to your premium banking experience
+                <CardTitle className="text-xl font-bold text-heritage-blue">Heritage Bank</CardTitle>
+                <CardDescription className="text-heritage-blue/70 text-sm">
+                  Secure premium banking
                 </CardDescription>
               </div>
             </CardHeader>
@@ -343,10 +343,9 @@ const Auth = () => {
             )}
             
             {showSuccess && (
-              <CardContent className="text-center py-8">
-                <div className="space-y-4">
-                  <h3 className="text-xl font-semibold text-heritage-blue">Authentication Successful!</h3>
-                  <p className="text-heritage-blue/70">Redirecting to your dashboard...</p>
+              <CardContent className="text-center py-6">
+                <div className="space-y-3">
+                  <h3 className="text-lg font-semibold text-heritage-blue">Authentication Successful!</h3>
                 </div>
               </CardContent>
             )}

@@ -36,21 +36,19 @@ export const CustomerChatWidget = () => {
       {/* Chat Window */}
       {isOpen && (
         <Card className="fixed bottom-6 right-6 w-96 shadow-2xl z-50 animate-fade-in">
-          <CardHeader className="bg-heritage-blue text-white">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg flex items-center space-x-2">
-                <MessageCircle className="h-5 w-5" />
-                <span>Chat with Heritage Bank</span>
-              </CardTitle>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsOpen(false)}
-                className="text-white hover:bg-white/20"
-              >
-                <X className="h-5 w-5" />
-              </Button>
-            </div>
+          <CardHeader className="bg-heritage-blue text-white relative">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsOpen(false)}
+              className="absolute top-2 right-2 text-white hover:bg-white/20 z-10"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+            <CardTitle className="text-lg flex items-center space-x-2">
+              <MessageCircle className="h-5 w-5" />
+              <span>Chat with Heritage Bank</span>
+            </CardTitle>
           </CardHeader>
           <CardContent className="p-4">
             <div className="space-y-4">

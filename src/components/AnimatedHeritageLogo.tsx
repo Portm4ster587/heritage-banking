@@ -140,19 +140,6 @@ export const AnimatedHeritageLogo = ({
         </div>
       </div>
 
-      {/* Status Text */}
-      {size !== 'sm' && (
-        <div className={cn(
-          "absolute -bottom-8 left-1/2 transform -translate-x-1/2",
-          "text-xs font-medium text-muted-foreground whitespace-nowrap",
-          isActive && "animate-fade-in"
-        )}>
-          {variant === 'login' && 'Authenticating...'}
-          {variant === 'transfer' && 'Processing Transfer...'}
-          {variant === 'success' && 'Success!'}
-          {variant === 'loading' && 'Loading...'}
-        </div>
-      )}
     </div>
   );
 };

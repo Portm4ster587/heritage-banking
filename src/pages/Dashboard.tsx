@@ -1,36 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { HeritageLoadingScreen } from '@/components/HeritageLoadingScreen';
-import { 
-  CreditCard, 
-  Send, 
-  Plus, 
-  Eye, 
-  EyeOff, 
-  TrendingUp, 
-  Shield, 
-  Bell,
-  Settings,
-  LogOut,
-  Wallet,
-  ArrowUpRight,
-  ArrowDownRight,
-  Clock,
-  User,
-  Building,
-  Home,
-  Car,
-  FileText,
-  DollarSign
-} from 'lucide-react';
+import { Bell } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { AccountOverviewSection } from '@/components/dashboard/AccountOverviewSection';
 import { BankingHeader } from '@/components/BankingHeader';
 import { ApplicationForm } from '@/components/ApplicationForm';
 import { AdminPanel } from '@/components/AdminPanel';
@@ -276,114 +252,16 @@ export default function Dashboard() {
           <p className="text-muted-foreground">Manage your accounts and banking services</p>
         </div>
 
-        {/* Balance Overview */}
-        <div className="grid gap-6 md:grid-cols-3 mb-8">
-          <Card className="md:col-span-2 overflow-hidden relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20 pointer-events-none" />
-            <CardHeader className="relative">
-              <CardTitle className="flex items-center justify-between">
-                <span>Total Balance</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setBalanceVisible(!balanceVisible)}
-                >
-                  {balanceVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </Button>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="relative">
-              <div className="text-3xl font-bold mb-2">
-                {balanceVisible ? `$${totalBalance.toLocaleString()}` : '••••••••'}
-              </div>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <TrendingUp className="w-3 h-3 text-success" />
-                  <span>+2.1% this month</span>
-                </div>
-                <div>Last updated: just now</div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <div className="space-y-4">
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Active Accounts</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{accounts.length}</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm font-medium">Pending Transfers</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">
-                  {transfers.filter(t => t.status === 'pending').length}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
         {activeSection === 'accounts' && (
-          <div className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-semibold">Your Accounts</h2>
-              <Button 
-                className="gap-2"
-                onClick={() => {
-                  setApplicationType('checking');
-                  setShowApplicationForm(true);
-                }}
-              >
-                <Plus className="w-4 h-4" />
-                Open New Account
-              </Button>
-            </div>
-            
-            <div className="grid gap-4 md:grid-cols-2">
-              {accounts.map((account) => (
-                <Card key={account.id} className="hover:shadow-lg transition-shadow">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                     <CardTitle className="text-lg capitalize">
-                        {account.account_type
-                          .replace('_', ' ')
-                          .replace('personal checking', 'Heritage Checking')
-                          .replace('personal savings', 'Heritage Savings')
-                          .replace('business savings', 'Business Savings')
-                          .replace('loan account', 'Loan Account')}
-                      </CardTitle>
-                      <Badge variant={account.status === 'active' ? 'default' : 'secondary'}>
-                        {account.status}
-                      </Badge>
-                    </div>
-                    <CardDescription>••• {account.account_number.slice(-4)}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Available Balance</p>
-                      <p className="text-2xl font-bold">
-                        {balanceVisible ? `$${(account.balance ?? 0).toLocaleString()}` : '••••••'}
-                      </p>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setBalanceVisible(!balanceVisible)}
-                    >
-                      {balanceVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </Button>
-                  </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
+          <AccountOverviewSection
+            accounts={accounts}
+            balanceVisible={balanceVisible}
+            onToggleBalance={() => setBalanceVisible(!balanceVisible)}
+            onOpenNewAccount={() => {
+              setApplicationType('checking');
+              setShowApplicationForm(true);
+            }}
+          />
         )}
 
         {activeSection === 'transfers' && (
@@ -423,24 +301,7 @@ export default function Dashboard() {
         )}
 
         {activeSection === 'notifications' && (
-          <div className="max-w-4xl mx-auto space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Bell className="w-5 h-5" />
-                  Notification Preferences
-                </CardTitle>
-                <CardDescription>
-                  Manage how and when you receive notifications
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground">
-                  Notification settings will be available here. You can manage email alerts, SMS notifications, and in-app notifications.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+          <AccountSettings />
         )}
 
         {activeSection === 'help' && (
