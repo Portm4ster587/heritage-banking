@@ -219,10 +219,10 @@ export default function OpenAccount() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-heritage-blue via-heritage-blue-dark to-heritage-blue py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-heritage-blue via-heritage-blue-dark to-heritage-blue py-6 sm:py-8 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <Link to="/">
             <Button variant="ghost" className="text-heritage-gold hover:bg-white/10 mb-4">
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -230,11 +230,11 @@ export default function OpenAccount() {
             </Button>
           </Link>
           <Card className="bg-white/95 backdrop-blur">
-            <CardHeader>
-              <CardTitle className="text-3xl text-heritage-blue">Open Your Heritage Account</CardTitle>
-              <CardDescription className="text-lg">Complete American Banking Application</CardDescription>
+            <CardHeader className="p-4 sm:p-6">
+              <CardTitle className="text-2xl sm:text-3xl text-heritage-blue">Open Your Heritage Account</CardTitle>
+              <CardDescription className="text-base sm:text-lg">Complete American Banking Application</CardDescription>
               <div className="mt-4">
-                <div className="flex justify-between text-sm text-muted-foreground mb-2">
+                <div className="flex justify-between text-xs sm:text-sm text-muted-foreground mb-2">
                   <span>Step {step} of {totalSteps}</span>
                   <span>{Math.round(progress)}% Complete</span>
                 </div>
@@ -249,14 +249,14 @@ export default function OpenAccount() {
             {/* Step 1: Personal Information */}
             {step === 1 && (
               <Card className="bg-white/95 backdrop-blur animate-fade-in">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-heritage-blue">
-                    <User className="w-6 h-6" />
+                <CardHeader className="p-4 sm:p-6">
+                  <CardTitle className="flex items-center gap-2 text-heritage-blue text-lg sm:text-xl">
+                    <User className="w-5 h-5 sm:w-6 sm:h-6" />
                     Personal Information
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid md:grid-cols-3 gap-4">
+                <CardContent className="space-y-4 p-4 sm:p-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                     <FormField
                       control={form.control}
                       name="firstName"
@@ -298,7 +298,7 @@ export default function OpenAccount() {
                     />
                   </div>
                   
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
                       name="dateOfBirth"
@@ -361,14 +361,14 @@ export default function OpenAccount() {
             {/* Step 2: Contact & Address */}
             {step === 2 && (
               <Card className="bg-white/95 backdrop-blur animate-fade-in">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-heritage-blue">
-                    <MapPin className="w-6 h-6" />
+                <CardHeader className="p-4 sm:p-6">
+                  <CardTitle className="flex items-center gap-2 text-heritage-blue text-lg sm:text-xl">
+                    <MapPin className="w-5 h-5 sm:w-6 sm:h-6" />
                     Contact & Address Information
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid md:grid-cols-2 gap-4">
+                <CardContent className="space-y-4 p-4 sm:p-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
                       name="email"
@@ -486,13 +486,13 @@ export default function OpenAccount() {
             {/* Step 3: Employment */}
             {step === 3 && (
               <Card className="bg-white/95 backdrop-blur animate-fade-in">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-heritage-blue">
-                    <Briefcase className="w-6 h-6" />
+                <CardHeader className="p-4 sm:p-6">
+                  <CardTitle className="flex items-center gap-2 text-heritage-blue text-lg sm:text-xl">
+                    <Briefcase className="w-5 h-5 sm:w-6 sm:h-6" />
                     Employment & Income
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 p-4 sm:p-6">
                   <FormField
                     control={form.control}
                     name="employmentStatus"
@@ -518,7 +518,7 @@ export default function OpenAccount() {
                     )}
                   />
 
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
                       name="employerName"
@@ -568,14 +568,14 @@ export default function OpenAccount() {
             {/* Step 4: Security Questions */}
             {step === 4 && (
               <Card className="bg-white/95 backdrop-blur animate-fade-in">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-heritage-blue">
-                    <Shield className="w-6 h-6" />
+                <CardHeader className="p-4 sm:p-6">
+                  <CardTitle className="flex items-center gap-2 text-heritage-blue text-lg sm:text-xl">
+                    <Shield className="w-5 h-5 sm:w-6 sm:h-6" />
                     Security Questions
                   </CardTitle>
                   <CardDescription>Choose security questions to protect your account</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 p-4 sm:p-6">
                   <div className="space-y-3">
                     <FormField
                       control={form.control}
@@ -658,13 +658,13 @@ export default function OpenAccount() {
             {/* Step 5: Product Selection & Agreements */}
             {step === 5 && (
               <Card className="bg-white/95 backdrop-blur animate-fade-in">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-heritage-blue">
-                    <FileText className="w-6 h-6" />
+                <CardHeader className="p-4 sm:p-6">
+                  <CardTitle className="flex items-center gap-2 text-heritage-blue text-lg sm:text-xl">
+                    <FileText className="w-5 h-5 sm:w-6 sm:h-6" />
                     Account Details & Agreements
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-4 p-4 sm:p-6">
                   <FormField
                     control={form.control}
                     name="accountType"
@@ -689,7 +689,7 @@ export default function OpenAccount() {
                     )}
                   />
 
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
                       name="initialDeposit"
@@ -808,14 +808,14 @@ export default function OpenAccount() {
 
             {/* Navigation Buttons */}
             <Card className="bg-white/95 backdrop-blur">
-              <CardContent className="pt-6">
-                <div className="flex justify-between">
+              <CardContent className="p-4 sm:p-6">
+                <div className="flex flex-col sm:flex-row justify-between gap-3">
                   {step > 1 && (
                     <Button
                       type="button"
                       variant="outline"
                       onClick={prevStep}
-                      className="border-heritage-blue text-heritage-blue"
+                      className="border-heritage-blue text-heritage-blue w-full sm:w-auto"
                     >
                       Previous
                     </Button>
@@ -824,7 +824,7 @@ export default function OpenAccount() {
                     <Button
                       type="button"
                       onClick={nextStep}
-                      className="ml-auto bg-heritage-gold hover:bg-heritage-gold/90 text-heritage-blue"
+                      className="sm:ml-auto bg-heritage-gold hover:bg-heritage-gold/90 text-heritage-blue w-full sm:w-auto"
                     >
                       Next Step
                     </Button>
@@ -832,7 +832,7 @@ export default function OpenAccount() {
                     <Button
                       type="submit"
                       disabled={loading}
-                      className="ml-auto bg-heritage-blue hover:bg-heritage-blue-dark text-heritage-gold"
+                      className="sm:ml-auto bg-heritage-blue hover:bg-heritage-blue-dark text-heritage-gold w-full sm:w-auto"
                     >
                       {loading ? (
                         <>

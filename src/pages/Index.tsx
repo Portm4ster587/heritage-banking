@@ -8,7 +8,7 @@ import { AnimatedHeritageLogo } from "../components/AnimatedHeritageLogo";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { GuestApplicationForm } from "../components/GuestApplicationForm";
 import { useAuth } from "@/hooks/useAuth";
-import { Sparkles, Shield, Zap, Users } from "lucide-react";
+import { Sparkles, Shield, Zap, Users, Phone, Mail, MapPin, Landmark } from "lucide-react";
 import { CustomerChatWidget } from "../components/CustomerChatWidget";
 import bankingHeroImage from "@/assets/banking-hero.jpg";
 import cardsShowcaseImage from "@/assets/cards-showcase.jpg";
@@ -357,12 +357,20 @@ const Index = () => {
                   <p className="text-xs text-heritage-gold/80">Excellence Since 1892</p>
                 </div>
               </div>
-              <p className="text-white/90 text-sm mb-4 leading-relaxed">
-                💼 <strong>Banking You Can Trust</strong><br />
-                Join over 100,000 satisfied customers who've chosen Heritage Bank for security, innovation, and exceptional service.
-              </p>
-              <p className="text-xs text-heritage-gold/90 font-semibold mb-2">
-                🛡️ FDIC Insured up to $250,000
+              <div className="space-y-3">
+                <div className="flex items-start space-x-2 text-white/90 text-sm">
+                  <Shield className="w-4 h-4 text-heritage-gold mt-0.5 flex-shrink-0" />
+                  <div>
+                    <strong className="text-heritage-gold">Banking You Can Trust</strong>
+                    <p className="text-xs text-white/80 leading-relaxed mt-1">
+                      Join over 100,000 satisfied customers who've chosen Heritage Bank for security, innovation, and exceptional service.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-heritage-gold/90 font-semibold mb-2 mt-4 flex items-center">
+                <Shield className="w-3.5 h-3.5 mr-1.5" />
+                FDIC Insured up to $250,000
               </p>
               <p className="text-xs text-white/70">
                 Member FDIC | Equal Housing Lender | NMLS #123456
@@ -370,7 +378,10 @@ const Index = () => {
             </div>
             
             <div>
-              <h4 className="font-bold mb-4 text-heritage-gold text-lg">🏦 Banking Services</h4>
+              <h4 className="font-bold mb-4 text-heritage-gold text-lg flex items-center">
+                <Landmark className="w-5 h-5 mr-2" />
+                Banking Services
+              </h4>
               <ul className="space-y-2 text-sm">
                 <li><Link to="/auth" className="hover:text-heritage-gold transition-colors">Personal Checking</Link></li>
                 <li><Link to="/auth" className="hover:text-heritage-gold transition-colors">High-Yield Savings</Link></li>
@@ -382,29 +393,49 @@ const Index = () => {
             </div>
 
             <div>
-              <h4 className="font-bold mb-4 text-heritage-gold text-lg">📞 Contact Us</h4>
+              <h4 className="font-bold mb-4 text-heritage-gold text-lg flex items-center">
+                <Phone className="w-5 h-5 mr-2" />
+                Contact Us
+              </h4>
               <div className="space-y-3 text-sm">
                 <div>
                   <p className="font-semibold text-heritage-gold">Customer Service</p>
-                  <p className="text-white/90">📱 1-800-HERITAGE</p>
-                  <p className="text-white/90">📱 (800) 437-4824</p>
+                  <p className="text-white/90 flex items-center">
+                    <Phone className="w-3.5 h-3.5 mr-1.5" />
+                    1-800-HERITAGE
+                  </p>
+                  <p className="text-white/90 flex items-center">
+                    <Phone className="w-3.5 h-3.5 mr-1.5" />
+                    (800) 437-4824
+                  </p>
                   <p className="text-white/70 text-xs">Available 24/7</p>
                 </div>
                 <div>
                   <p className="font-semibold text-heritage-gold">Email</p>
-                  <p className="text-white/90">✉️ support@heritagebank.com</p>
-                  <p className="text-white/90">✉️ business@heritagebank.com</p>
+                  <p className="text-white/90 flex items-center">
+                    <Mail className="w-3.5 h-3.5 mr-1.5" />
+                    support@heritagebank.com
+                  </p>
+                  <p className="text-white/90 flex items-center">
+                    <Mail className="w-3.5 h-3.5 mr-1.5" />
+                    business@heritagebank.com
+                  </p>
                 </div>
                 <div>
                   <p className="font-semibold text-heritage-gold">Headquarters</p>
-                  <p className="text-white/90">🏛️ 123 Heritage Plaza</p>
-                  <p className="text-white/90">New York, NY 10001</p>
+                  <p className="text-white/90 flex items-start">
+                    <MapPin className="w-3.5 h-3.5 mr-1.5 mt-0.5 flex-shrink-0" />
+                    <span>123 Heritage Plaza<br />New York, NY 10001</span>
+                  </p>
                 </div>
               </div>
             </div>
 
             <div>
-              <h4 className="font-bold mb-4 text-heritage-gold text-lg">⚡ Quick Links</h4>
+              <h4 className="font-bold mb-4 text-heritage-gold text-lg flex items-center">
+                <Zap className="w-5 h-5 mr-2" />
+                Quick Links
+              </h4>
               <ul className="space-y-2 text-sm">
                 <li><Link to="/auth" className="hover:text-heritage-gold transition-colors">Online Banking Login</Link></li>
                 <li><Link to="/auth" className="hover:text-heritage-gold transition-colors">Open an Account</Link></li>
