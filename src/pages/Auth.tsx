@@ -20,7 +20,7 @@ import bankInterior2 from '@/assets/bank-interior-2.jpg';
 
 const Auth = () => {
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState('');
+  const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
@@ -49,9 +49,9 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const normalizedEmail = email.trim().toLowerCase();
+      const normalized = usernameOrEmail.trim().toLowerCase();
       const normalizedPassword = password.trim();
-      const { data, error } = await signIn(normalizedEmail, normalizedPassword);
+      const { data, error } = await signIn(normalized, normalizedPassword);
       
       if (error) {
         let errorMessage = error.message;
@@ -111,7 +111,7 @@ const Auth = () => {
         return;
       }
 
-      const normalizedEmail = email.trim().toLowerCase();
+      const normalizedEmail = usernameOrEmail.trim().toLowerCase();
       const normalizedPassword = password.trim();
       const { data, error } = await signUp(normalizedEmail, normalizedPassword);
       
@@ -139,7 +139,7 @@ const Auth = () => {
           description: "You can now sign in with your credentials. Note: Email confirmation may be required depending on settings.",
           duration: 5000
         });
-        setEmail('');
+        setUsernameOrEmail('');
         setPassword('');
       }
     } catch (error) {
@@ -228,18 +228,18 @@ const Auth = () => {
                     <form onSubmit={handleSignIn} className="space-y-6">
                       <div className="bg-heritage-blue/5 border border-heritage-gold/20 rounded-md p-3 mb-4">
                         <p className="text-xs text-heritage-blue/70">
-                          <strong>First time here?</strong> Please use the Sign Up tab to create your account first.
+                          <strong>Demo Accounts:</strong> Use "user" / "user" or "admin" / "Admin123"
                         </p>
                       </div>
                       <div className="space-y-4">
                         <div className="space-y-2">
-                          <Label htmlFor="email" className="text-heritage-blue font-medium">Email Address</Label>
+                          <Label htmlFor="username" className="text-heritage-blue font-medium">Username or Email</Label>
                           <Input
-                            id="email"
-                            type="email"
-                            placeholder="your@email.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            id="username"
+                            type="text"
+                            placeholder="username or email"
+                            value={usernameOrEmail}
+                            onChange={(e) => setUsernameOrEmail(e.target.value)}
                             className="border-heritage-blue/20 focus:border-heritage-gold focus:ring-heritage-gold"
                             required
                           />
@@ -302,8 +302,8 @@ const Auth = () => {
                               id="signup-email"
                               type="email"
                               placeholder="your@email.com"
-                              value={email}
-                              onChange={(e) => setEmail(e.target.value)}
+                              value={usernameOrEmail}
+                              onChange={(e) => setUsernameOrEmail(e.target.value)}
                               className="border-heritage-blue/20 focus:border-heritage-gold focus:ring-heritage-gold"
                               required
                             />

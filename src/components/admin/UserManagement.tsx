@@ -4,7 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Search, Users, Eye, Edit, Ban, CheckCircle } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Search, Users, Eye, Edit, Ban, CheckCircle, Lock, Unlock, DollarSign, CreditCard } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -25,6 +28,10 @@ export const UserManagement = () => {
   const [users, setUsers] = useState<UserData[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedAccount, setSelectedAccount] = useState<any>(null);
+  const [actionDialog, setActionDialog] = useState<'hold' | 'freeze' | 'adjust' | null>(null);
+  const [adjustAmount, setAdjustAmount] = useState('');
+  const [adjustNote, setAdjustNote] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -83,6 +90,65 @@ export const UserManagement = () => {
 
   const getTotalBalance = (accounts: UserData['accounts']) => {
     return accounts.reduce((sum, acc) => sum + acc.balance, 0);
+  };
+
+  const handleAccountAction = async (accountId: string, action: 'hold' | 'active' | 'frozen') => {
+    try {
+      const { error } = await supabase
+        .from('accounts')
+        .update({ status: action })
+        .eq('id', accountId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Account Updated",
+        description: `Account status changed to ${action}`,
+      });
+
+      fetchUsers();
+      setActionDialog(null);
+    } catch (error) {
+      console.error('Error updating account:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update account status",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleBalanceAdjustment = async () => {
+    if (!selectedAccount || !adjustAmount) return;
+
+    try {
+      const adjustment = parseFloat(adjustAmount);
+      const newBalance = selectedAccount.balance + adjustment;
+
+      const { error } = await supabase
+        .from('accounts')
+        .update({ balance: newBalance })
+        .eq('id', selectedAccount.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Balance Adjusted",
+        description: `Balance ${adjustment > 0 ? 'increased' : 'decreased'} by $${Math.abs(adjustment).toLocaleString()}`,
+      });
+
+      fetchUsers();
+      setActionDialog(null);
+      setAdjustAmount('');
+      setAdjustNote('');
+    } catch (error) {
+      console.error('Error adjusting balance:', error);
+      toast({
+        title: "Error",
+        description: "Failed to adjust balance",
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -163,13 +229,35 @@ export const UserManagement = () => {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Button size="sm" variant="ghost">
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                          <Button size="sm" variant="ghost">
-                            <Edit className="w-4 h-4" />
-                          </Button>
+                        <div className="flex items-center gap-1">
+                          {user.accounts.map((acc) => (
+                            <div key={acc.id} className="flex gap-1">
+                              <Button 
+                                size="sm" 
+                                variant="ghost"
+                                onClick={() => {
+                                  setSelectedAccount(acc);
+                                  setActionDialog('adjust');
+                                }}
+                                title="Adjust Balance"
+                              >
+                                <DollarSign className="w-4 h-4" />
+                              </Button>
+                              <Select
+                                value={acc.status}
+                                onValueChange={(value) => handleAccountAction(acc.id, value as any)}
+                              >
+                                <SelectTrigger className="h-8 w-[100px]">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="active">Active</SelectItem>
+                                  <SelectItem value="hold">Hold</SelectItem>
+                                  <SelectItem value="frozen">Frozen</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+                          ))}
                         </div>
                       </TableCell>
                     </TableRow>
@@ -186,6 +274,55 @@ export const UserManagement = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Balance Adjustment Dialog */}
+      <Dialog open={actionDialog === 'adjust'} onOpenChange={(open) => !open && setActionDialog(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Adjust Account Balance</DialogTitle>
+            <DialogDescription>
+              Current Balance: ${selectedAccount?.balance?.toLocaleString() || '0'}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="amount">Adjustment Amount</Label>
+              <Input
+                id="amount"
+                type="number"
+                step="0.01"
+                placeholder="Enter amount (positive to add, negative to deduct)"
+                value={adjustAmount}
+                onChange={(e) => setAdjustAmount(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="note">Note (optional)</Label>
+              <Input
+                id="note"
+                placeholder="Reason for adjustment"
+                value={adjustNote}
+                onChange={(e) => setAdjustNote(e.target.value)}
+              />
+            </div>
+            {adjustAmount && (
+              <div className="p-3 bg-muted rounded-md">
+                <p className="text-sm font-medium">
+                  New Balance: ${(selectedAccount?.balance + parseFloat(adjustAmount || '0')).toLocaleString()}
+                </p>
+              </div>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setActionDialog(null)}>
+              Cancel
+            </Button>
+            <Button onClick={handleBalanceAdjustment} disabled={!adjustAmount}>
+              Apply Adjustment
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -5,8 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Bitcoin, Send, Wallet, TrendingUp, Download, Upload } from "lucide-react";
+import { Bitcoin, Send, Wallet, TrendingUp, Download, Upload, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import cryptoBgImage from "@/assets/crypto-bg.jpg";
 
 interface CryptoAsset {
@@ -106,7 +107,40 @@ export const CryptoWallet = () => {
   const [sendAmount, setSendAmount] = useState<string>('');
   const [receiveAddress, setReceiveAddress] = useState<string>('');
   const [walletAddress, setWalletAddress] = useState<string>('');
+  const [wallets, setWallets] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+
+  useEffect(() => {
+    fetchWallets();
+  }, []);
+
+  const fetchWallets = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('crypto_wallets')
+        .select('*')
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+      setWallets(data || []);
+    } catch (error) {
+      console.error('Error fetching wallets:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load crypto wallets",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     // Generate a mock wallet address for the selected asset
@@ -161,7 +195,36 @@ export const CryptoWallet = () => {
     });
   };
 
-  const totalPortfolioValue = cryptoAssets.reduce((sum, asset) => sum + asset.usdValue, 0);
+  // Get crypto prices (mock for now)
+  const cryptoPrices = {
+    BTC: 62250.50,
+    ETH: 2487.90,
+    USDT: 1.00,
+    BNB: 320.45
+  };
+
+  const getWalletBalance = (symbol: string) => {
+    const wallet = wallets.find(w => w.asset_symbol === symbol);
+    return wallet?.balance || 0;
+  };
+
+  const getWalletUsdValue = (symbol: string) => {
+    const balance = getWalletBalance(symbol);
+    const price = cryptoPrices[symbol as keyof typeof cryptoPrices] || 0;
+    return balance * price;
+  };
+
+  const totalPortfolioValue = ['BTC', 'ETH', 'USDT', 'BNB'].reduce(
+    (sum, symbol) => sum + getWalletUsdValue(symbol), 
+    0
+  );
+
+  const displayAssets = [
+    { symbol: 'BTC', name: 'Bitcoin', icon: '₿' },
+    { symbol: 'ETH', name: 'Ethereum', icon: 'Ξ' },
+    { symbol: 'USDT', name: 'Tether', icon: '₮' },
+    { symbol: 'BNB', name: 'Binance Coin', icon: '💰' }
+  ];
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -173,9 +236,14 @@ export const CryptoWallet = () => {
             className="w-full h-full object-cover opacity-10"
           />
         </div>
-        <div className="relative z-10 p-6">
-          <h2 className="text-3xl font-bold text-primary mb-2">Heritage Crypto Wallet</h2>
-          <p className="text-muted-foreground">Secure cryptocurrency storage and trading</p>
+        <div className="relative z-10 p-6 flex justify-between items-center">
+          <div>
+            <h2 className="text-3xl font-bold text-primary mb-2">Heritage Crypto Wallet</h2>
+            <p className="text-muted-foreground">Secure cryptocurrency storage and trading</p>
+          </div>
+          <Button onClick={fetchWallets} variant="outline" size="icon">
+            <RefreshCw className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
@@ -188,43 +256,60 @@ export const CryptoWallet = () => {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center mb-6">
-            <p className="text-sm text-muted-foreground mb-2">Total Portfolio Value</p>
-            <p className="text-4xl font-bold text-primary">${totalPortfolioValue.toLocaleString()}</p>
-            <p className="text-sm text-secondary">+12.45% (24h)</p>
-          </div>
+          {loading ? (
+            <div className="text-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+              <p className="text-muted-foreground mt-2">Loading wallets...</p>
+            </div>
+          ) : (
+            <>
+              <div className="text-center mb-6">
+                <p className="text-sm text-muted-foreground mb-2">Total Portfolio Value</p>
+                <p className="text-4xl font-bold text-primary">${totalPortfolioValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+              </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {cryptoAssets.map((asset) => (
-              <Card 
-                key={asset.symbol} 
-                className={`cursor-pointer transition-all hover:shadow-md ${selectedAsset === asset.symbol ? 'ring-2 ring-primary' : ''}`}
-                onClick={() => setSelectedAsset(asset.symbol)}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-2xl">{asset.icon}</span>
-                      <div>
-                        <p className="font-bold">{asset.symbol}</p>
-                        <p className="text-xs text-muted-foreground">{asset.name}</p>
-                      </div>
-                    </div>
-                    <Badge variant={asset.change24h >= 0 ? "default" : "destructive"}>
-                      {asset.change24h >= 0 ? '+' : ''}{asset.change24h.toFixed(2)}%
-                    </Badge>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">Balance</p>
-                    <p className="font-semibold">{asset.balance} {asset.symbol}</p>
-                    <p className="text-sm text-secondary">${asset.usdValue.toLocaleString()}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                {displayAssets.map((asset) => {
+                  const balance = getWalletBalance(asset.symbol);
+                  const usdValue = getWalletUsdValue(asset.symbol);
+                  return (
+                    <Card 
+                      key={asset.symbol} 
+                      className={`cursor-pointer transition-all hover:shadow-md ${selectedAsset === asset.symbol ? 'ring-2 ring-primary' : ''}`}
+                      onClick={() => setSelectedAsset(asset.symbol)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-2xl">{asset.icon}</span>
+                            <div>
+                              <p className="font-bold">{asset.symbol}</p>
+                              <p className="text-xs text-muted-foreground">{asset.name}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">Balance</p>
+                          <p className="font-bold">{balance.toFixed(4)} {asset.symbol}</p>
+                          <p className="text-sm text-secondary">${usdValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
+
+      {!loading && wallets.length === 0 && (
+        <Card className="bg-muted/50">
+          <CardContent className="py-8 text-center">
+            <p className="text-muted-foreground">No crypto wallets found. Contact support to set up your wallet.</p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Wallet Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

@@ -694,6 +694,7 @@ export type Database = {
           state: string | null
           updated_at: string | null
           user_id: string
+          username: string | null
           zip_code: string | null
         }
         Insert: {
@@ -712,6 +713,7 @@ export type Database = {
           state?: string | null
           updated_at?: string | null
           user_id: string
+          username?: string | null
           zip_code?: string | null
         }
         Update: {
@@ -730,6 +732,7 @@ export type Database = {
           state?: string | null
           updated_at?: string | null
           user_id?: string
+          username?: string | null
           zip_code?: string | null
         }
         Relationships: []
@@ -922,6 +925,13 @@ export type Database = {
     }
     Functions: {
       generate_application_number: { Args: never; Returns: string }
+      get_user_by_username: {
+        Args: { _username: string }
+        Returns: {
+          email: string
+          user_id: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

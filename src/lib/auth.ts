@@ -21,9 +21,34 @@ export const signUp = async (email: string, password: string) => {
   return { data, error };
 };
 
-export const signIn = async (email: string, password: string) => {
+export const signIn = async (usernameOrEmail: string, password: string) => {
+  // Check if input looks like an email
+  const isEmail = usernameOrEmail.includes('@');
+  
+  if (!isEmail) {
+    // Look up email by username
+    const { data: userData, error: lookupError } = await supabase
+      .rpc('get_user_by_username', { _username: usernameOrEmail });
+    
+    if (lookupError || !userData || userData.length === 0) {
+      return { 
+        data: null, 
+        error: new Error('Invalid username or password') 
+      };
+    }
+    
+    // Sign in with the found email
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: userData[0].email,
+      password
+    });
+    
+    return { data, error };
+  }
+  
+  // Sign in with email directly
   const { data, error } = await supabase.auth.signInWithPassword({
-    email,
+    email: usernameOrEmail,
     password
   });
   
