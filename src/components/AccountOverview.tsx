@@ -86,28 +86,28 @@ export const AccountOverview = () => {
         </Button>
       </div>
 
-      <Card className="banking-card banking-gradient-secondary text-secondary-foreground hover-lift animate-scale-in relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-secondary-light/20 rounded-full -mr-16 -mt-16" />
-        <div className="absolute bottom-0 left-0 w-24 h-24 bg-accent/20 rounded-full -ml-12 -mb-12" />
+      <Card className="banking-card bg-heritage-blue text-white hover-lift animate-scale-in relative overflow-hidden border-heritage-gold/20">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-heritage-gold/20 rounded-full -mr-16 -mt-16" />
+        <div className="absolute bottom-0 left-0 w-24 h-24 bg-heritage-gold/10 rounded-full -ml-12 -mb-12" />
         
         <CardHeader className="relative z-10">
-          <CardTitle className="flex items-center space-x-2">
-            <TrendingUp className="h-6 w-6 animate-float" />
+          <CardTitle className="flex items-center space-x-2 text-white">
+            <TrendingUp className="h-6 w-6 animate-float text-heritage-gold" />
             <span>Total Portfolio Value</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="relative z-10">
-          <div className="text-4xl font-bold animate-balance-pulse">
+          <div className="text-4xl font-bold animate-balance-pulse text-white">
             {new Intl.NumberFormat('en-US', {
               style: 'currency',
               currency: 'USD',
             }).format(totalBalance)}
           </div>
-          <p className="text-secondary-foreground/80 mt-2">
+          <p className="text-white/80 mt-2">
             Across all active accounts
           </p>
-          <div className="mt-4 h-2 bg-secondary-foreground/20 rounded-full overflow-hidden">
-            <div className="h-full bg-accent animate-slide-in-right" style={{ width: '75%' }} />
+          <div className="mt-4 h-2 bg-white/20 rounded-full overflow-hidden">
+            <div className="h-full bg-heritage-gold animate-slide-in-right" style={{ width: '75%' }} />
           </div>
         </CardContent>
       </Card>

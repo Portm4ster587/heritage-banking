@@ -109,28 +109,28 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
           </div>
           
           <div className="hidden lg:block relative animate-fade-in" style={{ animationDelay: '0.6s' }}>
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-heritage-gold/20 shadow-2xl hover-scale">
+            <div className="bg-heritage-blue backdrop-blur-md rounded-2xl p-8 border border-heritage-gold/20 shadow-2xl hover-scale">
               <h3 className="text-2xl font-bold text-heritage-gold mb-4">Why Choose Heritage Bank?</h3>
-              <ul className="space-y-4 text-white/90">
+              <ul className="space-y-4 text-white">
                 <li className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-heritage-gold rounded-full mt-2"></div>
-                  <span className="flex-1">FDIC Insured up to $250,000 per depositor</span>
+                  <span className="flex-1 text-white">FDIC Insured up to $250,000 per depositor</span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-heritage-gold rounded-full mt-2"></div>
-                  <span className="flex-1">No monthly fees on eligible accounts</span>
+                  <span className="flex-1 text-white">No monthly fees on eligible accounts</span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-heritage-gold rounded-full mt-2"></div>
-                  <span className="flex-1">Competitive interest rates on savings</span>
+                  <span className="flex-1 text-white">Competitive interest rates on savings</span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-heritage-gold rounded-full mt-2"></div>
-                  <span className="flex-1">Award-winning mobile banking app</span>
+                  <span className="flex-1 text-white">Award-winning mobile banking app</span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-heritage-gold rounded-full mt-2"></div>
-                  <span className="flex-1">Free ATM access at 55,000+ locations nationwide</span>
+                  <span className="flex-1 text-white">Free ATM access at 55,000+ locations nationwide</span>
                 </li>
               </ul>
             </div>
