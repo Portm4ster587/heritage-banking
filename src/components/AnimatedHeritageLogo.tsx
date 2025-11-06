@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import heritageLogoImage from '@/assets/heritage-logo.png';
+import heritageLogoImage from '@/assets/heritage-crown-logo.png';
 
 interface AnimatedHeritageLogoProps {
   isActive?: boolean;
@@ -54,92 +54,44 @@ export const AnimatedHeritageLogo = ({
       logoSize,
       className
     )}>
-      {/* Outer Glow Ring */}
+      {/* Pulsing Glow Effect */}
       <div 
         className={cn(
-          "absolute inset-0 rounded-full transition-all duration-1000",
+          "absolute inset-0 transition-all duration-1000",
           isActive && "animate-pulse"
         )}
         style={{
-          background: `conic-gradient(from 0deg, 
-            hsl(var(--heritage-gold)), 
-            hsl(var(--heritage-blue)), 
-            hsl(var(--heritage-gold))
-          )`,
-          padding: '2px',
-          animation: 'none'
+          background: 'radial-gradient(circle, rgba(212, 175, 55, 0.3) 0%, transparent 70%)',
+          filter: 'blur(10px)',
         }}
-      >
-        {/* Inner Background */}
-        <div 
-          className={cn(
-            "w-full h-full rounded-full flex items-center justify-center relative overflow-hidden transition-all duration-500",
-            "shadow-2xl"
-          )}
-          style={{
-            background: 'transparent'
-          }}
-        >
-          {/* Actual Heritage Logo Image */}
-          <img 
-            src={heritageLogoImage} 
-            alt="Heritage Bank Logo" 
-            className={cn(
-              "w-full h-full object-contain transition-all duration-500 p-1 animate-slide-horizontal",
-              isActive && "animate-shake"
-            )}
-            style={{
-              filter: isActive 
-                ? 'drop-shadow(0 0 12px rgba(212, 175, 55, 0.8)) brightness(1.2)' 
-                : 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))',
-              transform: isActive ? `scale(${1 + animationPhase * 0.03})` : 'scale(1)',
-            }}
-          />
+      />
+      
+      {/* Heritage Logo Image with Pulse Animation */}
+      <img 
+        src={heritageLogoImage} 
+        alt="Heritage Bank Logo" 
+        className={cn(
+          "relative w-full h-full object-contain transition-all duration-500 p-2",
+          isActive && "animate-pulse"
+        )}
+        style={{
+          filter: isActive 
+            ? 'drop-shadow(0 0 20px rgba(212, 175, 55, 0.9)) brightness(1.3)' 
+            : 'drop-shadow(0 4px 12px rgba(212, 175, 55, 0.6))',
+          transform: isActive ? 'scale(1.05)' : 'scale(1)',
+        }}
+      />
 
-          {/* Success Checkmark Overlay */}
-          {variant === 'success' && showSuccess && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-8 h-8 text-success animate-scale-in bg-background/90 rounded-full flex items-center justify-center">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-5 h-5">
-                  <path d="M20 6L9 17l-5-5" />
-                </svg>
-              </div>
-            </div>
-          )}
-
-          {/* Pulsing Background Effect */}
-          <div className={cn(
-            "absolute inset-0 rounded-full opacity-20 transition-all duration-500",
-            isActive && "animate-pulse",
-            variant === 'login' && "bg-heritage-blue",
-            variant === 'transfer' && "bg-heritage-gold", 
-            variant === 'success' && "bg-success",
-            variant === 'loading' && "bg-heritage-gold"
-          )} />
-
-          {/* Particle Effects */}
-          {variant === 'transfer' && isActive && (
-            <>
-              {[...Array(8)].map((_, i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    "absolute w-1 h-1 bg-heritage-gold rounded-full",
-                    animationPhase >= 2 && "animate-ping"
-                  )}
-                  style={{
-                    top: `${20 + (i % 4) * 15}%`,
-                    left: `${15 + (i % 2) * 70}%`,
-                    animationDelay: `${i * 0.1}s`,
-                    animation: animationPhase >= 2 ? `particle-float 1.5s ease-in-out infinite ${i * 0.1}s` : 'none'
-                  }}
-                />
-              ))}
-            </>
-          )}
+      {/* Success Checkmark Overlay */}
+      {variant === 'success' && showSuccess && (
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          <div className="w-8 h-8 text-success animate-scale-in bg-white rounded-full flex items-center justify-center shadow-lg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-5 h-5">
+              <path d="M20 6L9 17l-5-5" />
+            </svg>
+          </div>
         </div>
-      </div>
-
+      )}
     </div>
   );
 };

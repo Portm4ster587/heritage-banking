@@ -34,30 +34,31 @@ export const AccountOverviewSection = ({
     <div className="space-y-6">
       {/* Balance Overview */}
       <div className="grid gap-6 md:grid-cols-3">
-        <Card className="md:col-span-2 overflow-hidden relative">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-secondary/20 pointer-events-none" />
+        <Card className="md:col-span-2 overflow-hidden relative bg-heritage-blue border-heritage-gold/20">
+          <div className="absolute inset-0 bg-gradient-to-br from-heritage-gold/10 via-transparent to-heritage-gold/5 pointer-events-none" />
           <CardHeader className="relative">
-            <CardTitle className="flex items-center justify-between">
+            <CardTitle className="flex items-center justify-between text-white">
               <span>Total Balance</span>
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={onToggleBalance}
+                className="text-white hover:text-heritage-gold hover:bg-white/10"
               >
                 {balanceVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </Button>
             </CardTitle>
           </CardHeader>
           <CardContent className="relative">
-            <div className="text-3xl font-bold mb-2">
+            <div className="text-3xl font-bold mb-2 text-white">
               {balanceVisible ? `$${totalBalance.toLocaleString()}` : '••••••••'}
             </div>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="flex items-center gap-4 text-sm text-white/80">
               <div className="flex items-center gap-1">
-                <TrendingUp className="w-3 h-3 text-success" />
-                <span>+2.1% this month</span>
+                <TrendingUp className="w-3 h-3 text-heritage-gold" />
+                <span className="text-white">+2.1% this month</span>
               </div>
-              <div>Last updated: just now</div>
+              <div className="text-white/80">Last updated: just now</div>
             </div>
           </CardContent>
         </Card>
@@ -88,10 +89,10 @@ export const AccountOverviewSection = ({
       
       <div className="grid gap-4 md:grid-cols-2">
         {accounts.map((account) => (
-          <Card key={account.id} className="hover:shadow-lg transition-shadow">
+          <Card key={account.id} className="hover:shadow-lg transition-shadow bg-heritage-blue border-heritage-gold/20">
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle className="text-lg capitalize">
+                <CardTitle className="text-lg capitalize text-white">
                   {account.account_type
                     .replace('_', ' ')
                     .replace('personal checking', 'Heritage Checking')
@@ -99,7 +100,7 @@ export const AccountOverviewSection = ({
                     .replace('business savings', 'Business Savings')
                     .replace('loan account', 'Loan Account')}
                 </CardTitle>
-                <Badge variant={account.status === 'active' ? 'default' : 'secondary'}>
+                <Badge variant={account.status === 'active' ? 'default' : 'secondary'} className="bg-heritage-gold text-heritage-blue">
                   {account.status}
                 </Badge>
               </div>
@@ -107,8 +108,8 @@ export const AccountOverviewSection = ({
             <CardContent>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-muted-foreground">Available Balance</p>
-                  <p className="text-2xl font-bold">
+                  <p className="text-sm text-white/80">Available Balance</p>
+                  <p className="text-2xl font-bold text-white">
                     {balanceVisible ? `$${(account.balance ?? 0).toLocaleString()}` : '••••••'}
                   </p>
                 </div>
@@ -116,6 +117,7 @@ export const AccountOverviewSection = ({
                   variant="ghost"
                   size="sm"
                   onClick={onToggleBalance}
+                  className="text-white hover:text-heritage-gold hover:bg-white/10"
                 >
                   {balanceVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </Button>
