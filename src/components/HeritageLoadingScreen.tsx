@@ -1,6 +1,7 @@
-import { AnimatedHeritageLogo } from './AnimatedHeritageLogo';
+import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import { Loader2 } from 'lucide-react';
+import heritageLogoImage1 from '@/assets/heritage-logo-1.png';
+import heritageLogoImage2 from '@/assets/heritage-logo-2.png';
 
 interface HeritageLoadingScreenProps {
   message?: string;
@@ -11,6 +12,16 @@ export const HeritageLoadingScreen = ({
   message = 'Loading...', 
   fullScreen = true 
 }: HeritageLoadingScreenProps) => {
+  const [currentLogo, setCurrentLogo] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentLogo(prev => prev === 0 ? 1 : 0);
+    }, 1000); // Switch every 1 second
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div 
       className={cn(
@@ -30,14 +41,16 @@ export const HeritageLoadingScreen = ({
       </div>
       
       <div className="relative z-10 space-y-8 animate-fade-in px-4">
-        {/* Logo with enhanced animation */}
-        <div className="relative">
-          <AnimatedHeritageLogo size="xl" isActive={true} variant="loading" />
-          
-          {/* Spinning loader ring around logo */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Loader2 className="w-56 h-56 text-heritage-gold/30 animate-spin" style={{ animationDuration: '3s' }} />
-          </div>
+        {/* Alternating Logo Animation */}
+        <div className="relative w-48 h-48 flex items-center justify-center">
+          <img 
+            src={currentLogo === 0 ? heritageLogoImage1 : heritageLogoImage2}
+            alt="Heritage Bank Logo" 
+            className="w-full h-full object-contain transition-all duration-300 animate-pulse p-2"
+            style={{
+              filter: 'drop-shadow(0 0 20px rgba(212, 175, 55, 0.9)) brightness(1.3)',
+            }}
+          />
         </div>
         
         <div className="text-center space-y-4">

@@ -105,7 +105,7 @@ export const AccountOverviewSection = ({
                 </Badge>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-3">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-white/80">Available Balance</p>
@@ -121,6 +121,12 @@ export const AccountOverviewSection = ({
                 >
                   {balanceVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </Button>
+              </div>
+              <div className="pt-2 border-t border-heritage-gold/20">
+                <p className="text-xs text-white/60">Account Number</p>
+                <p className="text-sm font-mono text-white">{account.account_number}</p>
+                <p className="text-xs text-white/60 mt-1">Routing Number</p>
+                <p className="text-sm font-mono text-white">{account.routing_number}</p>
               </div>
             </CardContent>
           </Card>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import heritageLogoImage from '@/assets/heritage-crown-logo.png';
+import heritageLogoImage from '@/assets/heritage-logo.png';
 
 interface AnimatedHeritageLogoProps {
   isActive?: boolean;
