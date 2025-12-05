@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Bell, X, CheckCircle, AlertTriangle, Info, DollarSign } from 'lucide-react';
+import { Bell, X, CheckCircle, AlertTriangle, Info, DollarSign, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
@@ -10,15 +10,19 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Notification {
   id: string;
-  type: 'success' | 'warning' | 'info' | 'transaction';
+  type: string;
   title: string;
   message: string;
-  timestamp: Date;
-  read: boolean;
-  actionable?: boolean;
+  created_at: string;
+  is_read: boolean;
+  priority: string;
+  related_type?: string;
+  related_id?: string;
 }
 
 interface NotificationCenterProps {
@@ -26,72 +30,84 @@ interface NotificationCenterProps {
 }
 
 export const NotificationCenter = ({ onNotificationAction }: NotificationCenterProps) => {
+  const { user } = useAuth();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
   useEffect(() => {
-    // Simulate some initial notifications
-    const mockNotifications: Notification[] = [
-      {
-        id: '1',
-        type: 'transaction',
-        title: 'Transfer Completed',
-        message: 'Your transfer of $500.00 to John Doe has been completed successfully.',
-        timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
-        read: false,
-        actionable: false
-      },
-      {
-        id: '2',
-        type: 'info',
-        title: 'Account Statement Ready',
-        message: 'Your monthly statement for November is now available.',
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-        read: false,
-        actionable: true
-      },
-      {
-        id: '3',
-        type: 'warning',
-        title: 'Card Expiring Soon',
-        message: 'Your Heritage Premium card ending in 4567 expires in 30 days.',
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
-        read: false,
-        actionable: true
-      },
-      {
-        id: '4',
-        type: 'success',
-        title: 'Credit Limit Increase Approved',
-        message: 'Your credit limit has been increased to $15,000.',
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 48), // 2 days ago
-        read: true,
-        actionable: false
-      }
-    ];
-    
-    setNotifications(mockNotifications);
-  }, []);
+    if (user) {
+      fetchNotifications();
+      subscribeToNotifications();
+    }
+  }, [user]);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const fetchNotifications = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('user_notifications')
+        .select('*')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (error) throw error;
+      setNotifications(data || []);
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const subscribeToNotifications = () => {
+    const channel = supabase
+      .channel('user-notifications')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'user_notifications',
+          filter: `user_id=eq.${user?.id}`
+        },
+        (payload) => {
+          setNotifications(prev => [payload.new as Notification, ...prev]);
+          toast({
+            title: (payload.new as Notification).title,
+            description: (payload.new as Notification).message,
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  };
+
+  const unreadCount = notifications.filter(n => !n.is_read).length;
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'success':
-        return <CheckCircle className="w-4 h-4 text-success" />;
+        return <CheckCircle className="w-4 h-4 text-green-500" />;
       case 'warning':
-        return <AlertTriangle className="w-4 h-4 text-warning" />;
+        return <AlertTriangle className="w-4 h-4 text-yellow-500" />;
       case 'transaction':
-        return <DollarSign className="w-4 h-4 text-primary" />;
+        return <DollarSign className="w-4 h-4 text-heritage-gold" />;
+      case 'security':
+        return <Shield className="w-4 h-4 text-red-500" />;
       default:
         return <Info className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
-  const formatTimestamp = (timestamp: Date) => {
+  const formatTimestamp = (timestamp: string) => {
     const now = new Date();
-    const diff = now.getTime() - timestamp.getTime();
+    const date = new Date(timestamp);
+    const diff = now.getTime() - date.getTime();
     const minutes = Math.floor(diff / (1000 * 60));
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -105,36 +121,64 @@ export const NotificationCenter = ({ onNotificationAction }: NotificationCenterP
     }
   };
 
-  const markAsRead = (notificationId: string) => {
-    setNotifications(prev =>
-      prev.map(n =>
-        n.id === notificationId ? { ...n, read: true } : n
-      )
-    );
+  const markAsRead = async (notificationId: string) => {
+    try {
+      await supabase
+        .from('user_notifications')
+        .update({ is_read: true })
+        .eq('id', notificationId);
+
+      setNotifications(prev =>
+        prev.map(n =>
+          n.id === notificationId ? { ...n, is_read: true } : n
+        )
+      );
+    } catch (error) {
+      console.error('Error marking as read:', error);
+    }
   };
 
-  const removeNotification = (notificationId: string) => {
-    setNotifications(prev => prev.filter(n => n.id !== notificationId));
-    toast({
-      title: "Notification dismissed",
-      description: "The notification has been removed."
-    });
+  const removeNotification = async (notificationId: string) => {
+    try {
+      await supabase
+        .from('user_notifications')
+        .delete()
+        .eq('id', notificationId);
+
+      setNotifications(prev => prev.filter(n => n.id !== notificationId));
+      toast({
+        title: "Notification dismissed",
+        description: "The notification has been removed."
+      });
+    } catch (error) {
+      console.error('Error removing notification:', error);
+    }
   };
 
-  const markAllAsRead = () => {
-    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-    toast({
-      title: "All notifications marked as read",
-      description: "Your notifications have been updated."
-    });
+  const markAllAsRead = async () => {
+    try {
+      await supabase
+        .from('user_notifications')
+        .update({ is_read: true })
+        .eq('user_id', user?.id)
+        .eq('is_read', false);
+
+      setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+      toast({
+        title: "All notifications marked as read",
+        description: "Your notifications have been updated."
+      });
+    } catch (error) {
+      console.error('Error marking all as read:', error);
+    }
   };
 
   const handleNotificationClick = (notification: Notification) => {
-    if (!notification.read) {
+    if (!notification.is_read) {
       markAsRead(notification.id);
     }
     
-    if (notification.actionable && onNotificationAction) {
+    if (onNotificationAction) {
       onNotificationAction(notification.id, 'view');
     }
   };
@@ -167,7 +211,11 @@ export const NotificationCenter = ({ onNotificationAction }: NotificationCenterP
         </div>
         
         <ScrollArea className="h-[400px]">
-          {notifications.length === 0 ? (
+          {loading ? (
+            <div className="p-6 text-center">
+              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary mx-auto"></div>
+            </div>
+          ) : notifications.length === 0 ? (
             <div className="p-6 text-center text-muted-foreground">
               <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
               <p>No notifications</p>
@@ -178,7 +226,7 @@ export const NotificationCenter = ({ onNotificationAction }: NotificationCenterP
                 <div key={notification.id}>
                   <div
                     className={`p-3 rounded-lg cursor-pointer transition-all duration-200 hover:bg-muted/50 ${
-                      !notification.read ? 'bg-primary/5 border-l-2 border-l-primary' : ''
+                      !notification.is_read ? 'bg-primary/5 border-l-2 border-l-heritage-gold' : ''
                     }`}
                     onClick={() => handleNotificationClick(notification)}
                   >
@@ -188,14 +236,14 @@ export const NotificationCenter = ({ onNotificationAction }: NotificationCenterP
                           {getNotificationIcon(notification.type)}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className={`text-sm font-medium ${!notification.read ? 'text-foreground' : 'text-muted-foreground'}`}>
+                          <p className={`text-sm font-medium ${!notification.is_read ? 'text-foreground' : 'text-muted-foreground'}`}>
                             {notification.title}
                           </p>
                           <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
                             {notification.message}
                           </p>
                           <p className="text-xs text-muted-foreground mt-2">
-                            {formatTimestamp(notification.timestamp)}
+                            {formatTimestamp(notification.created_at)}
                           </p>
                         </div>
                       </div>
