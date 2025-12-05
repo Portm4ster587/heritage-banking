@@ -383,6 +383,57 @@ export type Database = {
         }
         Relationships: []
       }
+      bill_payments: {
+        Row: {
+          amount: number
+          auto_pay: boolean | null
+          created_at: string | null
+          frequency: string | null
+          id: string
+          last_payment_date: string | null
+          next_payment_date: string | null
+          payee_account: string
+          payee_name: string
+          payee_type: string
+          reminder_days: number | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          auto_pay?: boolean | null
+          created_at?: string | null
+          frequency?: string | null
+          id?: string
+          last_payment_date?: string | null
+          next_payment_date?: string | null
+          payee_account: string
+          payee_name: string
+          payee_type?: string
+          reminder_days?: number | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          auto_pay?: boolean | null
+          created_at?: string | null
+          frequency?: string | null
+          id?: string
+          last_payment_date?: string | null
+          next_payment_date?: string | null
+          payee_account?: string
+          payee_name?: string
+          payee_type?: string
+          reminder_days?: number | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       cards: {
         Row: {
           account_id: string
@@ -396,7 +447,9 @@ export type Database = {
           cvv: string
           expiry_date: string
           id: string
+          is_locked: boolean | null
           last4: string
+          spending_limit: number | null
           status: string | null
           updated_at: string | null
           user_id: string
@@ -413,7 +466,9 @@ export type Database = {
           cvv: string
           expiry_date: string
           id?: string
+          is_locked?: boolean | null
           last4: string
+          spending_limit?: number | null
           status?: string | null
           updated_at?: string | null
           user_id: string
@@ -430,7 +485,9 @@ export type Database = {
           cvv?: string
           expiry_date?: string
           id?: string
+          is_locked?: boolean | null
           last4?: string
+          spending_limit?: number | null
           status?: string | null
           updated_at?: string | null
           user_id?: string
@@ -641,6 +698,45 @@ export type Database = {
           },
         ]
       }
+      notification_settings: {
+        Row: {
+          created_at: string | null
+          id: string
+          large_transaction_alert: boolean | null
+          large_transaction_amount: number | null
+          low_balance_alert: boolean | null
+          low_balance_threshold: number | null
+          payment_reminders: boolean | null
+          security_alerts: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          large_transaction_alert?: boolean | null
+          large_transaction_amount?: number | null
+          low_balance_alert?: boolean | null
+          low_balance_threshold?: number | null
+          payment_reminders?: boolean | null
+          security_alerts?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          large_transaction_alert?: boolean | null
+          large_transaction_amount?: number | null
+          low_balance_alert?: boolean | null
+          low_balance_threshold?: number | null
+          payment_reminders?: boolean | null
+          security_alerts?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       payment_methods: {
         Row: {
           account_number: string | null
@@ -842,6 +938,45 @@ export type Database = {
           secondary_color?: string | null
           supports_instant_verification?: boolean | null
           swift_code?: string | null
+        }
+        Relationships: []
+      }
+      user_notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          priority: string | null
+          related_id: string | null
+          related_type: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          priority?: string | null
+          related_id?: string | null
+          related_type?: string | null
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          priority?: string | null
+          related_id?: string | null
+          related_type?: string | null
+          title?: string
+          type?: string
+          user_id?: string
         }
         Relationships: []
       }
