@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { AnimatedHeritageLogo } from "../AnimatedHeritageLogo";
+import { HeritageSVGLogo } from "../HeritageSVGLogo";
+import { AccountSummaryWidget } from "./AccountSummaryWidget";
+import { CryptoPortfolioWidget } from "./CryptoPortfolioWidget";
 import bankingHeroImage from "@/assets/banking-hero.jpg";
 import cardsShowcaseImage from "@/assets/cards-showcase.jpg";
 import bankInterior1 from "@/assets/bank-interior-1.jpg";
@@ -36,7 +38,7 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
 
   return (
     <section className="relative overflow-hidden">
-      <div className="min-h-[600px] relative animate-fade-in flex items-center">
+      <div className="min-h-[700px] relative animate-fade-in flex items-center py-12">
         {/* Background Slideshow */}
         {backgroundImages.map((bg, index) => (
           <div
@@ -58,81 +60,67 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
         <div className="absolute bottom-20 left-20 w-24 h-24 bg-heritage-gold/10 rounded-full blur-lg animate-float" style={{ animationDelay: '1s' }}></div>
         <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-heritage-gold/15 rounded-full blur-md animate-float" style={{ animationDelay: '2s' }}></div>
         
-        <div className="relative container mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="text-white space-y-6 animate-slide-up">
-            <div className="flex items-center space-x-4 mb-6">
-              <AnimatedHeritageLogo size="lg" isActive={true} variant="loading" />
-              <div>
-                <h1 className="text-4xl lg:text-6xl font-bold animate-fade-in text-heritage-gold">
-                  HERITAGE
-                </h1>
-                <p className="text-xl lg:text-2xl text-heritage-gold/90">BANK</p>
-              </div>
+        <div className="relative container mx-auto px-6">
+          {/* Top Header with SVG Logo */}
+          <div className="flex items-center space-x-4 mb-8 animate-slide-up">
+            <HeritageSVGLogo size="xl" className="animate-pulse" />
+            <div>
+              <h1 className="text-4xl lg:text-6xl font-bold animate-fade-in text-heritage-gold tracking-wider">
+                HERITAGE
+              </h1>
+              <p className="text-xl lg:text-2xl text-heritage-gold/90 tracking-widest">BANK</p>
             </div>
-            
-            <h2 className="text-3xl lg:text-4xl font-bold mb-4 animate-fade-in">
-              Banking Excellence Since 1892
-            </h2>
-            <p className="text-xl mb-8 text-white/90 animate-fade-in leading-relaxed" style={{ animationDelay: '0.2s' }}>
-              Experience premium banking with unmatched security, competitive rates, and personalized service. 
-              Join thousands of satisfied customers who trust Heritage Bank.
-            </p>
-            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-              <Button 
-                size="lg" 
-                onClick={onOpenCards}
-                className="bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 px-8 py-4 font-semibold text-lg banking-button pulse-glow"
-              >
-                Explore Our Cards
-              </Button>
-              {user ? (
-                <Link to="/dashboard">
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            {/* Left Column - Welcome Text */}
+            <div className="text-white space-y-6 animate-slide-up">
+              <h2 className="text-3xl lg:text-4xl font-bold mb-4 animate-fade-in">
+                Banking Excellence Since 1892
+              </h2>
+              <p className="text-lg mb-8 text-white/90 animate-fade-in leading-relaxed" style={{ animationDelay: '0.2s' }}>
+                Experience premium banking with unmatched security, competitive rates, and personalized service. 
+                Join thousands of satisfied customers who trust Heritage Bank.
+              </p>
+              <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+                <Button 
+                  size="lg" 
+                  onClick={onOpenCards}
+                  className="bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 px-8 py-4 font-semibold text-lg banking-button pulse-glow"
+                >
+                  Explore Our Cards
+                </Button>
+                {user ? (
+                  <Link to="/dashboard">
+                    <Button 
+                      size="lg" 
+                      variant="outline" 
+                      className="border-2 border-heritage-gold text-white hover:bg-heritage-gold hover:text-heritage-blue px-8 py-4 font-semibold text-lg"
+                    >
+                      Go to Dashboard
+                    </Button>
+                  </Link>
+                ) : (
                   <Button 
                     size="lg" 
                     variant="outline" 
+                    onClick={onOpenApplication}
                     className="border-2 border-heritage-gold text-white hover:bg-heritage-gold hover:text-heritage-blue px-8 py-4 font-semibold text-lg"
                   >
-                    Go to Dashboard
+                    Open Account
                   </Button>
-                </Link>
-              ) : (
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  onClick={onOpenApplication}
-                  className="border-2 border-heritage-gold text-white hover:bg-heritage-gold hover:text-heritage-blue px-8 py-4 font-semibold text-lg"
-                >
-                  Open Account
-                </Button>
-              )}
+                )}
+              </div>
             </div>
-          </div>
-          
-          <div className="hidden lg:block relative animate-fade-in" style={{ animationDelay: '0.6s' }}>
-            <div className="bg-heritage-blue backdrop-blur-md rounded-2xl p-8 border border-heritage-gold/20 shadow-2xl hover-scale">
-              <h3 className="text-2xl font-bold text-heritage-gold mb-4">Why Choose Heritage Bank?</h3>
-              <ul className="space-y-4 text-white">
-                <li className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-heritage-gold rounded-full mt-2"></div>
-                  <span className="flex-1 text-white">FDIC Insured up to $250,000 per depositor</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-heritage-gold rounded-full mt-2"></div>
-                  <span className="flex-1 text-white">No monthly fees on eligible accounts</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-heritage-gold rounded-full mt-2"></div>
-                  <span className="flex-1 text-white">Competitive interest rates on savings</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-heritage-gold rounded-full mt-2"></div>
-                  <span className="flex-1 text-white">Award-winning mobile banking app</span>
-                </li>
-                <li className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-heritage-gold rounded-full mt-2"></div>
-                  <span className="flex-1 text-white">Free ATM access at 55,000+ locations nationwide</span>
-                </li>
-              </ul>
+            
+            {/* Center Column - Account Summary Widget */}
+            <div className="hidden lg:block animate-fade-in" style={{ animationDelay: '0.6s' }}>
+              <AccountSummaryWidget />
+            </div>
+
+            {/* Right Column - Crypto Portfolio Widget */}
+            <div className="hidden lg:block animate-fade-in" style={{ animationDelay: '0.8s' }}>
+              <CryptoPortfolioWidget />
             </div>
           </div>
         </div>
