@@ -6,13 +6,15 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRightLeft, Send, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowRightLeft, Send, Clock, CheckCircle, AlertCircle, Eye, EyeOff, Building2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { EnhancedTransferProgress } from "@/components/EnhancedTransferProgress";
 import { TransferSuccessScreen } from "@/components/TransferSuccessScreen";
 import { AlertSystem } from "@/components/AlertSystem";
+import { ExternalBankTransfer } from "@/components/ExternalBankTransfer";
 
 interface Account {
   id: string;
@@ -50,6 +52,7 @@ export const TransferSystem = () => {
   const [showTransferProgress, setShowTransferProgress] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [successData, setSuccessData] = useState<any>(null);
+  const [showAccountNumbers, setShowAccountNumbers] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -118,7 +121,7 @@ export const TransferSystem = () => {
     const transferAmount = parseFloat(amount);
     const sourceAccount = accounts.find(acc => acc.id === fromAccount);
     
-    if (!sourceAccount || sourceAccount.balance < transferAmount) {
+    if (!sourceAccount || (sourceAccount.balance ?? 0) < transferAmount) {
       toast({
         title: "Insufficient Funds",
         description: "The source account doesn't have enough balance",
@@ -150,33 +153,20 @@ export const TransferSystem = () => {
       // Update account balances
       await supabase
         .from('accounts')
-        .update({ balance: sourceAccount.balance - transferAmount })
+        .update({ balance: (sourceAccount.balance ?? 0) - transferAmount })
         .eq('id', fromAccount);
 
       const targetAccount = accounts.find(acc => acc.id === toAccount);
       if (targetAccount) {
         await supabase
           .from('accounts')
-          .update({ balance: targetAccount.balance + transferAmount })
+          .update({ balance: (targetAccount.balance ?? 0) + transferAmount })
           .eq('id', toAccount);
       }
 
-      // Simulate transfer processing - this will be handled by EnhancedTransferProgress
-      setTimeout(() => {
-        toast({
-          title: "Transfer Initiated",
-          description: `Transfer of $${transferAmount} has been started`,
-        });
-        
-        // Reset form
-        setFromAccount("");
-        setToAccount("");
-        setAmount("");
-        setMemo("");
-      }, 500);
-
     } catch (error) {
       console.error('Transfer error:', error);
+      setShowTransferProgress(false);
       toast({
         title: "Transfer Failed",
         description: "Failed to process transfer",
@@ -194,10 +184,17 @@ export const TransferSystem = () => {
     const fromAcc = accounts.find(a => a.id === fromAccount);
     const toAcc = accounts.find(a => a.id === toAccount);
     
+    const fromDisplay = fromAcc 
+      ? `${formatAccountType(fromAcc.account_type)} ending in ${fromAcc.account_number.slice(-4)}`
+      : 'Unknown';
+    const toDisplay = toAcc 
+      ? `${formatAccountType(toAcc.account_type)} ending in ${toAcc.account_number.slice(-4)}`
+      : 'Unknown';
+    
     setSuccessData({
       amount: parseFloat(amount),
-      fromAccount: `${fromAcc?.account_type.replace('_', ' ')} - ${fromAcc?.account_number?.slice(-4)}`,
-      toAccount: `${toAcc?.account_type.replace('_', ' ')} - ${toAcc?.account_number?.slice(-4)}`
+      fromAccount: fromDisplay,
+      toAccount: toDisplay
     });
     
     setShowSuccess(true);
@@ -214,35 +211,42 @@ export const TransferSystem = () => {
     setMemo("");
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: string | null) => {
     switch (status) {
       case 'completed':
-        return <CheckCircle className="h-4 w-4 text-success" />;
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
       case 'pending':
-        return <Clock className="h-4 w-4 text-warning" />;
+        return <Clock className="h-4 w-4 text-yellow-500" />;
       case 'failed':
-        return <AlertCircle className="h-4 w-4 text-destructive" />;
+        return <AlertCircle className="h-4 w-4 text-red-500" />;
       default:
         return <Clock className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string | null) => {
     switch (status) {
       case 'completed':
-        return 'bg-success text-success-foreground';
+        return 'bg-green-100 text-green-800';
       case 'pending':
-        return 'bg-warning text-warning-foreground';
+        return 'bg-yellow-100 text-yellow-800';
       case 'failed':
-        return 'bg-destructive text-destructive-foreground';
+        return 'bg-red-100 text-red-800';
       default:
-        return 'bg-muted text-muted-foreground';
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
+  const formatAccountType = (type: string) => {
+    return type.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  };
+
   const formatAccountDisplay = (account: Account) => {
-    const typeDisplay = account.account_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
-    return `${typeDisplay} (...${account.account_number.slice(-4)}) - $${(account.balance ?? 0).toLocaleString()}`;
+    const typeDisplay = formatAccountType(account.account_type);
+    const accountNum = showAccountNumbers 
+      ? account.account_number 
+      : `****${account.account_number.slice(-4)}`;
+    return `${typeDisplay} (${accountNum}) - $${(account.balance ?? 0).toLocaleString()}`;
   };
 
   return (
@@ -266,187 +270,194 @@ export const TransferSystem = () => {
       
       <div className="animate-slide-up">
         <h2 className="text-3xl font-bold text-primary mb-2">Transfer Funds</h2>
-        <p className="text-muted-foreground">Transfer money between your Heritage Bank accounts</p>
+        <p className="text-muted-foreground">Transfer money between your accounts or to external banks</p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Transfer Form */}
-        <Card className="banking-card">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <ArrowRightLeft className="h-6 w-6 text-primary" />
-              <span>New Transfer</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="from-account">From Account</Label>
-              <Select value={fromAccount} onValueChange={setFromAccount}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select source account" />
-                </SelectTrigger>
-                <SelectContent>
-                  {accounts.map((account) => (
-                    <SelectItem key={account.id} value={account.id}>
-                      {formatAccountDisplay(account)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+      <Tabs defaultValue="internal" className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsTrigger value="internal" className="flex items-center gap-2">
+            <ArrowRightLeft className="w-4 h-4" />
+            Heritage Transfers
+          </TabsTrigger>
+          <TabsTrigger value="external" className="flex items-center gap-2">
+            <Building2 className="w-4 h-4" />
+            External Banks
+          </TabsTrigger>
+        </TabsList>
 
-            <div className="space-y-2">
-              <Label htmlFor="to-account">To Account</Label>
-              <Select value={toAccount} onValueChange={setToAccount}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select destination account" />
-                </SelectTrigger>
-                <SelectContent>
-                  {accounts.map((account) => (
-                    <SelectItem key={account.id} value={account.id}>
-                      {formatAccountDisplay(account)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="amount">Amount</Label>
-              <Input
-                id="amount"
-                type="number"
-                placeholder="0.00"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                min="0"
-                step="0.01"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="memo">Memo (Optional)</Label>
-              <Textarea
-                id="memo"
-                placeholder="Add a note for this transfer..."
-                value={memo}
-                onChange={(e) => setMemo(e.target.value)}
-                rows={3}
-              />
-            </div>
-
-            <Button 
-              onClick={handleTransfer}
-              disabled={isTransferring || !fromAccount || !toAccount || !amount}
-              className="w-full banking-button"
-            >
-              {isTransferring ? (
-                <div className="flex items-center space-x-3">
-                  <div className="relative w-6 h-6">
-                    <svg className="w-6 h-6 -rotate-90" viewBox="0 0 24 24">
-                      <circle
-                        cx="12"
-                        cy="12"
-                        r="8"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        fill="none"
-                        className="opacity-30"
-                      />
-                      <circle
-                        cx="12"
-                        cy="12"
-                        r="8"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        fill="none"
-                        strokeDasharray={50.27}
-                        strokeDashoffset={50.27 - (transferProgress / 100) * 50.27}
-                        className="transition-all duration-300"
-                      />
-                    </svg>
-                    <div className="absolute inset-0 flex items-center justify-center text-xs font-bold">
-                      {transferProgress}%
-                    </div>
-                  </div>
-                  <span>Processing Transfer...</span>
+        <TabsContent value="internal">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Transfer Form */}
+            <Card className="banking-card">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center space-x-2">
+                    <ArrowRightLeft className="h-6 w-6 text-primary" />
+                    <span>New Transfer</span>
+                  </CardTitle>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowAccountNumbers(!showAccountNumbers)}
+                    className="text-muted-foreground"
+                  >
+                    {showAccountNumbers ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    <span className="ml-2 text-xs">{showAccountNumbers ? 'Hide' : 'Show'} Numbers</span>
+                  </Button>
                 </div>
-              ) : (
-                <>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="from-account">From Account</Label>
+                  <Select value={fromAccount} onValueChange={setFromAccount}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select source account" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {accounts.map((account) => (
+                        <SelectItem key={account.id} value={account.id}>
+                          {formatAccountDisplay(account)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="to-account">To Account</Label>
+                  <Select value={toAccount} onValueChange={setToAccount}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select destination account" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {accounts.map((account) => (
+                        <SelectItem key={account.id} value={account.id}>
+                          {formatAccountDisplay(account)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="amount">Amount</Label>
+                  <Input
+                    id="amount"
+                    type="number"
+                    placeholder="0.00"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="memo">Memo (Optional)</Label>
+                  <Textarea
+                    id="memo"
+                    placeholder="Add a note for this transfer..."
+                    value={memo}
+                    onChange={(e) => setMemo(e.target.value)}
+                    rows={3}
+                  />
+                </div>
+
+                <Button 
+                  onClick={handleTransfer}
+                  disabled={isTransferring || !fromAccount || !toAccount || !amount}
+                  className="w-full bg-gradient-to-r from-[#1e3a5f] to-[#0d1b2a] hover:from-[#0d1b2a] hover:to-[#1e3a5f] text-white"
+                >
                   <Send className="h-4 w-4 mr-2" />
                   Transfer Funds
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
+                </Button>
+              </CardContent>
+            </Card>
 
-        {/* Recent Transfers */}
-        <Card className="banking-card">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Clock className="h-6 w-6 text-secondary" />
-              <span>Recent Transfers</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {transfers.length === 0 ? (
-                <p className="text-muted-foreground text-center py-8">No transfers yet</p>
-              ) : (
-                transfers.map((transfer) => (
-                  <div key={transfer.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                    <div className="flex items-center space-x-3">
-                      {getStatusIcon(transfer.status)}
-                      <div>
-                        <p className="font-medium">${transfer.amount.toLocaleString()}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {transfer.description || 'Internal Transfer'}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {new Date(transfer.created_at).toLocaleDateString()}
-                        </p>
+            {/* Recent Transfers */}
+            <Card className="banking-card">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Clock className="h-6 w-6 text-secondary" />
+                  <span>Recent Transfers</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {transfers.length === 0 ? (
+                    <p className="text-muted-foreground text-center py-8">No transfers yet</p>
+                  ) : (
+                    transfers.map((transfer) => (
+                      <div key={transfer.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                        <div className="flex items-center space-x-3">
+                          {getStatusIcon(transfer.status)}
+                          <div>
+                            <p className="font-medium">${transfer.amount.toLocaleString()}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {transfer.description || 'Internal Transfer'}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {new Date(transfer.created_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                        <Badge className={getStatusColor(transfer.status)}>
+                          {transfer.status}
+                        </Badge>
                       </div>
-                    </div>
-                    <Badge className={getStatusColor(transfer.status)}>
-                      {transfer.status}
-                    </Badge>
-                  </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Account Summary */}
-      <Card className="banking-card">
-        <CardHeader>
-          <CardTitle>Your Accounts</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {accounts.map((account) => (
-              <div key={account.id} className="p-4 border rounded-lg hover:bg-muted/50 transition-colors">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium">
-                    {account.account_type.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
-                  </h4>
-                  <Badge variant="outline">
-                    USD
-                  </Badge>
+                    ))
+                  )}
                 </div>
-                <p className="text-sm text-muted-foreground mb-2">
-                  ...{account.account_number.slice(-4)}
-                </p>
-                <p className="text-xl font-bold text-primary">
-                  ${account.balance.toLocaleString()}
-                </p>
-              </div>
-            ))}
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
+
+          {/* Account Summary */}
+          <Card className="banking-card mt-8">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Your Accounts</CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowAccountNumbers(!showAccountNumbers)}
+                >
+                  {showAccountNumbers ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {accounts.map((account) => (
+                  <div key={account.id} className="p-4 bg-gradient-to-br from-[#1e3a5f] to-[#0d1b2a] rounded-lg text-white">
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-medium text-heritage-gold">
+                        {formatAccountType(account.account_type)}
+                      </h4>
+                      <Badge className="bg-heritage-gold/20 text-heritage-gold border-heritage-gold/30">
+                        USD
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-white/70 mb-1">
+                      {showAccountNumbers 
+                        ? account.account_number 
+                        : `****${account.account_number.slice(-4)}`
+                      }
+                    </p>
+                    <p className="text-2xl font-bold">
+                      ${(account.balance ?? 0).toLocaleString()}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="external">
+          <ExternalBankTransfer accounts={accounts} onSuccess={fetchAccounts} />
+        </TabsContent>
+      </Tabs>
 
       {/* Enhanced Transfer Progress */}
       <EnhancedTransferProgress
