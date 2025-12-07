@@ -16,6 +16,7 @@ import Crypto from "./pages/dashboard/Crypto";
 import Settings from "./pages/dashboard/Settings";
 import IDMe from "./pages/dashboard/IDMe";
 import History from "./pages/dashboard/History";
+import TransactionHistory from "./pages/dashboard/TransactionHistory";
 import Withdraw from "./pages/dashboard/Withdraw";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -142,6 +143,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <History />
+                </ProtectedRoute>
+              }
+            />
+            <Route 
+              path="/dashboard/transactions" 
+              element={
+                <ProtectedRoute>
+                  <TransactionHistory />
                 </ProtectedRoute>
               }
             />

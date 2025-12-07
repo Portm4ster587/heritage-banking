@@ -25,6 +25,7 @@ import { MerchantPayments } from '@/components/MerchantPayments';
 import { ExternalBankTransfer } from '@/components/ExternalBankTransfer';
 import { MobileNavigation } from '@/components/MobileNavigation';
 import { ComprehensiveAdminPanel } from '@/components/ComprehensiveAdminPanel';
+import { FullAdminPanel } from '@/components/admin/FullAdminPanel';
 import { AccountSettings } from '@/components/AccountSettings';
 import { CryptoExchange } from '@/components/CryptoExchange';
 
@@ -338,7 +339,7 @@ export default function Dashboard() {
         )}
 
         {activeSection === 'admin' && isAdmin && (
-          <ComprehensiveAdminPanel />
+          <FullAdminPanel />
         )}
 
         {activeSection === 'card-management' && (
