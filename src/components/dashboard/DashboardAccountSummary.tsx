@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Eye, EyeOff, Wallet, ArrowUpRight, ArrowDownLeft, Copy, Check } from 'lucide-react';
+import { Eye, EyeOff, Wallet, ArrowUpRight, ArrowDownLeft, Copy, Check, TrendingUp, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -23,10 +23,52 @@ export const DashboardAccountSummary = () => {
   const [loading, setLoading] = useState(true);
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
   useEffect(() => {
     if (user) {
       fetchAccounts();
+
+      // Set up real-time subscription for balance updates
+      const channel = supabase
+        .channel('account-balance-updates')
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'accounts',
+            filter: `user_id=eq.${user.id}`
+          },
+          (payload) => {
+            console.log('Account update received:', payload);
+            fetchAccounts();
+            setLastUpdate(new Date());
+            toast({
+              title: "Balance Updated",
+              description: "Your account balance has been updated.",
+            });
+          }
+        )
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'transfers',
+            filter: `user_id=eq.${user.id}`
+          },
+          (payload) => {
+            console.log('Transfer detected:', payload);
+            // Refresh accounts when a transfer completes
+            setTimeout(() => fetchAccounts(), 1000);
+          }
+        )
+        .subscribe();
+
+      return () => {
+        supabase.removeChannel(channel);
+      };
     }
   }, [user]);
 
