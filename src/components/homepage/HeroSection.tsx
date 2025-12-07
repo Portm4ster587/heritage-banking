@@ -2,10 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { HeritageSVGLogo } from "../HeritageSVGLogo";
-import { AccountSummaryWidget } from "./AccountSummaryWidget";
-import { CryptoPortfolioWidget } from "./CryptoPortfolioWidget";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Wallet, Bitcoin } from "lucide-react";
+import { Shield, CreditCard, Landmark, ArrowRight } from "lucide-react";
 import bankingHeroImage from "@/assets/banking-hero.jpg";
 import cardsShowcaseImage from "@/assets/cards-showcase.jpg";
 import bankInterior1 from "@/assets/bank-interior-1.jpg";
@@ -74,13 +71,13 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Left Column - Welcome Text */}
             <div className="text-white space-y-4 lg:space-y-6 animate-slide-up">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 lg:mb-4 animate-fade-in">
-                Banking Excellence Since 1892
+              <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold mb-3 lg:mb-4 animate-fade-in leading-tight">
+                Banking Excellence <br className="hidden sm:block" />Since 1892
               </h2>
-              <p className="text-base lg:text-lg mb-6 lg:mb-8 text-white/90 animate-fade-in leading-relaxed" style={{ animationDelay: '0.2s' }}>
+              <p className="text-base lg:text-xl mb-6 lg:mb-8 text-white/90 animate-fade-in leading-relaxed max-w-xl" style={{ animationDelay: '0.2s' }}>
                 Experience premium banking with unmatched security, competitive rates, and personalized service. 
                 Join thousands of satisfied customers who trust Heritage Bank.
               </p>
@@ -97,60 +94,51 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
                     <Button 
                       size="lg" 
                       variant="outline" 
-                      className="border-2 border-heritage-gold text-white hover:bg-heritage-gold hover:text-heritage-blue px-6 lg:px-8 py-3 lg:py-4 font-semibold text-base lg:text-lg w-full"
+                      className="border-2 border-heritage-gold text-white hover:bg-heritage-gold hover:text-heritage-blue px-6 lg:px-8 py-3 lg:py-4 font-semibold text-base lg:text-lg w-full flex items-center justify-center gap-2"
                     >
                       Go to Dashboard
+                      <ArrowRight className="w-5 h-5" />
                     </Button>
                   </Link>
                 ) : (
-                  <Button 
-                    size="lg" 
-                    variant="outline" 
-                    onClick={onOpenApplication}
-                    className="border-2 border-heritage-gold text-white hover:bg-heritage-gold hover:text-heritage-blue px-6 lg:px-8 py-3 lg:py-4 font-semibold text-base lg:text-lg w-full sm:w-auto"
-                  >
-                    Open Account
-                  </Button>
+                  <Link to="/auth" className="w-full sm:w-auto">
+                    <Button 
+                      size="lg" 
+                      variant="outline" 
+                      className="border-2 border-heritage-gold text-white hover:bg-heritage-gold hover:text-heritage-blue px-6 lg:px-8 py-3 lg:py-4 font-semibold text-base lg:text-lg w-full"
+                    >
+                      Sign In
+                    </Button>
+                  </Link>
                 )}
               </div>
             </div>
             
-            {/* Mobile/Tablet Widgets - Tabbed View */}
-            <div className="lg:hidden col-span-1 animate-fade-in" style={{ animationDelay: '0.6s' }}>
-              <Tabs defaultValue="account" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 bg-heritage-blue-dark/50 border border-heritage-gold/20">
-                  <TabsTrigger 
-                    value="account" 
-                    className="data-[state=active]:bg-heritage-gold data-[state=active]:text-heritage-blue text-white flex items-center gap-2"
-                  >
-                    <Wallet className="w-4 h-4" />
-                    <span className="hidden sm:inline">Account</span>
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="crypto"
-                    className="data-[state=active]:bg-heritage-gold data-[state=active]:text-heritage-blue text-white flex items-center gap-2"
-                  >
-                    <Bitcoin className="w-4 h-4" />
-                    <span className="hidden sm:inline">Crypto</span>
-                  </TabsTrigger>
-                </TabsList>
-                <TabsContent value="account" className="mt-4">
-                  <AccountSummaryWidget compact />
-                </TabsContent>
-                <TabsContent value="crypto" className="mt-4">
-                  <CryptoPortfolioWidget compact />
-                </TabsContent>
-              </Tabs>
-            </div>
-
-            {/* Desktop - Center Column - Account Summary Widget */}
-            <div className="hidden lg:block animate-fade-in" style={{ animationDelay: '0.6s' }}>
-              <AccountSummaryWidget />
-            </div>
-
-            {/* Desktop - Right Column - Crypto Portfolio Widget */}
-            <div className="hidden lg:block animate-fade-in" style={{ animationDelay: '0.8s' }}>
-              <CryptoPortfolioWidget />
+            {/* Right Column - Feature Cards */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fade-in" style={{ animationDelay: '0.6s' }}>
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-heritage-gold/30 hover:bg-white/15 transition-all duration-300">
+                <div className="w-12 h-12 bg-heritage-gold/20 rounded-full flex items-center justify-center mb-4">
+                  <Shield className="w-6 h-6 text-heritage-gold" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Secure Banking</h3>
+                <p className="text-white/70 text-sm">256-bit encryption and 24/7 fraud monitoring</p>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-heritage-gold/30 hover:bg-white/15 transition-all duration-300">
+                <div className="w-12 h-12 bg-heritage-gold/20 rounded-full flex items-center justify-center mb-4">
+                  <CreditCard className="w-6 h-6 text-heritage-gold" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Premium Cards</h3>
+                <p className="text-white/70 text-sm">Exclusive rewards and worldwide acceptance</p>
+              </div>
+              
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-heritage-gold/30 hover:bg-white/15 transition-all duration-300 sm:col-span-2">
+                <div className="w-12 h-12 bg-heritage-gold/20 rounded-full flex items-center justify-center mb-4">
+                  <Landmark className="w-6 h-6 text-heritage-gold" />
+                </div>
+                <h3 className="text-lg font-semibold text-white mb-2">Heritage Routing: 021000021</h3>
+                <p className="text-white/70 text-sm">Your trusted partner for all banking needs across the USA</p>
+              </div>
             </div>
           </div>
         </div>

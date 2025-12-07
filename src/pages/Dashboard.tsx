@@ -7,6 +7,7 @@ import { HeritageLoadingScreen } from '@/components/HeritageLoadingScreen';
 import { Bell } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { AccountOverviewSection } from '@/components/dashboard/AccountOverviewSection';
+import { DashboardAccountSummary } from '@/components/dashboard/DashboardAccountSummary';
 import { BankingHeader } from '@/components/BankingHeader';
 import { ApplicationForm } from '@/components/ApplicationForm';
 import { AdminPanel } from '@/components/AdminPanel';
@@ -253,15 +254,18 @@ export default function Dashboard() {
         </div>
 
         {activeSection === 'accounts' && (
-          <AccountOverviewSection
-            accounts={accounts}
-            balanceVisible={balanceVisible}
-            onToggleBalance={() => setBalanceVisible(!balanceVisible)}
-            onOpenNewAccount={() => {
-              setApplicationType('checking');
-              setShowApplicationForm(true);
-            }}
-          />
+          <div className="space-y-8">
+            <DashboardAccountSummary />
+            <AccountOverviewSection
+              accounts={accounts}
+              balanceVisible={balanceVisible}
+              onToggleBalance={() => setBalanceVisible(!balanceVisible)}
+              onOpenNewAccount={() => {
+                setApplicationType('checking');
+                setShowApplicationForm(true);
+              }}
+            />
+          </div>
         )}
 
         {activeSection === 'transfers' && (

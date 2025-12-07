@@ -1,98 +1,156 @@
 import { useEffect, useState } from 'react';
-import { CheckCircle, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { CheckCircle, ArrowRight, Home, Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { AnimatedHeritageLogo } from './AnimatedHeritageLogo';
+import { useToast } from '@/hooks/use-toast';
 
 interface TransferSuccessScreenProps {
   amount: number;
   fromAccount: string;
   toAccount: string;
   onClose: () => void;
+  transactionId?: string;
 }
 
 export const TransferSuccessScreen = ({
   amount,
   fromAccount,
   toAccount,
-  onClose
+  onClose,
+  transactionId
 }: TransferSuccessScreenProps) => {
   const [showContent, setShowContent] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  const generatedTxId = transactionId || `HBT${Date.now().toString(36).toUpperCase()}`;
 
   useEffect(() => {
     setTimeout(() => setShowContent(true), 500);
   }, []);
 
+  const copyTransactionId = async () => {
+    await navigator.clipboard.writeText(generatedTxId);
+    setCopied(true);
+    toast({
+      title: "Copied!",
+      description: "Transaction ID copied to clipboard",
+    });
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleGoToDashboard = () => {
+    onClose();
+    navigate('/dashboard');
+  };
+
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-heritage-blue/95 via-heritage-blue-dark/95 to-heritage-blue/95 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-gradient-to-br from-[#0d1b2a]/98 via-[#1e3a5f]/98 to-[#0d1b2a]/98 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-heritage-gold/20 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-success/20 rounded-full blur-2xl animate-float" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-green-500/20 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-heritage-gold/20 rounded-full blur-2xl animate-float" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 w-32 h-32 bg-green-400/10 rounded-full blur-xl animate-float" style={{ animationDelay: '0.5s' }}></div>
       </div>
 
-      <Card className="relative w-full max-w-md bg-white/95 backdrop-blur-sm animate-scale-in">
+      <Card className="relative w-full max-w-md bg-white/95 backdrop-blur-sm animate-scale-in shadow-2xl">
         <div className="p-8 text-center space-y-6">
-          {/* Success Icon with Animation */}
+          {/* Success Icon with Green Checkmark */}
           <div className="relative w-32 h-32 mx-auto">
-            <div className="absolute inset-0">
+            <div className="absolute inset-0 bg-gradient-to-br from-green-400/20 to-green-600/20 rounded-full animate-pulse"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
               <AnimatedHeritageLogo 
                 size="lg" 
                 isActive={true} 
                 variant="success" 
               />
             </div>
-            <div className="absolute -top-2 -right-2 w-12 h-12 bg-success rounded-full flex items-center justify-center animate-scale-in shadow-lg" style={{ animationDelay: '0.5s' }}>
-              <CheckCircle className="w-7 h-7 text-white" />
+            <div className="absolute -top-1 -right-1 w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center animate-scale-in shadow-lg ring-4 ring-white" style={{ animationDelay: '0.5s' }}>
+              <CheckCircle className="w-8 h-8 text-white" />
             </div>
           </div>
 
           {showContent && (
-            <div className="space-y-4 animate-fade-in">
-              <h2 className="text-3xl font-bold text-heritage-blue">
-                Transfer Successful!
-              </h2>
-              
-              <div className="space-y-2 text-muted-foreground">
-                <p className="text-lg">Transfer completed successfully</p>
+            <div className="space-y-5 animate-fade-in">
+              <div>
+                <h2 className="text-3xl font-bold text-green-600 mb-2">
+                  Transfer Successful!
+                </h2>
+                <p className="text-muted-foreground">Your funds have been transferred</p>
+              </div>
+
+              {/* Amount Display */}
+              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
+                <p className="text-sm text-green-600 mb-1">Amount Transferred</p>
+                <p className="text-4xl font-bold text-green-700">
+                  ${amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                </p>
               </div>
 
               {/* Transfer Details */}
-              <div className="bg-gradient-to-br from-heritage-blue/5 to-heritage-gold/5 rounded-lg p-4 space-y-3 text-left">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Amount</span>
-                  <span className="text-2xl font-bold text-success">
-                    ${amount.toFixed(2)}
-                  </span>
-                </div>
-                
-                <Separator className="bg-heritage-blue/10" />
-                
-                <div className="space-y-2">
-                  <div className="flex items-center text-sm">
-                    <span className="text-muted-foreground flex-1">From</span>
-                    <span className="font-medium text-heritage-blue">{fromAccount}</span>
+              <div className="bg-gradient-to-br from-[#1e3a5f]/5 to-heritage-gold/5 rounded-lg p-4 space-y-4 text-left border border-heritage-blue/10">
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between p-3 bg-white rounded-lg shadow-sm">
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">From</p>
+                      <p className="font-semibold text-heritage-blue">{fromAccount}</p>
+                    </div>
                   </div>
-                  <div className="flex items-center justify-center">
-                    <ArrowRight className="w-4 h-4 text-heritage-gold" />
+                  
+                  <div className="flex justify-center">
+                    <div className="w-8 h-8 bg-heritage-gold/20 rounded-full flex items-center justify-center">
+                      <ArrowRight className="w-4 h-4 text-heritage-gold" />
+                    </div>
                   </div>
-                  <div className="flex items-center text-sm">
-                    <span className="text-muted-foreground flex-1">To</span>
-                    <span className="font-medium text-heritage-blue">{toAccount}</span>
+                  
+                  <div className="flex items-start justify-between p-3 bg-white rounded-lg shadow-sm">
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">To</p>
+                      <p className="font-semibold text-heritage-blue">{toAccount}</p>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-4 space-y-2">
+              {/* Transaction ID */}
+              <div className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                <div className="text-left">
+                  <p className="text-xs text-muted-foreground">Transaction ID</p>
+                  <p className="font-mono text-sm">{generatedTxId}</p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={copyTransactionId}
+                  className="h-8 w-8 p-0"
+                >
+                  {copied ? (
+                    <Check className="w-4 h-4 text-green-500" />
+                  ) : (
+                    <Copy className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-2 space-y-3">
+                <Button 
+                  onClick={handleGoToDashboard}
+                  className="w-full bg-gradient-to-r from-[#1e3a5f] to-[#0d1b2a] hover:from-[#0d1b2a] hover:to-[#1e3a5f] text-white font-semibold py-6 text-lg"
+                >
+                  <Home className="w-5 h-5 mr-2" />
+                  Go to Dashboard
+                </Button>
                 <Button 
                   onClick={onClose}
-                  className="w-full bg-heritage-gold hover:bg-heritage-gold/90 text-heritage-blue font-semibold"
+                  variant="outline"
+                  className="w-full border-heritage-gold text-heritage-blue hover:bg-heritage-gold/10 font-semibold"
                 >
-                  Done
+                  Make Another Transfer
                 </Button>
-                <p className="text-xs text-muted-foreground">
-                  Transaction ID: {Math.random().toString(36).substr(2, 9).toUpperCase()}
-                </p>
               </div>
             </div>
           )}
@@ -101,7 +159,3 @@ export const TransferSuccessScreen = ({
     </div>
   );
 };
-
-const Separator = ({ className }: { className?: string }) => (
-  <div className={`h-px bg-border ${className}`} />
-);
