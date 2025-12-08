@@ -65,12 +65,14 @@ export const EnhancedTransferProgress = ({ isVisible, onComplete }: TransferProg
   const logos = [heritageLogo1, heritageLogo2];
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-[#0d1b2a]/98 via-[#1e3a5f]/98 to-[#0d1b2a]/98 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      {/* Animated background elements */}
+    <div className="fixed inset-0 bg-white z-50 flex items-center justify-center p-4">
+      {/* Animated glowing background effects - Red and Blue */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-heritage-gold/15 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-48 h-48 bg-heritage-gold/10 rounded-full blur-2xl animate-float" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/3 w-32 h-32 bg-heritage-gold/5 rounded-full blur-xl animate-float" style={{ animationDelay: '0.5s' }}></div>
+        <div className="absolute w-96 h-96 rounded-full blur-3xl animate-pulse" style={{ background: 'radial-gradient(circle, rgba(220, 38, 38, 0.3) 0%, transparent 70%)', top: '10%', left: '10%' }}></div>
+        <div className="absolute w-96 h-96 rounded-full blur-3xl animate-pulse" style={{ background: 'radial-gradient(circle, rgba(30, 58, 95, 0.3) 0%, transparent 70%)', bottom: '10%', right: '10%', animationDelay: '1s' }}></div>
+        <div className="absolute w-64 h-64 rounded-full blur-2xl" style={{ background: 'radial-gradient(circle, rgba(212, 175, 55, 0.2) 0%, transparent 70%)', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}></div>
+        <div className="absolute w-72 h-72 rounded-full blur-3xl" style={{ background: 'radial-gradient(circle, rgba(185, 28, 28, 0.25) 0%, transparent 70%)', bottom: '20%', left: '20%' }}></div>
+        <div className="absolute w-72 h-72 rounded-full blur-3xl" style={{ background: 'radial-gradient(circle, rgba(13, 27, 42, 0.25) 0%, transparent 70%)', top: '20%', right: '20%' }}></div>
       </div>
 
       <Card className="w-full max-w-md animate-scale-in bg-white/95 backdrop-blur-sm shadow-2xl relative overflow-hidden">

@@ -23,6 +23,7 @@ import Contact from "./pages/Contact";
 import OpenAccount from "./pages/OpenAccount";
 import LinkExternalBank from "./pages/LinkExternalBank";
 import ConnectExternalBank from "./pages/ConnectExternalBank";
+import AdminLogin from "./pages/AdminLogin";
 
 const queryClient = new QueryClient();
 
@@ -159,6 +160,14 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/open-account" element={<OpenAccount />} />
+            <Route 
+              path="/admin" 
+              element={
+                <AuthRoute>
+                  <AdminLogin />
+                </AuthRoute>
+              }
+            />
             
             {/* Protected Account Routes */}
             <Route 
