@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Eye, EyeOff, Wallet, ArrowUpRight, ArrowDownLeft, Copy, Check, TrendingUp, RefreshCw } from 'lucide-react';
+import { Eye, EyeOff, Wallet, ArrowUpRight, ArrowDownLeft, Copy, Check, TrendingUp, RefreshCw, Bitcoin, Coins } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { CryptoPortfolioWidget } from '@/components/homepage/CryptoPortfolioWidget';
 
 interface Account {
   id: string;
@@ -113,7 +114,7 @@ export const DashboardAccountSummary = () => {
 
   if (loading) {
     return (
-      <Card className="bg-gradient-to-br from-[#1e3a5f] to-[#0d1b2a] border-heritage-gold/30">
+      <Card className="bg-heritage-blue border-heritage-gold/30">
         <CardContent className="p-6">
           <div className="animate-pulse space-y-4">
             <div className="h-8 bg-white/10 rounded w-1/3"></div>
@@ -126,48 +127,60 @@ export const DashboardAccountSummary = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Total Balance Card */}
-      <Card className="bg-gradient-to-br from-[#1e3a5f] to-[#0d1b2a] border-heritage-gold/30 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-heritage-gold/5 to-transparent"></div>
-        <CardHeader className="relative pb-2">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-white/90 text-lg font-medium flex items-center gap-2">
-              <Wallet className="w-5 h-5 text-heritage-gold" />
-              Total Balance
-            </CardTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setBalanceVisible(!balanceVisible)}
-              className="text-white/70 hover:text-white hover:bg-white/10"
-            >
-              {balanceVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="relative pt-0 pb-6">
-          <p className="text-4xl font-bold text-white mb-4">
-            {formatBalance(totalBalance)}
-          </p>
-          <div className="flex items-center gap-4 text-sm">
-            <div className="flex items-center gap-1 text-green-400">
-              <ArrowUpRight className="w-4 h-4" />
-              <span>Income</span>
+      {/* Main Summary Grid - Account Balance + Crypto Portfolio Side by Side */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Total Balance Card - Blue Background with White Text */}
+        <Card className="bg-heritage-blue border-heritage-gold/30 overflow-hidden relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-heritage-gold/10 via-transparent to-heritage-blue-dark/50"></div>
+          <CardHeader className="relative pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-white text-lg font-medium flex items-center gap-2">
+                <Wallet className="w-5 h-5 text-heritage-gold" />
+                Total Balance
+              </CardTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setBalanceVisible(!balanceVisible)}
+                className="text-white/70 hover:text-white hover:bg-white/10"
+              >
+                {balanceVisible ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </Button>
             </div>
-            <div className="flex items-center gap-1 text-red-400">
-              <ArrowDownLeft className="w-4 h-4" />
-              <span>Expenses</span>
+          </CardHeader>
+          <CardContent className="relative pt-0 pb-6">
+            <p className="text-4xl font-bold text-white mb-4">
+              {formatBalance(totalBalance)}
+            </p>
+            <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-1 text-green-400">
+                <ArrowUpRight className="w-4 h-4" />
+                <span>Income</span>
+              </div>
+              <div className="flex items-center gap-1 text-red-400">
+                <ArrowDownLeft className="w-4 h-4" />
+                <span>Expenses</span>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+            
+            {/* Last Update Time */}
+            <div className="mt-4 flex items-center gap-2 text-xs text-white/50">
+              <RefreshCw className="w-3 h-3" />
+              <span>Last updated: {lastUpdate.toLocaleTimeString()}</span>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Crypto Portfolio Widget */}
+        <CryptoPortfolioWidget compact={false} />
+      </div>
 
       {/* Individual Accounts */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {accounts.map((account) => (
           <Card 
             key={account.id} 
-            className="bg-gradient-to-br from-[#1e3a5f] to-[#0d1b2a] border-heritage-gold/20 hover:border-heritage-gold/40 transition-all duration-300"
+            className="bg-heritage-blue border-heritage-gold/20 hover:border-heritage-gold/40 transition-all duration-300"
           >
             <CardContent className="p-5">
               <div className="flex items-center justify-between mb-4">
