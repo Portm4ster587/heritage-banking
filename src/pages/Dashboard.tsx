@@ -8,6 +8,7 @@ import { Bell } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { AccountOverviewSection } from '@/components/dashboard/AccountOverviewSection';
 import { DashboardAccountSummary } from '@/components/dashboard/DashboardAccountSummary';
+import { SpendingChart } from '@/components/dashboard/SpendingChart';
 import { BankingHeader } from '@/components/BankingHeader';
 import { ApplicationForm } from '@/components/ApplicationForm';
 import { AdminPanel } from '@/components/AdminPanel';
@@ -257,6 +258,7 @@ export default function Dashboard() {
         {activeSection === 'accounts' && (
           <div className="space-y-8">
             <DashboardAccountSummary />
+            <SpendingChart />
             <AccountOverviewSection
               accounts={accounts}
               balanceVisible={balanceVisible}
