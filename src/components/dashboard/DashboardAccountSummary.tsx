@@ -178,7 +178,7 @@ export const DashboardAccountSummary = () => {
 
   if (loading) {
     return (
-      <div className="bg-[#0a1628] rounded-2xl overflow-hidden shadow-2xl border border-heritage-gold/20">
+      <div className="bg-heritage-blue-dark rounded-2xl overflow-hidden shadow-2xl border border-heritage-gold/20">
         <div className="flex items-center justify-center p-12">
           <Loader2 className="w-8 h-8 text-heritage-gold animate-spin" />
         </div>
@@ -192,9 +192,9 @@ export const DashboardAccountSummary = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* Account Summary Card - Heritage Navy Blue Design */}
-        <div className="bg-[#0a1628] rounded-2xl overflow-hidden shadow-2xl border border-heritage-gold/20">
+        <div className="bg-heritage-blue-dark rounded-2xl overflow-hidden shadow-2xl border border-heritage-gold/20">
           {/* Header with Logo */}
-          <div className="bg-gradient-to-r from-[#0d2140] to-[#1a365d] p-6 border-b border-heritage-gold/20">
+          <div className="bg-gradient-to-r from-heritage-blue to-heritage-blue-dark p-6 border-b border-heritage-gold/20">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <HeritageSVGLogo size="lg" className="animate-pulse" />
@@ -205,13 +205,13 @@ export const DashboardAccountSummary = () => {
               </div>
               <div className="text-right">
                 <p className="text-heritage-gold/60 text-xs">Heritage US</p>
-                <p className="text-white font-mono text-sm">Ecosystem Account</p>
+                <p className="text-primary-foreground font-mono text-sm">Ecosystem Account</p>
               </div>
             </div>
           </div>
 
           {/* Balance Section - Navy Blue */}
-          <div className="bg-[#0d2140] p-6">
+          <div className="bg-heritage-blue p-6">
             <div className="flex items-center justify-between mb-3">
               <p className="text-heritage-gold/80 text-sm font-medium">Available Balance</p>
               <button 
@@ -221,7 +221,7 @@ export const DashboardAccountSummary = () => {
                 {showBalance ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
               </button>
             </div>
-            <p className="text-3xl sm:text-4xl font-bold text-white mb-2 tracking-wide">
+            <p className="text-3xl sm:text-4xl font-bold text-primary-foreground mb-2 tracking-wide">
               {showBalance ? `$${totalBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '••••••••'}
             </p>
             <p className="text-heritage-gold/60 text-xs">USD - United States Dollar</p>
@@ -230,20 +230,20 @@ export const DashboardAccountSummary = () => {
             )}
             
             {/* Last Update Time */}
-            <div className="mt-4 flex items-center gap-2 text-xs text-white/50">
+            <div className="mt-4 flex items-center gap-2 text-xs text-primary-foreground/50">
               <RefreshCw className="w-3 h-3" />
               <span>Last updated: {lastUpdate.toLocaleTimeString()}</span>
             </div>
           </div>
 
           {/* Account Details */}
-          <div className="bg-[#0a1628] p-6 space-y-4">
+          <div className="bg-heritage-blue-dark p-6 space-y-4">
             {/* Account Number */}
-            <div className="bg-[#0d2140] rounded-xl p-4 border border-heritage-gold/10">
+            <div className="bg-heritage-blue rounded-xl p-4 border border-heritage-gold/10">
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
                   <p className="text-heritage-gold/60 text-xs mb-1">Account Number</p>
-                  <p className="text-white font-mono text-lg tracking-wider truncate">
+                  <p className="text-primary-foreground font-mono text-lg tracking-wider truncate">
                     {showBalance ? accountNumber : '•••• •••• ••••'}
                   </p>
                 </div>
@@ -251,41 +251,41 @@ export const DashboardAccountSummary = () => {
                   onClick={() => copyToClipboard(accountNumber, 'account')}
                   className="text-heritage-gold hover:text-heritage-gold/80 transition-colors p-2 flex-shrink-0"
                 >
-                  {copiedField === 'account' ? <Check className="w-5 h-5 text-green-400" /> : <Copy className="w-5 h-5" />}
+                  {copiedField === 'account' ? <Check className="w-5 h-5 text-success" /> : <Copy className="w-5 h-5" />}
                 </button>
               </div>
             </div>
 
             {/* Routing Number */}
-            <div className="bg-[#0d2140] rounded-xl p-4 border border-heritage-gold/10">
+            <div className="bg-heritage-blue rounded-xl p-4 border border-heritage-gold/10">
               <div className="flex items-center justify-between">
                 <div className="flex-1 min-w-0">
                   <p className="text-heritage-gold/60 text-xs mb-1">Heritage US Routing Number</p>
-                  <p className="text-white font-mono text-lg tracking-wider">{heritageRouting}</p>
+                  <p className="text-primary-foreground font-mono text-lg tracking-wider">{heritageRouting}</p>
                 </div>
                 <button
                   onClick={() => copyToClipboard(heritageRouting, 'routing')}
                   className="text-heritage-gold hover:text-heritage-gold/80 transition-colors p-2 flex-shrink-0"
                 >
-                  {copiedField === 'routing' ? <Check className="w-5 h-5 text-green-400" /> : <Copy className="w-5 h-5" />}
+                  {copiedField === 'routing' ? <Check className="w-5 h-5 text-success" /> : <Copy className="w-5 h-5" />}
                 </button>
               </div>
             </div>
 
             {/* Bank Info */}
-            <div className="bg-[#0d2140] rounded-xl p-4 border border-heritage-gold/10">
+            <div className="bg-heritage-blue rounded-xl p-4 border border-heritage-gold/10">
               <div className="flex items-center space-x-3">
                 <Building2 className="w-5 h-5 text-heritage-gold flex-shrink-0" />
                 <div className="min-w-0">
                   <p className="text-heritage-gold/60 text-xs">Bank Name</p>
-                  <p className="text-white font-semibold text-base truncate">Heritage Bank US</p>
+                  <p className="text-primary-foreground font-semibold text-base truncate">Heritage Bank US</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Footer */}
-          <div className="bg-gradient-to-r from-[#0d2140] to-[#1a365d] p-4 border-t border-heritage-gold/20">
+          <div className="bg-gradient-to-r from-heritage-blue to-heritage-blue-dark p-4 border-t border-heritage-gold/20">
             <div className="flex items-center justify-between text-xs">
               <span className="text-heritage-gold/60">FDIC Insured • Member FDIC</span>
               <span className="text-heritage-gold font-semibold">Since 1892</span>
@@ -294,14 +294,14 @@ export const DashboardAccountSummary = () => {
         </div>
 
         {/* Crypto Portfolio Widget - Same Heritage Design */}
-        <div className="bg-heritage-blue/95 backdrop-blur-md rounded-2xl p-6 border border-heritage-gold/30 shadow-2xl">
+        <div className="bg-heritage-blue backdrop-blur-md rounded-2xl p-6 border border-heritage-gold/30 shadow-2xl">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-heritage-gold/20 rounded-full flex items-center justify-center">
                 <Bitcoin className="w-5 h-5 text-heritage-gold" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white">Crypto Portfolio</h3>
+                <h3 className="text-lg font-bold text-primary-foreground">Crypto Portfolio</h3>
                 <p className="text-heritage-gold/80 text-xs">Heritage Digital Assets</p>
               </div>
             </div>
@@ -309,9 +309,9 @@ export const DashboardAccountSummary = () => {
           </div>
 
           {/* Total Portfolio Value */}
-          <div className="bg-heritage-blue-dark/60 rounded-xl p-4 mb-4 border border-heritage-gold/20">
+          <div className="bg-heritage-blue-dark rounded-xl p-4 mb-4 border border-heritage-gold/20">
             <p className="text-heritage-gold/80 text-xs mb-1">Total Portfolio Value</p>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-2xl font-bold text-primary-foreground">
               ${cryptoTotalValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
           </div>
@@ -326,26 +326,26 @@ export const DashboardAccountSummary = () => {
               {cryptoAssets.slice(0, 5).map((asset) => (
                 <div 
                   key={asset.symbol}
-                  className="flex items-center justify-between p-3 bg-heritage-blue-dark/40 rounded-lg border border-heritage-gold/10 hover:border-heritage-gold/30 transition-all"
+                  className="flex items-center justify-between p-3 bg-heritage-blue-dark/60 rounded-lg border border-heritage-gold/10 hover:border-heritage-gold/30 transition-all"
                 >
                   <div className="flex items-center space-x-3 min-w-0">
                     <div className="w-8 h-8 bg-heritage-gold/20 rounded-full flex items-center justify-center flex-shrink-0">
                       <span className="text-heritage-gold font-bold text-sm">{asset.icon}</span>
                     </div>
                     <div className="min-w-0">
-                      <p className="text-white font-semibold text-sm">{asset.symbol}</p>
+                      <p className="text-primary-foreground font-semibold text-sm">{asset.symbol}</p>
                       <p className="text-heritage-gold/60 text-xs truncate">{asset.name}</p>
                     </div>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="text-white font-semibold text-sm">
+                    <p className="text-primary-foreground font-semibold text-sm">
                       {asset.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
                     </p>
                     <div className="flex items-center justify-end space-x-1">
                       <span className="text-heritage-gold/80 text-xs">
                         ${(asset.price * asset.balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                       </span>
-                      <div className={`flex items-center ${asset.change24h >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      <div className={`flex items-center ${asset.change24h >= 0 ? 'text-success' : 'text-destructive'}`}>
                         {asset.change24h >= 0 ? (
                           <TrendingUp className="w-3 h-3" />
                         ) : (
@@ -365,7 +365,7 @@ export const DashboardAccountSummary = () => {
             <button className="bg-heritage-gold/20 hover:bg-heritage-gold/30 text-heritage-gold py-2 text-sm rounded-lg font-semibold transition-all border border-heritage-gold/30">
               Buy Crypto
             </button>
-            <button className="bg-heritage-gold hover:bg-heritage-gold/90 text-heritage-blue py-2 text-sm rounded-lg font-semibold transition-all">
+            <button className="bg-heritage-gold hover:bg-heritage-gold/90 text-heritage-blue-dark py-2 text-sm rounded-lg font-semibold transition-all">
               Trade Now
             </button>
           </div>
@@ -384,11 +384,11 @@ export const DashboardAccountSummary = () => {
                 <Badge className="bg-heritage-gold/20 text-heritage-gold border-heritage-gold/30">
                   {formatAccountType(account.account_type)}
                 </Badge>
-                <span className="text-xs text-white/50">Active</span>
+                <span className="text-xs text-primary-foreground/50">Active</span>
               </div>
               
               {/* Balance */}
-              <p className="text-2xl font-bold text-white mb-4">
+              <p className="text-2xl font-bold text-primary-foreground mb-4">
                 {showBalance 
                   ? `$${(account.balance ?? 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}`
                   : '••••••'
@@ -397,10 +397,10 @@ export const DashboardAccountSummary = () => {
               
               {/* Account Details */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between p-2 bg-white/5 rounded-lg">
+                <div className="flex items-center justify-between p-2 bg-primary-foreground/5 rounded-lg">
                   <div>
-                    <p className="text-xs text-white/50">Account Number</p>
-                    <p className="text-sm text-white font-mono">
+                    <p className="text-xs text-primary-foreground/50">Account Number</p>
+                    <p className="text-sm text-primary-foreground font-mono">
                       {showBalance 
                         ? account.account_number 
                         : `****${account.account_number.slice(-4)}`
@@ -411,20 +411,20 @@ export const DashboardAccountSummary = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => copyToClipboard(account.account_number, `acc-${account.id}`)}
-                    className="text-white/50 hover:text-white hover:bg-white/10 h-8 w-8 p-0"
+                    className="text-primary-foreground/50 hover:text-primary-foreground hover:bg-primary-foreground/10 h-8 w-8 p-0"
                   >
                     {copiedField === `acc-${account.id}` ? (
-                      <Check className="w-3.5 h-3.5 text-green-400" />
+                      <Check className="w-3.5 h-3.5 text-success" />
                     ) : (
                       <Copy className="w-3.5 h-3.5" />
                     )}
                   </Button>
                 </div>
                 
-                <div className="flex items-center justify-between p-2 bg-white/5 rounded-lg">
+                <div className="flex items-center justify-between p-2 bg-primary-foreground/5 rounded-lg">
                   <div>
-                    <p className="text-xs text-white/50">Routing Number</p>
-                    <p className="text-sm text-white font-mono">
+                    <p className="text-xs text-primary-foreground/50">Routing Number</p>
+                    <p className="text-sm text-primary-foreground font-mono">
                       {account.routing_number || heritageRouting}
                     </p>
                   </div>
@@ -432,10 +432,10 @@ export const DashboardAccountSummary = () => {
                     variant="ghost"
                     size="sm"
                     onClick={() => copyToClipboard(account.routing_number || heritageRouting, `rtn-${account.id}`)}
-                    className="text-white/50 hover:text-white hover:bg-white/10 h-8 w-8 p-0"
+                    className="text-primary-foreground/50 hover:text-primary-foreground hover:bg-primary-foreground/10 h-8 w-8 p-0"
                   >
                     {copiedField === `rtn-${account.id}` ? (
-                      <Check className="w-3.5 h-3.5 text-green-400" />
+                      <Check className="w-3.5 h-3.5 text-success" />
                     ) : (
                       <Copy className="w-3.5 h-3.5" />
                     )}
