@@ -36,7 +36,11 @@ import {
   TrendingUp,
   Wallet,
   Send,
-  History
+  History,
+  Undo2,
+  Receipt,
+  Landmark,
+  PiggyBank
 } from 'lucide-react';
 
 interface UserAccount {
@@ -82,6 +86,47 @@ interface Application {
   admin_notes: string | null;
 }
 
+interface DepositRequest {
+  id: string;
+  user_id: string;
+  account_id: string;
+  amount: number;
+  method: string;
+  status: string | null;
+  reference_number: string | null;
+  notes: string | null;
+  created_at: string | null;
+}
+
+interface WithdrawRequest {
+  id: string;
+  user_id: string;
+  account_id: string;
+  amount: number;
+  method: string;
+  destination: string;
+  status: string | null;
+  reference_number: string | null;
+  notes: string | null;
+  created_at: string | null;
+}
+
+interface CardData {
+  id: string;
+  user_id: string;
+  account_id: string;
+  card_number: string;
+  card_type: string;
+  card_network: string;
+  last4: string;
+  expiry_date: string;
+  status: string | null;
+  activation_status: string | null;
+  spending_limit: number | null;
+  is_locked: boolean | null;
+  created_at: string | null;
+}
+
 export const FullAdminPanel = () => {
   const { user, isAdmin } = useAuth();
   const { toast } = useToast();
@@ -93,26 +138,37 @@ export const FullAdminPanel = () => {
   const [accounts, setAccounts] = useState<UserAccount[]>([]);
   const [transfers, setTransfers] = useState<Transfer[]>([]);
   const [applications, setApplications] = useState<Application[]>([]);
+  const [deposits, setDeposits] = useState<DepositRequest[]>([]);
+  const [withdrawals, setWithdrawals] = useState<WithdrawRequest[]>([]);
+  const [cards, setCards] = useState<CardData[]>([]);
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalBalance: 0,
     pendingTransfers: 0,
     pendingApplications: 0,
-    todayTransactions: 0
+    todayTransactions: 0,
+    pendingDeposits: 0,
+    pendingWithdrawals: 0,
+    activeCards: 0
   });
 
   // Dialog states
   const [selectedAccount, setSelectedAccount] = useState<UserAccount | null>(null);
   const [selectedTransfer, setSelectedTransfer] = useState<Transfer | null>(null);
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null);
+  const [selectedDeposit, setSelectedDeposit] = useState<DepositRequest | null>(null);
+  const [selectedWithdrawal, setSelectedWithdrawal] = useState<WithdrawRequest | null>(null);
+  const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
   const [balanceAdjustment, setBalanceAdjustment] = useState('');
   const [adjustmentNote, setAdjustmentNote] = useState('');
   const [adminNote, setAdminNote] = useState('');
+  const [refundReason, setRefundReason] = useState('');
 
   useEffect(() => {
     if (isAdmin) {
       fetchAllData();
-      setupRealtimeSubscriptions();
+      const cleanup = setupRealtimeSubscriptions();
+      return cleanup;
     }
   }, [isAdmin]);
 
@@ -147,10 +203,43 @@ export const FullAdminPanel = () => {
       )
       .subscribe();
 
+    const depositsChannel = supabase
+      .channel('admin-deposits')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'deposit_requests' },
+        () => {
+          fetchDeposits();
+          fetchStats();
+        }
+      )
+      .subscribe();
+
+    const withdrawalsChannel = supabase
+      .channel('admin-withdrawals')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'withdraw_requests' },
+        () => {
+          fetchWithdrawals();
+          fetchStats();
+        }
+      )
+      .subscribe();
+
+    const cardsChannel = supabase
+      .channel('admin-cards')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'cards' },
+        () => fetchCards()
+      )
+      .subscribe();
+
     return () => {
       transfersChannel.unsubscribe();
       accountsChannel.unsubscribe();
       applicationsChannel.unsubscribe();
+      depositsChannel.unsubscribe();
+      withdrawalsChannel.unsubscribe();
+      cardsChannel.unsubscribe();
     };
   };
 
@@ -160,6 +249,9 @@ export const FullAdminPanel = () => {
       fetchAccounts(),
       fetchTransfers(),
       fetchApplications(),
+      fetchDeposits(),
+      fetchWithdrawals(),
+      fetchCards(),
       fetchStats()
     ]);
     setLoading(false);
@@ -208,18 +300,66 @@ export const FullAdminPanel = () => {
     }
   };
 
+  const fetchDeposits = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('deposit_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setDeposits(data || []);
+    } catch (error) {
+      console.error('Error fetching deposits:', error);
+    }
+  };
+
+  const fetchWithdrawals = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('withdraw_requests')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setWithdrawals(data || []);
+    } catch (error) {
+      console.error('Error fetching withdrawals:', error);
+    }
+  };
+
+  const fetchCards = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('cards')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setCards(data || []);
+    } catch (error) {
+      console.error('Error fetching cards:', error);
+    }
+  };
+
   const fetchStats = async () => {
     try {
-      const [accountsRes, transfersRes, applicationsRes] = await Promise.all([
+      const [accountsRes, transfersRes, applicationsRes, depositsRes, withdrawalsRes, cardsRes] = await Promise.all([
         supabase.from('accounts').select('balance, user_id'),
         supabase.from('transfers').select('status, created_at'),
-        supabase.from('account_applications').select('status')
+        supabase.from('account_applications').select('status'),
+        supabase.from('deposit_requests').select('status'),
+        supabase.from('withdraw_requests').select('status'),
+        supabase.from('cards').select('status')
       ]);
 
       const uniqueUsers = new Set(accountsRes.data?.map(a => a.user_id) || []);
       const totalBalance = accountsRes.data?.reduce((sum, a) => sum + (a.balance || 0), 0) || 0;
       const pendingTransfers = transfersRes.data?.filter(t => t.status === 'pending_approval').length || 0;
       const pendingApplications = applicationsRes.data?.filter(a => a.status === 'pending').length || 0;
+      const pendingDeposits = depositsRes.data?.filter(d => d.status === 'pending').length || 0;
+      const pendingWithdrawals = withdrawalsRes.data?.filter(w => w.status === 'pending').length || 0;
+      const activeCards = cardsRes.data?.filter(c => c.status === 'active').length || 0;
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const todayTransactions = transfersRes.data?.filter(t => new Date(t.created_at) >= today).length || 0;
@@ -229,7 +369,10 @@ export const FullAdminPanel = () => {
         totalBalance,
         pendingTransfers,
         pendingApplications,
-        todayTransactions
+        todayTransactions,
+        pendingDeposits,
+        pendingWithdrawals,
+        activeCards
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
@@ -520,6 +663,275 @@ export const FullAdminPanel = () => {
     }
   };
 
+  // Deposit Management Functions
+  const approveDeposit = async (depositId: string) => {
+    try {
+      const deposit = deposits.find(d => d.id === depositId);
+      if (!deposit) return;
+
+      // Update deposit status
+      const { error } = await supabase
+        .from('deposit_requests')
+        .update({ 
+          status: 'completed',
+          processed_by_admin_id: user?.id,
+          processed_at: new Date().toISOString()
+        })
+        .eq('id', depositId);
+
+      if (error) throw error;
+
+      // Add to account balance
+      const { data: account } = await supabase
+        .from('accounts')
+        .select('balance')
+        .eq('id', deposit.account_id)
+        .single();
+
+      if (account) {
+        await supabase
+          .from('accounts')
+          .update({ balance: account.balance + deposit.amount })
+          .eq('id', deposit.account_id);
+      }
+
+      // Notify user
+      await supabase.from('user_notifications').insert({
+        user_id: deposit.user_id,
+        type: 'transaction',
+        title: 'Deposit Approved',
+        message: `Your deposit of $${deposit.amount.toLocaleString()} has been approved and credited to your account.`,
+        priority: 'high'
+      });
+
+      toast({
+        title: "Deposit Approved",
+        description: "Funds have been credited to the account",
+      });
+
+      fetchDeposits();
+      fetchAccounts();
+      setSelectedDeposit(null);
+    } catch (error) {
+      console.error('Error approving deposit:', error);
+      toast({ title: "Error", description: "Failed to approve deposit", variant: "destructive" });
+    }
+  };
+
+  const rejectDeposit = async (depositId: string, reason: string) => {
+    try {
+      const deposit = deposits.find(d => d.id === depositId);
+      if (!deposit) return;
+
+      const { error } = await supabase
+        .from('deposit_requests')
+        .update({ 
+          status: 'rejected',
+          notes: reason,
+          processed_by_admin_id: user?.id,
+          processed_at: new Date().toISOString()
+        })
+        .eq('id', depositId);
+
+      if (error) throw error;
+
+      await supabase.from('user_notifications').insert({
+        user_id: deposit.user_id,
+        type: 'transaction',
+        title: 'Deposit Rejected',
+        message: `Your deposit of $${deposit.amount.toLocaleString()} was rejected. Reason: ${reason}`,
+        priority: 'high'
+      });
+
+      toast({ title: "Deposit Rejected", description: "User has been notified" });
+      fetchDeposits();
+      setSelectedDeposit(null);
+      setAdminNote('');
+    } catch (error) {
+      console.error('Error rejecting deposit:', error);
+      toast({ title: "Error", description: "Failed to reject deposit", variant: "destructive" });
+    }
+  };
+
+  // Withdrawal Management Functions
+  const approveWithdrawal = async (withdrawalId: string) => {
+    try {
+      const withdrawal = withdrawals.find(w => w.id === withdrawalId);
+      if (!withdrawal) return;
+
+      // Check balance first
+      const { data: account } = await supabase
+        .from('accounts')
+        .select('balance')
+        .eq('id', withdrawal.account_id)
+        .single();
+
+      if (!account || account.balance < withdrawal.amount) {
+        toast({ title: "Insufficient Funds", description: "Account balance is too low", variant: "destructive" });
+        return;
+      }
+
+      // Update withdrawal status
+      const { error } = await supabase
+        .from('withdraw_requests')
+        .update({ 
+          status: 'completed',
+          processed_by_admin_id: user?.id,
+          processed_at: new Date().toISOString()
+        })
+        .eq('id', withdrawalId);
+
+      if (error) throw error;
+
+      // Deduct from account balance
+      await supabase
+        .from('accounts')
+        .update({ balance: account.balance - withdrawal.amount })
+        .eq('id', withdrawal.account_id);
+
+      // Notify user
+      await supabase.from('user_notifications').insert({
+        user_id: withdrawal.user_id,
+        type: 'transaction',
+        title: 'Withdrawal Approved',
+        message: `Your withdrawal of $${withdrawal.amount.toLocaleString()} has been processed.`,
+        priority: 'high'
+      });
+
+      toast({ title: "Withdrawal Approved", description: "Funds have been deducted" });
+      fetchWithdrawals();
+      fetchAccounts();
+      setSelectedWithdrawal(null);
+    } catch (error) {
+      console.error('Error approving withdrawal:', error);
+      toast({ title: "Error", description: "Failed to approve withdrawal", variant: "destructive" });
+    }
+  };
+
+  const rejectWithdrawal = async (withdrawalId: string, reason: string) => {
+    try {
+      const withdrawal = withdrawals.find(w => w.id === withdrawalId);
+      if (!withdrawal) return;
+
+      const { error } = await supabase
+        .from('withdraw_requests')
+        .update({ 
+          status: 'rejected',
+          notes: reason,
+          processed_by_admin_id: user?.id,
+          processed_at: new Date().toISOString()
+        })
+        .eq('id', withdrawalId);
+
+      if (error) throw error;
+
+      await supabase.from('user_notifications').insert({
+        user_id: withdrawal.user_id,
+        type: 'transaction',
+        title: 'Withdrawal Rejected',
+        message: `Your withdrawal of $${withdrawal.amount.toLocaleString()} was rejected. Reason: ${reason}`,
+        priority: 'high'
+      });
+
+      toast({ title: "Withdrawal Rejected", description: "User has been notified" });
+      fetchWithdrawals();
+      setSelectedWithdrawal(null);
+      setAdminNote('');
+    } catch (error) {
+      console.error('Error rejecting withdrawal:', error);
+      toast({ title: "Error", description: "Failed to reject withdrawal", variant: "destructive" });
+    }
+  };
+
+  // Refund Function
+  const issueRefund = async (transferId: string) => {
+    try {
+      const transfer = transfers.find(t => t.id === transferId);
+      if (!transfer || transfer.status !== 'completed') return;
+
+      // Refund to source account
+      if (transfer.from_account_id) {
+        const { data: fromAccount } = await supabase
+          .from('accounts')
+          .select('balance')
+          .eq('id', transfer.from_account_id)
+          .single();
+
+        if (fromAccount) {
+          await supabase
+            .from('accounts')
+            .update({ balance: fromAccount.balance + transfer.amount })
+            .eq('id', transfer.from_account_id);
+        }
+      }
+
+      // Mark original transfer as refunded
+      await supabase
+        .from('transfers')
+        .update({ status: 'refunded', description: `${transfer.description || ''} - REFUNDED: ${refundReason}` })
+        .eq('id', transferId);
+
+      // Create refund record
+      await supabase.from('transfers').insert({
+        user_id: transfer.user_id,
+        amount: transfer.amount,
+        transfer_type: 'refund',
+        status: 'completed',
+        description: `Refund for transfer ${transfer.id.slice(0, 8)}: ${refundReason}`,
+        to_account_id: transfer.from_account_id,
+        approved_by_admin_id: user?.id
+      });
+
+      // Notify user
+      await supabase.from('user_notifications').insert({
+        user_id: transfer.user_id,
+        type: 'transaction',
+        title: 'Refund Issued',
+        message: `A refund of $${transfer.amount.toLocaleString()} has been credited to your account.`,
+        priority: 'high'
+      });
+
+      toast({ title: "Refund Issued", description: "Funds have been returned to the account" });
+      fetchTransfers();
+      fetchAccounts();
+      setSelectedTransfer(null);
+      setRefundReason('');
+    } catch (error) {
+      console.error('Error issuing refund:', error);
+      toast({ title: "Error", description: "Failed to issue refund", variant: "destructive" });
+    }
+  };
+
+  // Card Management Functions
+  const updateCardStatus = async (cardId: string, status: string) => {
+    try {
+      const { error } = await supabase
+        .from('cards')
+        .update({ status, activation_status: status === 'active' ? 'activated' : 'inactive' })
+        .eq('id', cardId);
+
+      if (error) throw error;
+
+      const card = cards.find(c => c.id === cardId);
+      if (card) {
+        await supabase.from('user_notifications').insert({
+          user_id: card.user_id,
+          type: 'info',
+          title: 'Card Status Updated',
+          message: `Your card ending in ${card.last4} has been ${status === 'active' ? 'activated' : status}.`,
+          priority: 'normal'
+        });
+      }
+
+      toast({ title: "Card Updated", description: `Card status changed to ${status}` });
+      fetchCards();
+      setSelectedCard(null);
+    } catch (error) {
+      console.error('Error updating card:', error);
+      toast({ title: "Error", description: "Failed to update card", variant: "destructive" });
+    }
+  };
+
   // Filter functions
   const filteredAccounts = accounts.filter(a => 
     a.account_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -541,6 +953,8 @@ export const FullAdminPanel = () => {
   );
 
   const pendingTransfers = transfers.filter(t => t.status === 'pending_approval');
+  const pendingDeposits = deposits.filter(d => d.status === 'pending');
+  const pendingWithdrawals = withdrawals.filter(w => w.status === 'pending');
 
   if (!isAdmin) {
     return (
@@ -575,62 +989,98 @@ export const FullAdminPanel = () => {
       </div>
 
       {/* Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
         <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/20">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <Users className="w-8 h-8 text-blue-500" />
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <Users className="w-6 h-6 text-blue-500" />
               <div>
-                <p className="text-sm text-muted-foreground">Total Users</p>
-                <p className="text-2xl font-bold">{stats.totalUsers}</p>
+                <p className="text-xs text-muted-foreground">Users</p>
+                <p className="text-lg font-bold">{stats.totalUsers}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-green-500/10 to-green-600/5 border-green-500/20">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <Wallet className="w-8 h-8 text-green-500" />
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <Wallet className="w-6 h-6 text-green-500" />
               <div>
-                <p className="text-sm text-muted-foreground">Total Balance</p>
-                <p className="text-2xl font-bold">${stats.totalBalance.toLocaleString()}</p>
+                <p className="text-xs text-muted-foreground">Balance</p>
+                <p className="text-lg font-bold">${(stats.totalBalance / 1000).toFixed(0)}K</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className={`bg-gradient-to-br ${stats.pendingTransfers > 0 ? 'from-orange-500/10 to-orange-600/5 border-orange-500/40' : 'from-muted/10 to-muted/5'}`}>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <Send className="w-8 h-8 text-orange-500" />
+        <Card className={`bg-gradient-to-br ${stats.pendingTransfers > 0 ? 'from-orange-500/10 border-orange-500/40' : 'from-muted/10'}`}>
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <Send className="w-6 h-6 text-orange-500" />
               <div>
-                <p className="text-sm text-muted-foreground">Pending Transfers</p>
-                <p className="text-2xl font-bold">{stats.pendingTransfers}</p>
+                <p className="text-xs text-muted-foreground">Transfers</p>
+                <p className="text-lg font-bold">{stats.pendingTransfers}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className={`bg-gradient-to-br ${stats.pendingApplications > 0 ? 'from-purple-500/10 to-purple-600/5 border-purple-500/40' : 'from-muted/10 to-muted/5'}`}>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <FileText className="w-8 h-8 text-purple-500" />
+        <Card className={`bg-gradient-to-br ${stats.pendingApplications > 0 ? 'from-purple-500/10 border-purple-500/40' : 'from-muted/10'}`}>
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <FileText className="w-6 h-6 text-purple-500" />
               <div>
-                <p className="text-sm text-muted-foreground">Pending Applications</p>
-                <p className="text-2xl font-bold">{stats.pendingApplications}</p>
+                <p className="text-xs text-muted-foreground">Applications</p>
+                <p className="text-lg font-bold">{stats.pendingApplications}</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gradient-to-br from-cyan-500/10 to-cyan-600/5 border-cyan-500/20">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <Activity className="w-8 h-8 text-cyan-500" />
+        <Card className={`bg-gradient-to-br ${stats.pendingDeposits > 0 ? 'from-emerald-500/10 border-emerald-500/40' : 'from-muted/10'}`}>
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <ArrowDownCircle className="w-6 h-6 text-emerald-500" />
               <div>
-                <p className="text-sm text-muted-foreground">Today's Activity</p>
-                <p className="text-2xl font-bold">{stats.todayTransactions}</p>
+                <p className="text-xs text-muted-foreground">Deposits</p>
+                <p className="text-lg font-bold">{stats.pendingDeposits}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className={`bg-gradient-to-br ${stats.pendingWithdrawals > 0 ? 'from-red-500/10 border-red-500/40' : 'from-muted/10'}`}>
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <ArrowUpCircle className="w-6 h-6 text-red-500" />
+              <div>
+                <p className="text-xs text-muted-foreground">Withdrawals</p>
+                <p className="text-lg font-bold">{stats.pendingWithdrawals}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-indigo-500/10 border-indigo-500/20">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <CreditCard className="w-6 h-6 text-indigo-500" />
+              <div>
+                <p className="text-xs text-muted-foreground">Cards</p>
+                <p className="text-lg font-bold">{stats.activeCards}</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-cyan-500/10 border-cyan-500/20">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <Activity className="w-6 h-6 text-cyan-500" />
+              <div>
+                <p className="text-xs text-muted-foreground">Today</p>
+                <p className="text-lg font-bold">{stats.todayTransactions}</p>
               </div>
             </div>
           </CardContent>
@@ -650,24 +1100,27 @@ export const FullAdminPanel = () => {
 
       {/* Main Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="accounts">
-            Accounts ({accounts.length})
-          </TabsTrigger>
-          <TabsTrigger value="transfers" className="relative">
+        <TabsList className="flex flex-wrap h-auto gap-1 p-1">
+          <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
+          <TabsTrigger value="accounts" className="text-xs">Accounts ({accounts.length})</TabsTrigger>
+          <TabsTrigger value="transfers" className="text-xs relative">
             Transfers
-            {stats.pendingTransfers > 0 && (
-              <Badge className="ml-2 bg-orange-500">{stats.pendingTransfers}</Badge>
-            )}
+            {stats.pendingTransfers > 0 && <Badge className="ml-1 h-5 bg-orange-500 text-[10px]">{stats.pendingTransfers}</Badge>}
           </TabsTrigger>
-          <TabsTrigger value="applications" className="relative">
+          <TabsTrigger value="deposits" className="text-xs relative">
+            Deposits
+            {stats.pendingDeposits > 0 && <Badge className="ml-1 h-5 bg-emerald-500 text-[10px]">{stats.pendingDeposits}</Badge>}
+          </TabsTrigger>
+          <TabsTrigger value="withdrawals" className="text-xs relative">
+            Withdrawals
+            {stats.pendingWithdrawals > 0 && <Badge className="ml-1 h-5 bg-red-500 text-[10px]">{stats.pendingWithdrawals}</Badge>}
+          </TabsTrigger>
+          <TabsTrigger value="applications" className="text-xs relative">
             Applications
-            {stats.pendingApplications > 0 && (
-              <Badge className="ml-2 bg-purple-500">{stats.pendingApplications}</Badge>
-            )}
+            {stats.pendingApplications > 0 && <Badge className="ml-1 h-5 bg-purple-500 text-[10px]">{stats.pendingApplications}</Badge>}
           </TabsTrigger>
-          <TabsTrigger value="transactions">All Transactions</TabsTrigger>
+          <TabsTrigger value="cards" className="text-xs">Cards ({cards.length})</TabsTrigger>
+          <TabsTrigger value="transactions" className="text-xs">History</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
@@ -913,6 +1366,195 @@ export const FullAdminPanel = () => {
           </Card>
         </TabsContent>
 
+        {/* Deposits Tab */}
+        <TabsContent value="deposits">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ArrowDownCircle className="w-5 h-5 text-emerald-500" />
+                Deposit Requests
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>User ID</TableHead>
+                    <TableHead>Method</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {deposits.map(deposit => (
+                    <TableRow key={deposit.id}>
+                      <TableCell>{deposit.created_at ? format(new Date(deposit.created_at), 'MMM dd, HH:mm') : '-'}</TableCell>
+                      <TableCell className="font-mono text-xs">{deposit.user_id.slice(0, 8)}...</TableCell>
+                      <TableCell className="capitalize">{deposit.method}</TableCell>
+                      <TableCell className="text-right font-semibold text-emerald-600">
+                        +${deposit.amount.toLocaleString()}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={deposit.status === 'completed' ? 'default' : deposit.status === 'rejected' ? 'destructive' : 'secondary'}>
+                          {deposit.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {deposit.status === 'pending' && (
+                          <div className="flex gap-1">
+                            <Button size="sm" className="bg-green-500 hover:bg-green-600" onClick={() => approveDeposit(deposit.id)}>
+                              <CheckCircle className="w-4 h-4" />
+                            </Button>
+                            <Button size="sm" variant="destructive" onClick={() => setSelectedDeposit(deposit)}>
+                              <XCircle className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {deposits.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                        No deposit requests
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Withdrawals Tab */}
+        <TabsContent value="withdrawals">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ArrowUpCircle className="w-5 h-5 text-red-500" />
+                Withdrawal Requests
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>User ID</TableHead>
+                    <TableHead>Method</TableHead>
+                    <TableHead>Destination</TableHead>
+                    <TableHead className="text-right">Amount</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {withdrawals.map(withdrawal => (
+                    <TableRow key={withdrawal.id}>
+                      <TableCell>{withdrawal.created_at ? format(new Date(withdrawal.created_at), 'MMM dd, HH:mm') : '-'}</TableCell>
+                      <TableCell className="font-mono text-xs">{withdrawal.user_id.slice(0, 8)}...</TableCell>
+                      <TableCell className="capitalize">{withdrawal.method}</TableCell>
+                      <TableCell className="max-w-[150px] truncate">{withdrawal.destination}</TableCell>
+                      <TableCell className="text-right font-semibold text-red-600">
+                        -${withdrawal.amount.toLocaleString()}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={withdrawal.status === 'completed' ? 'default' : withdrawal.status === 'rejected' ? 'destructive' : 'secondary'}>
+                          {withdrawal.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {withdrawal.status === 'pending' && (
+                          <div className="flex gap-1">
+                            <Button size="sm" className="bg-green-500 hover:bg-green-600" onClick={() => approveWithdrawal(withdrawal.id)}>
+                              <CheckCircle className="w-4 h-4" />
+                            </Button>
+                            <Button size="sm" variant="destructive" onClick={() => setSelectedWithdrawal(withdrawal)}>
+                              <XCircle className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {withdrawals.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                        No withdrawal requests
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Cards Tab */}
+        <TabsContent value="cards">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CreditCard className="w-5 h-5 text-indigo-500" />
+                Card Management
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Card Number</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Network</TableHead>
+                    <TableHead>Expiry</TableHead>
+                    <TableHead>Limit</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {cards.map(card => (
+                    <TableRow key={card.id}>
+                      <TableCell className="font-mono">**** {card.last4}</TableCell>
+                      <TableCell className="capitalize">{card.card_type}</TableCell>
+                      <TableCell className="capitalize">{card.card_network}</TableCell>
+                      <TableCell>{card.expiry_date}</TableCell>
+                      <TableCell>${(card.spending_limit || 0).toLocaleString()}</TableCell>
+                      <TableCell>
+                        <Badge variant={card.status === 'active' ? 'default' : card.status === 'blocked' ? 'destructive' : 'secondary'}>
+                          {card.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex gap-1">
+                          {card.status !== 'active' ? (
+                            <Button size="sm" variant="ghost" onClick={() => updateCardStatus(card.id, 'active')}>
+                              <Unlock className="w-4 h-4 text-green-500" />
+                            </Button>
+                          ) : (
+                            <Button size="sm" variant="ghost" onClick={() => updateCardStatus(card.id, 'blocked')}>
+                              <Ban className="w-4 h-4 text-red-500" />
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {cards.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                        No cards found
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         {/* All Transactions Tab */}
         <TabsContent value="transactions">
           <Card>
@@ -930,6 +1572,7 @@ export const FullAdminPanel = () => {
                     <TableHead>Description</TableHead>
                     <TableHead className="text-right">Amount</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -945,10 +1588,17 @@ export const FullAdminPanel = () => {
                       <TableCell>
                         <Badge variant={
                           transfer.status === 'completed' ? 'default' :
-                          transfer.status === 'rejected' ? 'destructive' : 'secondary'
+                          transfer.status === 'rejected' || transfer.status === 'refunded' ? 'destructive' : 'secondary'
                         }>
                           {transfer.status}
                         </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {transfer.status === 'completed' && transfer.transfer_type !== 'refund' && (
+                          <Button size="sm" variant="ghost" onClick={() => setSelectedTransfer(transfer)}>
+                            <Undo2 className="w-4 h-4 text-orange-500" />
+                          </Button>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -1137,6 +1787,59 @@ export const FullAdminPanel = () => {
               )}
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Deposit Reject Dialog */}
+      <Dialog open={!!selectedDeposit} onOpenChange={() => setSelectedDeposit(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reject Deposit</DialogTitle>
+            <DialogDescription>Amount: ${selectedDeposit?.amount.toLocaleString()}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Textarea placeholder="Rejection reason..." value={adminNote} onChange={(e) => setAdminNote(e.target.value)} />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSelectedDeposit(null)}>Cancel</Button>
+            <Button variant="destructive" onClick={() => selectedDeposit && rejectDeposit(selectedDeposit.id, adminNote)} disabled={!adminNote}>Reject</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Withdrawal Reject Dialog */}
+      <Dialog open={!!selectedWithdrawal} onOpenChange={() => setSelectedWithdrawal(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reject Withdrawal</DialogTitle>
+            <DialogDescription>Amount: ${selectedWithdrawal?.amount.toLocaleString()}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Textarea placeholder="Rejection reason..." value={adminNote} onChange={(e) => setAdminNote(e.target.value)} />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSelectedWithdrawal(null)}>Cancel</Button>
+            <Button variant="destructive" onClick={() => selectedWithdrawal && rejectWithdrawal(selectedWithdrawal.id, adminNote)} disabled={!adminNote}>Reject</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Transfer Refund Dialog */}
+      <Dialog open={!!selectedTransfer && selectedTransfer.status === 'completed'} onOpenChange={() => setSelectedTransfer(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Issue Refund</DialogTitle>
+            <DialogDescription>Refund ${selectedTransfer?.amount.toLocaleString()} to user</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Textarea placeholder="Refund reason..." value={refundReason} onChange={(e) => setRefundReason(e.target.value)} />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSelectedTransfer(null)}>Cancel</Button>
+            <Button className="bg-orange-500 hover:bg-orange-600" onClick={() => selectedTransfer && issueRefund(selectedTransfer.id)} disabled={!refundReason}>
+              <Undo2 className="w-4 h-4 mr-2" />Issue Refund
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
