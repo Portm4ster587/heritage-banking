@@ -40,7 +40,14 @@ import {
   Undo2,
   Receipt,
   Landmark,
-  PiggyBank
+  PiggyBank,
+  Mail,
+  BadgeCheck,
+  Percent,
+  CalendarDays,
+  UserCheck,
+  FileCheck,
+  Globe
 } from 'lucide-react';
 
 interface UserAccount {
@@ -127,6 +134,35 @@ interface CardData {
   created_at: string | null;
 }
 
+interface LoanApplication {
+  id: string;
+  user_id: string;
+  loan_type: string;
+  requested_amount: number;
+  approved_amount: number | null;
+  interest_rate: number | null;
+  loan_term_months: number;
+  status: string;
+  purpose: string | null;
+  annual_income: number | null;
+  credit_score: number | null;
+  admin_notes: string | null;
+  created_at: string;
+}
+
+interface IdVerification {
+  id: string;
+  user_id: string;
+  verification_type: string;
+  status: string;
+  verification_level: string | null;
+  document_type: string | null;
+  verification_score: number | null;
+  failure_reason: string | null;
+  admin_notes: string | null;
+  created_at: string;
+}
+
 export const FullAdminPanel = () => {
   const { user, isAdmin } = useAuth();
   const { toast } = useToast();
@@ -141,6 +177,8 @@ export const FullAdminPanel = () => {
   const [deposits, setDeposits] = useState<DepositRequest[]>([]);
   const [withdrawals, setWithdrawals] = useState<WithdrawRequest[]>([]);
   const [cards, setCards] = useState<CardData[]>([]);
+  const [loanApplications, setLoanApplications] = useState<LoanApplication[]>([]);
+  const [idVerifications, setIdVerifications] = useState<IdVerification[]>([]);
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalBalance: 0,
@@ -149,7 +187,9 @@ export const FullAdminPanel = () => {
     todayTransactions: 0,
     pendingDeposits: 0,
     pendingWithdrawals: 0,
-    activeCards: 0
+    activeCards: 0,
+    pendingLoans: 0,
+    pendingVerifications: 0
   });
 
   // Dialog states
@@ -159,10 +199,14 @@ export const FullAdminPanel = () => {
   const [selectedDeposit, setSelectedDeposit] = useState<DepositRequest | null>(null);
   const [selectedWithdrawal, setSelectedWithdrawal] = useState<WithdrawRequest | null>(null);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
+  const [selectedLoan, setSelectedLoan] = useState<LoanApplication | null>(null);
+  const [selectedVerification, setSelectedVerification] = useState<IdVerification | null>(null);
   const [balanceAdjustment, setBalanceAdjustment] = useState('');
   const [adjustmentNote, setAdjustmentNote] = useState('');
   const [adminNote, setAdminNote] = useState('');
   const [refundReason, setRefundReason] = useState('');
+  const [loanInterestRate, setLoanInterestRate] = useState('');
+  const [loanApprovedAmount, setLoanApprovedAmount] = useState('');
 
   useEffect(() => {
     if (isAdmin) {
@@ -252,6 +296,8 @@ export const FullAdminPanel = () => {
       fetchDeposits(),
       fetchWithdrawals(),
       fetchCards(),
+      fetchLoanApplications(),
+      fetchIdVerifications(),
       fetchStats()
     ]);
     setLoading(false);
@@ -342,15 +388,45 @@ export const FullAdminPanel = () => {
     }
   };
 
+  const fetchLoanApplications = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('loan_applications')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setLoanApplications(data || []);
+    } catch (error) {
+      console.error('Error fetching loan applications:', error);
+    }
+  };
+
+  const fetchIdVerifications = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('id_verifications')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setIdVerifications(data || []);
+    } catch (error) {
+      console.error('Error fetching ID verifications:', error);
+    }
+  };
+
   const fetchStats = async () => {
     try {
-      const [accountsRes, transfersRes, applicationsRes, depositsRes, withdrawalsRes, cardsRes] = await Promise.all([
+      const [accountsRes, transfersRes, applicationsRes, depositsRes, withdrawalsRes, cardsRes, loansRes, verificationsRes] = await Promise.all([
         supabase.from('accounts').select('balance, user_id'),
         supabase.from('transfers').select('status, created_at'),
         supabase.from('account_applications').select('status'),
         supabase.from('deposit_requests').select('status'),
         supabase.from('withdraw_requests').select('status'),
-        supabase.from('cards').select('status')
+        supabase.from('cards').select('status'),
+        supabase.from('loan_applications').select('status'),
+        supabase.from('id_verifications').select('status')
       ]);
 
       const uniqueUsers = new Set(accountsRes.data?.map(a => a.user_id) || []);
@@ -360,6 +436,8 @@ export const FullAdminPanel = () => {
       const pendingDeposits = depositsRes.data?.filter(d => d.status === 'pending').length || 0;
       const pendingWithdrawals = withdrawalsRes.data?.filter(w => w.status === 'pending').length || 0;
       const activeCards = cardsRes.data?.filter(c => c.status === 'active').length || 0;
+      const pendingLoans = loansRes.data?.filter(l => l.status === 'pending').length || 0;
+      const pendingVerifications = verificationsRes.data?.filter(v => v.status === 'pending').length || 0;
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       const todayTransactions = transfersRes.data?.filter(t => new Date(t.created_at) >= today).length || 0;
@@ -372,10 +450,25 @@ export const FullAdminPanel = () => {
         todayTransactions,
         pendingDeposits,
         pendingWithdrawals,
-        activeCards
+        activeCards,
+        pendingLoans,
+        pendingVerifications
       });
     } catch (error) {
       console.error('Error fetching stats:', error);
+    }
+  };
+
+  // Send Email Notification
+  const sendEmailNotification = async (to: string, subject: string, type: string, data: any) => {
+    try {
+      const { error } = await supabase.functions.invoke('send-notification-email', {
+        body: { to, subject, type, data }
+      });
+      if (error) throw error;
+      console.log('Email notification sent to:', to);
+    } catch (error) {
+      console.error('Error sending email:', error);
     }
   };
 
@@ -932,6 +1025,163 @@ export const FullAdminPanel = () => {
     }
   };
 
+  // Loan Management Functions
+  const approveLoan = async (loanId: string) => {
+    try {
+      const loan = loanApplications.find(l => l.id === loanId);
+      if (!loan) return;
+
+      const approvedAmt = parseFloat(loanApprovedAmount) || loan.requested_amount;
+      const interestRate = parseFloat(loanInterestRate) || 8.5;
+      const monthlyPayment = (approvedAmt * (1 + (interestRate / 100) * (loan.loan_term_months / 12))) / loan.loan_term_months;
+
+      const { error } = await supabase
+        .from('loan_applications')
+        .update({
+          status: 'approved',
+          approved_amount: approvedAmt,
+          interest_rate: interestRate,
+          monthly_payment: monthlyPayment,
+          remaining_balance: approvedAmt,
+          reviewed_by: user?.id,
+          reviewed_at: new Date().toISOString(),
+          admin_notes: adminNote
+        })
+        .eq('id', loanId);
+
+      if (error) throw error;
+
+      // Notify user
+      await supabase.from('user_notifications').insert({
+        user_id: loan.user_id,
+        type: 'application',
+        title: 'Loan Approved!',
+        message: `Your ${loan.loan_type.replace('_', ' ')} for $${approvedAmt.toLocaleString()} has been approved at ${interestRate}% APR.`,
+        priority: 'high'
+      });
+
+      toast({ title: "Loan Approved", description: `$${approvedAmt.toLocaleString()} at ${interestRate}% APR` });
+      fetchLoanApplications();
+      setSelectedLoan(null);
+      setLoanInterestRate('');
+      setLoanApprovedAmount('');
+      setAdminNote('');
+    } catch (error) {
+      console.error('Error approving loan:', error);
+      toast({ title: "Error", description: "Failed to approve loan", variant: "destructive" });
+    }
+  };
+
+  const rejectLoan = async (loanId: string, reason: string) => {
+    try {
+      const loan = loanApplications.find(l => l.id === loanId);
+      if (!loan) return;
+
+      const { error } = await supabase
+        .from('loan_applications')
+        .update({
+          status: 'rejected',
+          reviewed_by: user?.id,
+          reviewed_at: new Date().toISOString(),
+          admin_notes: reason
+        })
+        .eq('id', loanId);
+
+      if (error) throw error;
+
+      await supabase.from('user_notifications').insert({
+        user_id: loan.user_id,
+        type: 'application',
+        title: 'Loan Application Update',
+        message: `Your ${loan.loan_type.replace('_', ' ')} application was not approved. Reason: ${reason}`,
+        priority: 'normal'
+      });
+
+      toast({ title: "Loan Rejected", description: "Applicant has been notified" });
+      fetchLoanApplications();
+      setSelectedLoan(null);
+      setAdminNote('');
+    } catch (error) {
+      console.error('Error rejecting loan:', error);
+      toast({ title: "Error", description: "Failed to reject loan", variant: "destructive" });
+    }
+  };
+
+  // ID Verification Functions
+  const approveVerification = async (verificationId: string) => {
+    try {
+      const verification = idVerifications.find(v => v.id === verificationId);
+      if (!verification) return;
+
+      const { error } = await supabase
+        .from('id_verifications')
+        .update({
+          status: 'verified',
+          verified_by: user?.id,
+          verified_at: new Date().toISOString(),
+          verification_score: 100,
+          expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+          admin_notes: adminNote
+        })
+        .eq('id', verificationId);
+
+      if (error) throw error;
+
+      await supabase.from('user_notifications').insert({
+        user_id: verification.user_id,
+        type: 'info',
+        title: 'Identity Verified!',
+        message: 'Your identity has been successfully verified. You now have full access to all Heritage Bank features.',
+        priority: 'high'
+      });
+
+      toast({ title: "Identity Verified", description: "User now has full access" });
+      fetchIdVerifications();
+      setSelectedVerification(null);
+      setAdminNote('');
+    } catch (error) {
+      console.error('Error approving verification:', error);
+      toast({ title: "Error", description: "Failed to verify identity", variant: "destructive" });
+    }
+  };
+
+  const rejectVerification = async (verificationId: string, reason: string) => {
+    try {
+      const verification = idVerifications.find(v => v.id === verificationId);
+      if (!verification) return;
+
+      const { error } = await supabase
+        .from('id_verifications')
+        .update({
+          status: 'failed',
+          failure_reason: reason,
+          admin_notes: adminNote
+        })
+        .eq('id', verificationId);
+
+      if (error) throw error;
+
+      await supabase.from('user_notifications').insert({
+        user_id: verification.user_id,
+        type: 'info',
+        title: 'Verification Update',
+        message: `Your identity verification could not be completed. Reason: ${reason}`,
+        priority: 'high'
+      });
+
+      toast({ title: "Verification Rejected", description: "User has been notified" });
+      fetchIdVerifications();
+      setSelectedVerification(null);
+      setAdminNote('');
+    } catch (error) {
+      console.error('Error rejecting verification:', error);
+      toast({ title: "Error", description: "Failed to reject verification", variant: "destructive" });
+    }
+  };
+
+  const pendingLoansList = loanApplications.filter(l => l.status === 'pending');
+  const pendingVerificationsList = idVerifications.filter(v => v.status === 'pending');
+
   // Filter functions
   const filteredAccounts = accounts.filter(a => 
     a.account_number.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -1118,6 +1368,14 @@ export const FullAdminPanel = () => {
           <TabsTrigger value="applications" className="text-xs relative">
             Applications
             {stats.pendingApplications > 0 && <Badge className="ml-1 h-5 bg-purple-500 text-[10px]">{stats.pendingApplications}</Badge>}
+          </TabsTrigger>
+          <TabsTrigger value="loans" className="text-xs relative">
+            Loans
+            {stats.pendingLoans > 0 && <Badge className="ml-1 h-5 bg-amber-500 text-[10px]">{stats.pendingLoans}</Badge>}
+          </TabsTrigger>
+          <TabsTrigger value="verifications" className="text-xs relative">
+            KYC
+            {stats.pendingVerifications > 0 && <Badge className="ml-1 h-5 bg-blue-500 text-[10px]">{stats.pendingVerifications}</Badge>}
           </TabsTrigger>
           <TabsTrigger value="cards" className="text-xs">Cards ({cards.length})</TabsTrigger>
           <TabsTrigger value="transactions" className="text-xs">History</TabsTrigger>
@@ -1555,6 +1813,150 @@ export const FullAdminPanel = () => {
           </Card>
         </TabsContent>
 
+        {/* Loans Tab */}
+        <TabsContent value="loans">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <PiggyBank className="w-5 h-5 text-amber-500" />
+                Loan Applications
+              </CardTitle>
+              <CardDescription>Review and manage loan requests with interest rate configuration</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Term</TableHead>
+                    <TableHead>Income</TableHead>
+                    <TableHead>Credit Score</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {loanApplications.map(loan => (
+                    <TableRow key={loan.id}>
+                      <TableCell>{format(new Date(loan.created_at), 'MMM dd, yyyy')}</TableCell>
+                      <TableCell className="capitalize">{loan.loan_type.replace('_', ' ')}</TableCell>
+                      <TableCell className="font-semibold">${loan.requested_amount.toLocaleString()}</TableCell>
+                      <TableCell>{loan.loan_term_months} months</TableCell>
+                      <TableCell>${(loan.annual_income || 0).toLocaleString()}</TableCell>
+                      <TableCell>{loan.credit_score || 'N/A'}</TableCell>
+                      <TableCell>
+                        <Badge variant={
+                          loan.status === 'approved' || loan.status === 'funded' ? 'default' :
+                          loan.status === 'rejected' ? 'destructive' : 'secondary'
+                        }>
+                          {loan.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {loan.status === 'pending' ? (
+                          <div className="flex gap-1">
+                            <Button size="sm" className="bg-green-500 hover:bg-green-600" onClick={() => setSelectedLoan(loan)}>
+                              <CheckCircle className="w-4 h-4" />
+                            </Button>
+                            <Button size="sm" variant="destructive" onClick={() => { setSelectedLoan(loan); setAdminNote(''); }}>
+                              <XCircle className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button size="sm" variant="ghost" onClick={() => setSelectedLoan(loan)}>
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {loanApplications.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                        No loan applications found
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* KYC Verifications Tab */}
+        <TabsContent value="verifications">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <UserCheck className="w-5 h-5 text-blue-500" />
+                ID Verifications (KYC)
+              </CardTitle>
+              <CardDescription>Review identity verification submissions</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Date</TableHead>
+                    <TableHead>User ID</TableHead>
+                    <TableHead>Type</TableHead>
+                    <TableHead>Level</TableHead>
+                    <TableHead>Document</TableHead>
+                    <TableHead>Score</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {idVerifications.map(verification => (
+                    <TableRow key={verification.id}>
+                      <TableCell>{format(new Date(verification.created_at), 'MMM dd, yyyy')}</TableCell>
+                      <TableCell className="font-mono text-xs">{verification.user_id.slice(0, 8)}...</TableCell>
+                      <TableCell className="capitalize">{verification.verification_type.replace('_', ' ')}</TableCell>
+                      <TableCell className="capitalize">{verification.verification_level || 'basic'}</TableCell>
+                      <TableCell className="capitalize">{verification.document_type || 'N/A'}</TableCell>
+                      <TableCell>{verification.verification_score || 'Pending'}</TableCell>
+                      <TableCell>
+                        <Badge variant={
+                          verification.status === 'verified' ? 'default' :
+                          verification.status === 'failed' ? 'destructive' : 'secondary'
+                        }>
+                          {verification.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {verification.status === 'pending' ? (
+                          <div className="flex gap-1">
+                            <Button size="sm" className="bg-green-500 hover:bg-green-600" onClick={() => approveVerification(verification.id)}>
+                              <CheckCircle className="w-4 h-4" />
+                            </Button>
+                            <Button size="sm" variant="destructive" onClick={() => setSelectedVerification(verification)}>
+                              <XCircle className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <Button size="sm" variant="ghost" onClick={() => setSelectedVerification(verification)}>
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {idVerifications.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
+                        No ID verifications found
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         {/* All Transactions Tab */}
         <TabsContent value="transactions">
           <Card>
@@ -1838,6 +2240,132 @@ export const FullAdminPanel = () => {
             <Button variant="outline" onClick={() => setSelectedTransfer(null)}>Cancel</Button>
             <Button className="bg-orange-500 hover:bg-orange-600" onClick={() => selectedTransfer && issueRefund(selectedTransfer.id)} disabled={!refundReason}>
               <Undo2 className="w-4 h-4 mr-2" />Issue Refund
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Loan Approval Dialog */}
+      <Dialog open={!!selectedLoan && selectedLoan.status === 'pending'} onOpenChange={() => setSelectedLoan(null)}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <PiggyBank className="w-5 h-5 text-amber-500" />
+              Loan Application Review
+            </DialogTitle>
+            <DialogDescription>
+              {selectedLoan?.loan_type.replace('_', ' ')} - ${selectedLoan?.requested_amount.toLocaleString()}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedLoan && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Requested Amount</Label>
+                  <p className="font-medium text-lg">${selectedLoan.requested_amount.toLocaleString()}</p>
+                </div>
+                <div>
+                  <Label>Loan Term</Label>
+                  <p className="font-medium">{selectedLoan.loan_term_months} months</p>
+                </div>
+                <div>
+                  <Label>Annual Income</Label>
+                  <p className="font-medium">${(selectedLoan.annual_income || 0).toLocaleString()}</p>
+                </div>
+                <div>
+                  <Label>Credit Score</Label>
+                  <p className="font-medium">{selectedLoan.credit_score || 'Not provided'}</p>
+                </div>
+                <div className="col-span-2">
+                  <Label>Purpose</Label>
+                  <p className="font-medium">{selectedLoan.purpose || 'Not specified'}</p>
+                </div>
+              </div>
+
+              <div className="border-t pt-4 space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      <Percent className="w-4 h-4" />
+                      Interest Rate (APR %)
+                    </Label>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      placeholder="8.5"
+                      value={loanInterestRate}
+                      onChange={(e) => setLoanInterestRate(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      <DollarSign className="w-4 h-4" />
+                      Approved Amount
+                    </Label>
+                    <Input
+                      type="number"
+                      placeholder={selectedLoan.requested_amount.toString()}
+                      value={loanApprovedAmount}
+                      onChange={(e) => setLoanApprovedAmount(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Admin Notes</Label>
+                  <Textarea
+                    placeholder="Add notes about this loan..."
+                    value={adminNote}
+                    onChange={(e) => setAdminNote(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <Button 
+                  className="bg-green-500 hover:bg-green-600 flex-1" 
+                  onClick={() => approveLoan(selectedLoan.id)}
+                >
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Approve Loan
+                </Button>
+                <Button 
+                  variant="destructive" 
+                  className="flex-1"
+                  onClick={() => rejectLoan(selectedLoan.id, adminNote || 'Loan application rejected')}
+                >
+                  <XCircle className="w-4 h-4 mr-2" />
+                  Reject Loan
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Verification Rejection Dialog */}
+      <Dialog open={!!selectedVerification && selectedVerification.status === 'pending'} onOpenChange={() => setSelectedVerification(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reject Verification</DialogTitle>
+            <DialogDescription>User ID: {selectedVerification?.user_id.slice(0, 8)}...</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <Textarea 
+              placeholder="Reason for rejection (e.g., document unclear, expired ID)..." 
+              value={adminNote} 
+              onChange={(e) => setAdminNote(e.target.value)} 
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setSelectedVerification(null)}>Cancel</Button>
+            <Button 
+              variant="destructive" 
+              onClick={() => selectedVerification && rejectVerification(selectedVerification.id, adminNote)}
+              disabled={!adminNote}
+            >
+              Reject Verification
             </Button>
           </DialogFooter>
         </DialogContent>

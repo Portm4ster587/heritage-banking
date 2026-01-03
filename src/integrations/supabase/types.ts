@@ -698,6 +698,150 @@ export type Database = {
           },
         ]
       }
+      id_verifications: {
+        Row: {
+          admin_notes: string | null
+          created_at: string
+          document_back_url: string | null
+          document_expiry: string | null
+          document_front_url: string | null
+          document_number_encrypted: string | null
+          document_type: string | null
+          expires_at: string | null
+          failure_reason: string | null
+          id: string
+          selfie_url: string | null
+          status: string
+          updated_at: string
+          user_id: string
+          verification_level: string | null
+          verification_score: number | null
+          verification_type: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          admin_notes?: string | null
+          created_at?: string
+          document_back_url?: string | null
+          document_expiry?: string | null
+          document_front_url?: string | null
+          document_number_encrypted?: string | null
+          document_type?: string | null
+          expires_at?: string | null
+          failure_reason?: string | null
+          id?: string
+          selfie_url?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+          verification_level?: string | null
+          verification_score?: number | null
+          verification_type?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          admin_notes?: string | null
+          created_at?: string
+          document_back_url?: string | null
+          document_expiry?: string | null
+          document_front_url?: string | null
+          document_number_encrypted?: string | null
+          document_type?: string | null
+          expires_at?: string | null
+          failure_reason?: string | null
+          id?: string
+          selfie_url?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+          verification_level?: string | null
+          verification_score?: number | null
+          verification_type?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: []
+      }
+      loan_applications: {
+        Row: {
+          admin_notes: string | null
+          annual_income: number | null
+          approved_amount: number | null
+          collateral_description: string | null
+          collateral_value: number | null
+          created_at: string
+          credit_score: number | null
+          employment_status: string | null
+          first_payment_date: string | null
+          funded_at: string | null
+          id: string
+          interest_rate: number | null
+          loan_term_months: number
+          loan_type: string
+          monthly_payment: number | null
+          purpose: string | null
+          remaining_balance: number | null
+          requested_amount: number
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          annual_income?: number | null
+          approved_amount?: number | null
+          collateral_description?: string | null
+          collateral_value?: number | null
+          created_at?: string
+          credit_score?: number | null
+          employment_status?: string | null
+          first_payment_date?: string | null
+          funded_at?: string | null
+          id?: string
+          interest_rate?: number | null
+          loan_term_months: number
+          loan_type: string
+          monthly_payment?: number | null
+          purpose?: string | null
+          remaining_balance?: number | null
+          requested_amount: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          annual_income?: number | null
+          approved_amount?: number | null
+          collateral_description?: string | null
+          collateral_value?: number | null
+          created_at?: string
+          credit_score?: number | null
+          employment_status?: string | null
+          first_payment_date?: string | null
+          funded_at?: string | null
+          id?: string
+          interest_rate?: number | null
+          loan_term_months?: number
+          loan_type?: string
+          monthly_payment?: number | null
+          purpose?: string | null
+          remaining_balance?: number | null
+          requested_amount?: number
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notification_settings: {
         Row: {
           created_at: string | null

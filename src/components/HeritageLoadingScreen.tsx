@@ -17,7 +17,7 @@ export const HeritageLoadingScreen = ({
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentLogo(prev => prev === 0 ? 1 : 0);
-    }, 1000); // Switch every 1 second
+    }, 800); // Switch every 0.8 seconds for smoother animation in 2.5s total
 
     return () => clearInterval(interval);
   }, []);
@@ -68,12 +68,12 @@ export const HeritageLoadingScreen = ({
             ))}
           </div>
           
-          {/* Progress bar */}
+          {/* Progress bar - 2.5 second animation */}
           <div className="w-64 h-1 bg-heritage-blue-dark/50 rounded-full overflow-hidden mx-auto">
-            <div className="h-full bg-gradient-to-r from-heritage-gold to-heritage-gold/50 rounded-full animate-pulse" 
+            <div className="h-full bg-gradient-to-r from-heritage-gold to-heritage-gold/50 rounded-full" 
                  style={{ 
-                   width: '60%',
-                   animation: 'slide-progress 2s ease-in-out infinite'
+                   width: '100%',
+                   animation: 'slide-progress 2.5s ease-in-out infinite'
                  }}
             />
           </div>
