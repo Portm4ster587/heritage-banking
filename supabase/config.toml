@@ -32,3 +32,9 @@ enable_confirmations = false
 
 [functions.send-notification-email]
 verify_jwt = false
+
+[functions.send-sms-notification]
+verify_jwt = false
+
+[functions.lookup-account-name]
+verify_jwt = false

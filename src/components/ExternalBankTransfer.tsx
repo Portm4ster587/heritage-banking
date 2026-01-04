@@ -5,11 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Building2, Plus, ArrowRightLeft } from 'lucide-react';
+import { Building2, Plus, ArrowRightLeft, Search, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { BankIcon, modernBanks } from './ModernBankIcons';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useAccountLookup } from '@/hooks/useAccountLookup';
+import { useSmsNotification } from '@/hooks/useSmsNotification';
 
 interface ExternalAccount {
   id: string;
@@ -50,6 +52,23 @@ export const ExternalBankTransfer = ({
   const [selectedExternalAccount, setSelectedExternalAccount] = useState('');
   const [sourceAccount, setSourceAccount] = useState('');
   const { toast } = useToast();
+  const { lookupAccount, loading: lookupLoading, result: lookupResult, clearResult } = useAccountLookup();
+  const { sendTransactionAlert } = useSmsNotification();
+  const [userPhone, setUserPhone] = useState<string | null>(null);
+
+  // Fetch user phone for SMS alerts
+  useEffect(() => {
+    const fetchPhone = async () => {
+      if (!user?.id) return;
+      const { data } = await supabase
+        .from('profiles')
+        .select('phone')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (data?.phone) setUserPhone(data.phone);
+    };
+    fetchPhone();
+  }, [user?.id]);
 
   const handleAddExternalAccount = () => {
     if (!newAccount.bank_name || !newAccount.account_number || !newAccount.routing_number || !newAccount.account_holder) {
@@ -135,6 +154,11 @@ export const ExternalBankTransfer = ({
         title: 'External Transfer Initiated',
         description: `Transfer of $${amt.toLocaleString()} to ${ext?.bank_name || 'external account'} initiated.`,
       });
+
+      // Send SMS notification if phone available
+      if (userPhone) {
+        sendTransactionAlert(userPhone, amt, 'debit', `to ${ext?.bank_name || 'external bank'}`);
+      }
 
       setTransferAmount('');
       setSelectedExternalAccount('');
@@ -309,11 +333,41 @@ export const ExternalBankTransfer = ({
 
               <div>
                 <Label>Account Number</Label>
-                <Input
-                  value={newAccount.account_number}
-                  onChange={(e) => setNewAccount((prev) => ({ ...prev, account_number: e.target.value }))}
-                  placeholder="Account number"
-                />
+                <div className="flex gap-2">
+                  <Input
+                    value={newAccount.account_number}
+                    onChange={(e) => {
+                      setNewAccount((prev) => ({ ...prev, account_number: e.target.value }));
+                      clearResult();
+                    }}
+                    placeholder="Account number"
+                    className="flex-1"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => lookupAccount(newAccount.account_number, newAccount.routing_number)}
+                    disabled={!newAccount.account_number || lookupLoading}
+                  >
+                    {lookupLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                  </Button>
+                </div>
+                {lookupResult && (
+                  <div className={`mt-2 p-2 rounded-md text-sm flex items-center gap-2 ${lookupResult.found ? 'bg-green-500/10 text-green-600' : 'bg-yellow-500/10 text-yellow-600'}`}>
+                    {lookupResult.found ? (
+                      <>
+                        <CheckCircle className="w-4 h-4" />
+                        <span>Account: <strong>{lookupResult.accountName}</strong> at {lookupResult.bankName}</span>
+                      </>
+                    ) : (
+                      <>
+                        <AlertCircle className="w-4 h-4" />
+                        <span>{lookupResult.message}</span>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div>
