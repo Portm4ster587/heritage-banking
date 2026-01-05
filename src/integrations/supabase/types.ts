@@ -251,6 +251,120 @@ export type Database = {
         }
         Relationships: []
       }
+      ach_transfers: {
+        Row: {
+          account_id: string
+          ach_type: string | null
+          admin_notes: string | null
+          amount: number
+          created_at: string | null
+          description: string | null
+          effective_date: string | null
+          external_bank_id: string | null
+          id: string
+          processed_at: string | null
+          processed_by: string | null
+          reference_number: string | null
+          scheduled_date: string | null
+          status: string | null
+          transfer_direction: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          account_id: string
+          ach_type?: string | null
+          admin_notes?: string | null
+          amount: number
+          created_at?: string | null
+          description?: string | null
+          effective_date?: string | null
+          external_bank_id?: string | null
+          id?: string
+          processed_at?: string | null
+          processed_by?: string | null
+          reference_number?: string | null
+          scheduled_date?: string | null
+          status?: string | null
+          transfer_direction: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          account_id?: string
+          ach_type?: string | null
+          admin_notes?: string | null
+          amount?: number
+          created_at?: string | null
+          description?: string | null
+          effective_date?: string | null
+          external_bank_id?: string | null
+          id?: string
+          processed_at?: string | null
+          processed_by?: string | null
+          reference_number?: string | null
+          scheduled_date?: string | null
+          status?: string | null
+          transfer_direction?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ach_transfers_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ach_transfers_external_bank_id_fkey"
+            columns: ["external_bank_id"]
+            isOneToOne: false
+            referencedRelation: "external_bank_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      admin_crypto_wallets: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          currency: string
+          currency_name: string
+          id: string
+          is_active: boolean | null
+          network: string | null
+          qr_code_url: string | null
+          updated_at: string | null
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          currency: string
+          currency_name: string
+          id?: string
+          is_active?: boolean | null
+          network?: string | null
+          qr_code_url?: string | null
+          updated_at?: string | null
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string
+          currency_name?: string
+          id?: string
+          is_active?: boolean | null
+          network?: string | null
+          qr_code_url?: string | null
+          updated_at?: string | null
+          wallet_address?: string
+        }
+        Relationships: []
+      }
       admin_notifications: {
         Row: {
           created_at: string | null
@@ -495,6 +609,71 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "cards_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      check_deposits: {
+        Row: {
+          account_id: string
+          admin_notes: string | null
+          amount: number
+          bank_name: string | null
+          check_back_url: string | null
+          check_front_url: string | null
+          check_number: string | null
+          created_at: string | null
+          id: string
+          payer_name: string | null
+          processed_at: string | null
+          processed_by: string | null
+          routing_number: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          account_id: string
+          admin_notes?: string | null
+          amount: number
+          bank_name?: string | null
+          check_back_url?: string | null
+          check_front_url?: string | null
+          check_number?: string | null
+          created_at?: string | null
+          id?: string
+          payer_name?: string | null
+          processed_at?: string | null
+          processed_by?: string | null
+          routing_number?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          account_id?: string
+          admin_notes?: string | null
+          amount?: number
+          bank_name?: string | null
+          check_back_url?: string | null
+          check_front_url?: string | null
+          check_number?: string | null
+          created_at?: string | null
+          id?: string
+          payer_name?: string | null
+          processed_at?: string | null
+          processed_by?: string | null
+          routing_number?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "check_deposits_account_id_fkey"
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "accounts"
@@ -1144,6 +1323,83 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      wire_transfers: {
+        Row: {
+          admin_notes: string | null
+          amount: number
+          created_at: string | null
+          fee_amount: number | null
+          from_account_id: string
+          id: string
+          processed_at: string | null
+          processed_by: string | null
+          purpose: string | null
+          recipient_account: string
+          recipient_address: string | null
+          recipient_bank: string
+          recipient_name: string
+          recipient_routing: string | null
+          recipient_swift: string | null
+          reference_number: string | null
+          status: string | null
+          transfer_type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount: number
+          created_at?: string | null
+          fee_amount?: number | null
+          from_account_id: string
+          id?: string
+          processed_at?: string | null
+          processed_by?: string | null
+          purpose?: string | null
+          recipient_account: string
+          recipient_address?: string | null
+          recipient_bank: string
+          recipient_name: string
+          recipient_routing?: string | null
+          recipient_swift?: string | null
+          reference_number?: string | null
+          status?: string | null
+          transfer_type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          amount?: number
+          created_at?: string | null
+          fee_amount?: number | null
+          from_account_id?: string
+          id?: string
+          processed_at?: string | null
+          processed_by?: string | null
+          purpose?: string | null
+          recipient_account?: string
+          recipient_address?: string | null
+          recipient_bank?: string
+          recipient_name?: string
+          recipient_routing?: string | null
+          recipient_swift?: string | null
+          reference_number?: string | null
+          status?: string | null
+          transfer_type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wire_transfers_from_account_id_fkey"
+            columns: ["from_account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       withdraw_requests: {
         Row: {

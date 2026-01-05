@@ -18,6 +18,7 @@ import IDMe from "./pages/dashboard/IDMe";
 import History from "./pages/dashboard/History";
 import TransactionHistory from "./pages/dashboard/TransactionHistory";
 import Withdraw from "./pages/dashboard/Withdraw";
+import Profile from "./pages/dashboard/Profile";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import OpenAccount from "./pages/OpenAccount";
@@ -152,6 +153,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <TransactionHistory />
+                </ProtectedRoute>
+              }
+            />
+            <Route 
+              path="/dashboard/profile" 
+              element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               }
             />
