@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { DepositForm } from "@/components/deposits/DepositForm";
+import { EnhancedDepositForm } from "@/components/deposits/EnhancedDepositForm";
 import { HeritageLoadingScreen } from "@/components/HeritageLoadingScreen";
 
 export default function TopUp() {
@@ -40,9 +40,9 @@ export default function TopUp() {
     <main className="container mx-auto px-6 py-8">
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-primary">Deposit Funds</h1>
-        <p className="text-muted-foreground">Add money to your Heritage Bank accounts</p>
+        <p className="text-muted-foreground">Add money to your Heritage Bank accounts via crypto, card, check, ACH, or wire transfer</p>
       </div>
-      <DepositForm accounts={accounts} onSuccess={fetchAccounts} />
+      <EnhancedDepositForm accounts={accounts} onSuccess={fetchAccounts} />
     </main>
   );
 }

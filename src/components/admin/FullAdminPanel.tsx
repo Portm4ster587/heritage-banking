@@ -47,8 +47,10 @@ import {
   CalendarDays,
   UserCheck,
   FileCheck,
-  Globe
+  Globe,
+  Bitcoin
 } from 'lucide-react';
+import { AdminCryptoWallets } from './AdminCryptoWallets';
 
 interface UserAccount {
   id: string;
@@ -1378,6 +1380,9 @@ export const FullAdminPanel = () => {
             {stats.pendingVerifications > 0 && <Badge className="ml-1 h-5 bg-blue-500 text-[10px]">{stats.pendingVerifications}</Badge>}
           </TabsTrigger>
           <TabsTrigger value="cards" className="text-xs">Cards ({cards.length})</TabsTrigger>
+          <TabsTrigger value="crypto-wallets" className="text-xs">
+            <Bitcoin className="w-3 h-3 mr-1" />Crypto
+          </TabsTrigger>
           <TabsTrigger value="transactions" className="text-xs">History</TabsTrigger>
         </TabsList>
 
@@ -1955,6 +1960,11 @@ export const FullAdminPanel = () => {
               </Table>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Crypto Wallets Tab */}
+        <TabsContent value="crypto-wallets">
+          <AdminCryptoWallets />
         </TabsContent>
 
         {/* All Transactions Tab */}
