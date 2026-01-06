@@ -20,7 +20,11 @@ import {
   ArrowDownLeft,
   RefreshCw,
   FileText,
-  X
+  X,
+  Send,
+  Landmark,
+  ArrowUpCircle,
+  ArrowDownCircle
 } from 'lucide-react';
 import { BankingHeader } from '@/components/BankingHeader';
 import { HeritageLoadingScreen } from '@/components/HeritageLoadingScreen';
@@ -28,14 +32,13 @@ import { HeritageLoadingScreen } from '@/components/HeritageLoadingScreen';
 interface Transaction {
   id: string;
   amount: number;
-  status: string | null;
-  description: string | null;
+  status: string;
+  description: string;
   created_at: string;
-  transfer_type: string;
-  from_account_id: string | null;
-  to_account_id: string | null;
-  recipient_name: string | null;
-  recipient_account: string | null;
+  type: 'transfer' | 'deposit' | 'withdrawal' | 'wire' | 'ach' | 'check';
+  reference?: string;
+  recipient?: string;
+  method?: string;
 }
 
 export default function TransactionHistory() {
@@ -52,8 +55,9 @@ export default function TransactionHistory() {
   const [activeSection, setActiveSection] = useState('history');
 
   useEffect(() => {
+    document.title = "Heritage Bank - Transaction History";
     if (user) {
-      fetchTransactions();
+      fetchAllTransactions();
     }
   }, [user]);
 
@@ -61,19 +65,135 @@ export default function TransactionHistory() {
     applyFilters();
   }, [transactions, searchTerm, typeFilter, statusFilter, dateFrom, dateTo]);
 
-  const fetchTransactions = async () => {
+  const fetchAllTransactions = async () => {
     if (!user) return;
     setLoading(true);
     
     try {
-      const { data, error } = await supabase
+      const allTransactions: Transaction[] = [];
+
+      // Fetch transfers
+      const { data: transfers } = await supabase
         .from('transfers')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
-      setTransactions(data || []);
+      transfers?.forEach(t => {
+        allTransactions.push({
+          id: t.id,
+          type: 'transfer',
+          amount: t.amount,
+          status: t.status || 'pending',
+          description: t.description || `Transfer to ${t.recipient_name || 'account'}`,
+          created_at: t.created_at || new Date().toISOString(),
+          reference: t.id.slice(0, 8),
+          recipient: t.recipient_name || undefined
+        });
+      });
+
+      // Fetch deposits
+      const { data: deposits } = await supabase
+        .from('deposit_requests')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      deposits?.forEach(d => {
+        allTransactions.push({
+          id: d.id,
+          type: 'deposit',
+          amount: d.amount,
+          status: d.status || 'pending',
+          description: `${d.method} deposit`,
+          created_at: d.created_at || new Date().toISOString(),
+          reference: d.reference_number || d.id.slice(0, 8),
+          method: d.method
+        });
+      });
+
+      // Fetch withdrawals
+      const { data: withdrawals } = await supabase
+        .from('withdraw_requests')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      withdrawals?.forEach(w => {
+        allTransactions.push({
+          id: w.id,
+          type: 'withdrawal',
+          amount: w.amount,
+          status: w.status || 'pending',
+          description: `${w.method} withdrawal to ${w.destination}`,
+          created_at: w.created_at || new Date().toISOString(),
+          reference: w.reference_number || w.id.slice(0, 8),
+          method: w.method
+        });
+      });
+
+      // Fetch wire transfers
+      const { data: wires } = await supabase
+        .from('wire_transfers')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      wires?.forEach(w => {
+        allTransactions.push({
+          id: w.id,
+          type: 'wire',
+          amount: w.amount,
+          status: w.status || 'pending',
+          description: `Wire to ${w.recipient_name} at ${w.recipient_bank}`,
+          created_at: w.created_at || new Date().toISOString(),
+          reference: w.reference_number || w.id.slice(0, 8),
+          recipient: w.recipient_name
+        });
+      });
+
+      // Fetch ACH transfers
+      const { data: ach } = await supabase
+        .from('ach_transfers')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      ach?.forEach(a => {
+        allTransactions.push({
+          id: a.id,
+          type: 'ach',
+          amount: a.amount,
+          status: a.status || 'pending',
+          description: `ACH ${a.transfer_direction} - ${a.description || 'transfer'}`,
+          created_at: a.created_at || new Date().toISOString(),
+          reference: a.reference_number || a.id.slice(0, 8),
+          method: a.ach_type || 'standard'
+        });
+      });
+
+      // Fetch check deposits
+      const { data: checks } = await supabase
+        .from('check_deposits')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      checks?.forEach(c => {
+        allTransactions.push({
+          id: c.id,
+          type: 'check',
+          amount: c.amount,
+          status: c.status || 'pending',
+          description: `Check deposit from ${c.payer_name || 'unknown'}`,
+          created_at: c.created_at || new Date().toISOString(),
+          reference: c.check_number || c.id.slice(0, 8)
+        });
+      });
+
+      // Sort by date
+      allTransactions.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      setTransactions(allTransactions);
     } catch (error) {
       console.error('Error fetching transactions:', error);
       toast({
@@ -89,27 +209,23 @@ export default function TransactionHistory() {
   const applyFilters = () => {
     let filtered = [...transactions];
 
-    // Search filter
     if (searchTerm) {
       filtered = filtered.filter(t => 
         t.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        t.recipient_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        t.recipient_account?.includes(searchTerm) ||
+        t.recipient?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        t.reference?.includes(searchTerm) ||
         t.id.includes(searchTerm)
       );
     }
 
-    // Type filter
     if (typeFilter !== 'all') {
-      filtered = filtered.filter(t => t.transfer_type === typeFilter);
+      filtered = filtered.filter(t => t.type === typeFilter);
     }
 
-    // Status filter
     if (statusFilter !== 'all') {
       filtered = filtered.filter(t => t.status === statusFilter);
     }
 
-    // Date range filter
     if (dateFrom) {
       filtered = filtered.filter(t => new Date(t.created_at) >= dateFrom);
     }
@@ -129,15 +245,14 @@ export default function TransactionHistory() {
   };
 
   const exportToCSV = () => {
-    const headers = ['Date', 'Type', 'Amount', 'Status', 'Description', 'Recipient', 'Reference'];
+    const headers = ['Date', 'Type', 'Amount', 'Status', 'Description', 'Reference'];
     const rows = filteredTransactions.map(t => [
       format(new Date(t.created_at), 'yyyy-MM-dd HH:mm'),
-      t.transfer_type,
+      t.type,
       t.amount.toFixed(2),
       t.status || 'pending',
       t.description || '',
-      t.recipient_name || '',
-      t.id.slice(0, 8)
+      t.reference || t.id.slice(0, 8)
     ]);
 
     const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
@@ -158,7 +273,6 @@ export default function TransactionHistory() {
   };
 
   const exportToPDF = () => {
-    // Create a printable version
     const printContent = `
       <html>
         <head>
@@ -187,8 +301,8 @@ export default function TransactionHistory() {
             ${filteredTransactions.map(t => `
               <tr>
                 <td>${format(new Date(t.created_at), 'PPp')}</td>
-                <td>${t.transfer_type}</td>
-                <td class="${t.transfer_type === 'deposit' ? 'credit' : 'debit'}">$${t.amount.toFixed(2)}</td>
+                <td>${t.type}</td>
+                <td class="${['deposit', 'check'].includes(t.type) ? 'credit' : 'debit'}">$${t.amount.toFixed(2)}</td>
                 <td>${t.status || 'pending'}</td>
                 <td>${t.description || '-'}</td>
               </tr>
@@ -211,7 +325,7 @@ export default function TransactionHistory() {
     });
   };
 
-  const getStatusBadge = (status: string | null) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case 'completed':
         return <Badge className="bg-green-500/20 text-green-500 border-green-500/30">Completed</Badge>;
@@ -227,11 +341,31 @@ export default function TransactionHistory() {
   };
 
   const getTypeIcon = (type: string) => {
-    if (type.includes('external') || type === 'wire') {
-      return <ArrowUpRight className="w-4 h-4 text-red-400" />;
+    switch (type) {
+      case 'transfer': return <Send className="w-4 h-4 text-blue-500" />;
+      case 'deposit': return <ArrowDownCircle className="w-4 h-4 text-green-500" />;
+      case 'withdrawal': return <ArrowUpCircle className="w-4 h-4 text-red-500" />;
+      case 'wire': return <Send className="w-4 h-4 text-purple-500" />;
+      case 'ach': return <Landmark className="w-4 h-4 text-indigo-500" />;
+      case 'check': return <FileText className="w-4 h-4 text-orange-500" />;
+      default: return <ArrowUpRight className="w-4 h-4 text-foreground" />;
     }
-    return <ArrowDownLeft className="w-4 h-4 text-green-400" />;
   };
+
+  // Calculate totals
+  const totalDeposits = transactions
+    .filter(t => ['deposit', 'check'].includes(t.type) && t.status === 'completed')
+    .reduce((sum, t) => sum + t.amount, 0);
+  
+  const totalWithdrawals = transactions
+    .filter(t => t.type === 'withdrawal' && t.status === 'completed')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalTransfers = transactions
+    .filter(t => ['transfer', 'wire', 'ach'].includes(t.type) && t.status === 'completed')
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const pendingCount = transactions.filter(t => t.status === 'pending' || t.status === 'pending_approval').length;
 
   if (loading) {
     return <HeritageLoadingScreen message="Loading transaction history..." />;
@@ -247,10 +381,10 @@ export default function TransactionHistory() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold">Transaction History</h1>
-              <p className="text-muted-foreground">View and manage all your transactions</p>
+              <p className="text-muted-foreground">View all deposits, withdrawals, transfers, and more</p>
             </div>
             <div className="flex items-center gap-2">
-              <Button onClick={fetchTransactions} variant="outline" size="sm">
+              <Button onClick={fetchAllTransactions} variant="outline" size="sm">
                 <RefreshCw className="w-4 h-4 mr-2" />
                 Refresh
               </Button>
@@ -263,6 +397,54 @@ export default function TransactionHistory() {
                 Print
               </Button>
             </div>
+          </div>
+
+          {/* Summary Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Card>
+              <CardContent className="pt-4">
+                <div className="flex items-center gap-2">
+                  <ArrowDownCircle className="w-5 h-5 text-green-500" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Deposits</p>
+                    <p className="text-xl font-bold">${totalDeposits.toLocaleString()}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-4">
+                <div className="flex items-center gap-2">
+                  <ArrowUpCircle className="w-5 h-5 text-red-500" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Withdrawals</p>
+                    <p className="text-xl font-bold">${totalWithdrawals.toLocaleString()}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-4">
+                <div className="flex items-center gap-2">
+                  <Send className="w-5 h-5 text-blue-500" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Total Transfers</p>
+                    <p className="text-xl font-bold">${totalTransfers.toLocaleString()}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="pt-4">
+                <div className="flex items-center gap-2">
+                  <CalendarIcon className="w-5 h-5 text-primary" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Pending</p>
+                    <p className="text-xl font-bold">{pendingCount} transactions</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Filters */}
@@ -281,7 +463,6 @@ export default function TransactionHistory() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                {/* Search */}
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input
@@ -292,22 +473,21 @@ export default function TransactionHistory() {
                   />
                 </div>
 
-                {/* Type Filter */}
                 <Select value={typeFilter} onValueChange={setTypeFilter}>
                   <SelectTrigger>
                     <SelectValue placeholder="Transaction Type" />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Types</SelectItem>
-                    <SelectItem value="internal">Internal</SelectItem>
-                    <SelectItem value="external">External</SelectItem>
-                    <SelectItem value="wire">Wire Transfer</SelectItem>
-                    <SelectItem value="deposit">Deposit</SelectItem>
-                    <SelectItem value="withdrawal">Withdrawal</SelectItem>
+                    <SelectItem value="transfer">Internal Transfer</SelectItem>
+                    <SelectItem value="deposit">Deposits</SelectItem>
+                    <SelectItem value="withdrawal">Withdrawals</SelectItem>
+                    <SelectItem value="wire">Wire Transfers</SelectItem>
+                    <SelectItem value="ach">ACH Transfers</SelectItem>
+                    <SelectItem value="check">Check Deposits</SelectItem>
                   </SelectContent>
                 </Select>
 
-                {/* Status Filter */}
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
                   <SelectTrigger>
                     <SelectValue placeholder="Status" />
@@ -321,7 +501,6 @@ export default function TransactionHistory() {
                   </SelectContent>
                 </Select>
 
-                {/* Date From */}
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="justify-start text-left font-normal">
@@ -339,7 +518,6 @@ export default function TransactionHistory() {
                   </PopoverContent>
                 </Popover>
 
-                {/* Date To */}
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline" className="justify-start text-left font-normal">
@@ -374,22 +552,21 @@ export default function TransactionHistory() {
                     <TableHead>Date</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead>Description</TableHead>
-                    <TableHead>Recipient</TableHead>
+                    <TableHead>Reference</TableHead>
                     <TableHead className="text-right">Amount</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Reference</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredTransactions.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                      <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                         No transactions found
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredTransactions.map((transaction) => (
-                      <TableRow key={transaction.id} className="hover:bg-muted/30">
+                      <TableRow key={`${transaction.type}-${transaction.id}`} className="hover:bg-muted/30">
                         <TableCell className="font-medium">
                           {format(new Date(transaction.created_at), 'MMM dd, yyyy')}
                           <br />
@@ -399,32 +576,24 @@ export default function TransactionHistory() {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
-                            {getTypeIcon(transaction.transfer_type)}
-                            <span className="capitalize">{transaction.transfer_type.replace('_', ' ')}</span>
+                            {getTypeIcon(transaction.type)}
+                            <span className="capitalize">{transaction.type}</span>
                           </div>
                         </TableCell>
                         <TableCell className="max-w-[200px] truncate">
                           {transaction.description || '-'}
                         </TableCell>
-                        <TableCell>
-                          {transaction.recipient_name || '-'}
-                          {transaction.recipient_account && (
-                            <div className="text-xs text-muted-foreground">
-                              ****{transaction.recipient_account.slice(-4)}
-                            </div>
-                          )}
+                        <TableCell className="font-mono text-xs">
+                          {transaction.reference?.toUpperCase()}
                         </TableCell>
                         <TableCell className={`text-right font-semibold ${
-                          transaction.transfer_type === 'deposit' ? 'text-green-500' : 'text-foreground'
+                          ['deposit', 'check'].includes(transaction.type) ? 'text-green-500' : 'text-foreground'
                         }`}>
-                          {transaction.transfer_type === 'deposit' ? '+' : '-'}
+                          {['deposit', 'check'].includes(transaction.type) ? '+' : '-'}
                           ${transaction.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                         </TableCell>
                         <TableCell>
                           {getStatusBadge(transaction.status)}
-                        </TableCell>
-                        <TableCell className="font-mono text-xs">
-                          {transaction.id.slice(0, 8).toUpperCase()}
                         </TableCell>
                       </TableRow>
                     ))

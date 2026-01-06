@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { Bitcoin, Wallet, Edit, Save, RefreshCw, Copy, QrCode } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface CryptoWallet {
   id: string;
@@ -27,6 +28,7 @@ export const AdminCryptoWallets = () => {
   const [wallets, setWallets] = useState<CryptoWallet[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingWallet, setEditingWallet] = useState<CryptoWallet | null>(null);
+  const [viewingQR, setViewingQR] = useState<CryptoWallet | null>(null);
   const [newAddress, setNewAddress] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -135,6 +137,18 @@ export const AdminCryptoWallets = () => {
     return icons[currency] || '🪙';
   };
 
+  const getCryptoColor = (currency: string) => {
+    const colors: Record<string, string> = {
+      'BTC': '#F7931A',
+      'ETH': '#627EEA',
+      'USDT': '#26A17B',
+      'USDC': '#2775CA',
+      'LTC': '#BFBBBB',
+      'BNB': '#F0B90B'
+    };
+    return colors[currency] || '#D4AF37';
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8">
@@ -169,6 +183,7 @@ export const AdminCryptoWallets = () => {
                 <TableHead>Currency</TableHead>
                 <TableHead>Network</TableHead>
                 <TableHead>Wallet Address</TableHead>
+                <TableHead>QR Code</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
@@ -205,6 +220,18 @@ export const AdminCryptoWallets = () => {
                         </Button>
                       )}
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    {wallet.wallet_address !== 'pending_admin_setup' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setViewingQR(wallet)}
+                      >
+                        <QrCode className="w-4 h-4 mr-1" />
+                        View QR
+                      </Button>
+                    )}
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -280,6 +307,43 @@ export const AdminCryptoWallets = () => {
               )}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* QR Code Dialog */}
+      <Dialog open={!!viewingQR} onOpenChange={() => setViewingQR(null)}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 justify-center">
+              <span className="text-2xl">{viewingQR && getCryptoIcon(viewingQR.currency)}</span>
+              {viewingQR?.currency} Deposit Address
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-col items-center space-y-4 py-4">
+            {viewingQR && viewingQR.wallet_address !== 'pending_admin_setup' && (
+              <>
+                <div className="bg-white p-4 rounded-lg shadow-lg">
+                  <QRCodeSVG 
+                    value={viewingQR.wallet_address}
+                    size={200}
+                    level="H"
+                    fgColor={getCryptoColor(viewingQR.currency)}
+                    includeMargin
+                  />
+                </div>
+                <div className="text-center space-y-2">
+                  <p className="text-sm text-muted-foreground">{viewingQR.currency_name} ({viewingQR.network})</p>
+                  <code className="text-xs bg-muted px-3 py-2 rounded block break-all">
+                    {viewingQR.wallet_address}
+                  </code>
+                </div>
+                <Button onClick={() => copyAddress(viewingQR.wallet_address)} className="w-full">
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy Address
+                </Button>
+              </>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>
