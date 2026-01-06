@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import heritageLogoImage from '@/assets/heritage-logo.png';
+import { HeritageSVGLogoTransparent } from './HeritageSVGLogoTransparent';
 
 interface AnimatedHeritageLogoProps {
   isActive?: boolean;
@@ -66,26 +66,20 @@ export const AnimatedHeritageLogo = ({
         }}
       />
       
-      {/* Heritage Logo Image with Pulse Animation */}
-      <img 
-        src={heritageLogoImage} 
-        alt="Heritage Bank Logo" 
+      {/* Heritage SVG Logo with transparent background */}
+      <HeritageSVGLogoTransparent 
+        size={size}
+        animated={isActive}
         className={cn(
-          "relative w-full h-full object-contain transition-all duration-500 p-2",
-          isActive && "animate-pulse"
+          "relative transition-all duration-500",
+          isActive && "drop-shadow-[0_0_20px_rgba(212,175,55,0.9)]"
         )}
-        style={{
-          filter: isActive 
-            ? 'drop-shadow(0 0 20px rgba(212, 175, 55, 0.9)) brightness(1.3)' 
-            : 'drop-shadow(0 4px 12px rgba(212, 175, 55, 0.6))',
-          transform: isActive ? 'scale(1.05)' : 'scale(1)',
-        }}
       />
 
       {/* Success Checkmark Overlay */}
       {variant === 'success' && showSuccess && (
         <div className="absolute inset-0 flex items-center justify-center z-10">
-          <div className="w-8 h-8 text-success animate-scale-in bg-white rounded-full flex items-center justify-center shadow-lg">
+          <div className="w-8 h-8 text-green-500 animate-scale-in bg-white rounded-full flex items-center justify-center shadow-lg">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-5 h-5">
               <path d="M20 6L9 17l-5-5" />
             </svg>
