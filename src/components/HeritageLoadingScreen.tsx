@@ -17,7 +17,7 @@ export const HeritageLoadingScreen = ({
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentLogo(prev => prev === 0 ? 1 : 0);
-    }, 800); // Switch every 0.8 seconds for smoother animation in 2.5s total
+    }, 750); // Switch every 0.75 seconds for 3 second total animation (4 switches)
 
     return () => clearInterval(interval);
   }, []);
@@ -40,9 +40,9 @@ export const HeritageLoadingScreen = ({
         <div className="absolute inset-0 bg-gradient-to-t from-heritage-blue-dark/20 to-transparent animate-pulse"></div>
       </div>
       
-      <div className="relative z-10 space-y-8 animate-fade-in px-4">
-        {/* Alternating Logo Animation */}
-        <div className="relative w-48 h-48 flex items-center justify-center">
+      <div className="relative z-10 space-y-8 animate-fade-in px-4 flex flex-col items-center justify-center">
+        {/* Alternating Logo Animation - Centered */}
+        <div className="relative w-48 h-48 flex items-center justify-center mx-auto">
           <img 
             src={currentLogo === 0 ? heritageLogoImage1 : heritageLogoImage2}
             alt="Heritage Bank Logo" 
@@ -68,12 +68,12 @@ export const HeritageLoadingScreen = ({
             ))}
           </div>
           
-          {/* Progress bar - 2.5 second animation */}
+          {/* Progress bar - 3 second animation */}
           <div className="w-64 h-1 bg-heritage-blue-dark/50 rounded-full overflow-hidden mx-auto">
             <div className="h-full bg-gradient-to-r from-heritage-gold to-heritage-gold/50 rounded-full" 
                  style={{ 
                    width: '100%',
-                   animation: 'slide-progress 2.5s ease-in-out infinite'
+                   animation: 'slide-progress 3s ease-in-out infinite'
                  }}
             />
           </div>

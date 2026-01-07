@@ -51,6 +51,8 @@ import {
   Bitcoin
 } from 'lucide-react';
 import { AdminCryptoWallets } from './AdminCryptoWallets';
+import { AdminWireTransfers } from './AdminWireTransfers';
+import { AdminACHTransfers } from './AdminACHTransfers';
 
 interface UserAccount {
   id: string;
@@ -1380,6 +1382,12 @@ export const FullAdminPanel = () => {
             {stats.pendingVerifications > 0 && <Badge className="ml-1 h-5 bg-blue-500 text-[10px]">{stats.pendingVerifications}</Badge>}
           </TabsTrigger>
           <TabsTrigger value="cards" className="text-xs">Cards ({cards.length})</TabsTrigger>
+          <TabsTrigger value="wire-transfers" className="text-xs">
+            <Send className="w-3 h-3 mr-1" />Wire
+          </TabsTrigger>
+          <TabsTrigger value="ach-transfers" className="text-xs">
+            <Landmark className="w-3 h-3 mr-1" />ACH
+          </TabsTrigger>
           <TabsTrigger value="crypto-wallets" className="text-xs">
             <Bitcoin className="w-3 h-3 mr-1" />Crypto
           </TabsTrigger>
@@ -1960,6 +1968,16 @@ export const FullAdminPanel = () => {
               </Table>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Wire Transfers Tab */}
+        <TabsContent value="wire-transfers">
+          <AdminWireTransfers />
+        </TabsContent>
+
+        {/* ACH Transfers Tab */}
+        <TabsContent value="ach-transfers">
+          <AdminACHTransfers />
         </TabsContent>
 
         {/* Crypto Wallets Tab */}
