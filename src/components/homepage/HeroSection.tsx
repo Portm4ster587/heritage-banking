@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { HeritageSVGLogo } from "../HeritageSVGLogo";
+import { HeritageSVGLogoTransparent } from "../HeritageSVGLogoTransparent";
 import { Shield, CreditCard, Landmark, ArrowRight } from "lucide-react";
 import bankingHeroImage from "@/assets/banking-hero.jpg";
 import cardsShowcaseImage from "@/assets/cards-showcase.jpg";
@@ -62,7 +62,7 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
         <div className="relative container mx-auto px-4 sm:px-6">
           {/* Top Header with SVG Logo */}
           <div className="flex items-center space-x-3 sm:space-x-4 mb-6 lg:mb-8 animate-slide-up">
-            <HeritageSVGLogo size="lg" className="animate-pulse w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24" />
+            <HeritageSVGLogoTransparent size="lg" className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 drop-shadow-[0_0_20px_rgba(212,175,55,0.9)]" />
             <div>
               <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold animate-fade-in text-heritage-gold tracking-wider">
                 HERITAGE

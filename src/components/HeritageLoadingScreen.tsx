@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
-import heritageLogoImage1 from '@/assets/heritage-logo-1.png';
-import heritageLogoImage2 from '@/assets/heritage-logo-2.png';
+import { HeritageSVGLogoTransparent } from './HeritageSVGLogoTransparent';
 
 interface HeritageLoadingScreenProps {
   message?: string;
@@ -12,12 +11,12 @@ export const HeritageLoadingScreen = ({
   message = 'Loading...', 
   fullScreen = true 
 }: HeritageLoadingScreenProps) => {
-  const [currentLogo, setCurrentLogo] = useState(0);
+  const [pulsePhase, setPulsePhase] = useState(0);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentLogo(prev => prev === 0 ? 1 : 0);
-    }, 750); // Switch every 0.75 seconds for 3 second total animation (4 switches)
+      setPulsePhase(prev => (prev + 1) % 4);
+    }, 750); // 3 second total animation (4 phases x 750ms)
 
     return () => clearInterval(interval);
   }, []);
@@ -26,8 +25,8 @@ export const HeritageLoadingScreen = ({
     <div 
       className={cn(
         "flex flex-col items-center justify-center bg-gradient-to-br from-heritage-blue via-heritage-blue-dark to-heritage-blue relative overflow-hidden",
-        fullScreen && "min-h-screen",
-        !fullScreen && "min-h-[400px]"
+        fullScreen && "min-h-screen w-full",
+        !fullScreen && "min-h-[400px] w-full"
       )}
     >
       {/* Enhanced animated background orbs */}
@@ -40,20 +39,29 @@ export const HeritageLoadingScreen = ({
         <div className="absolute inset-0 bg-gradient-to-t from-heritage-blue-dark/20 to-transparent animate-pulse"></div>
       </div>
       
-      <div className="relative z-10 space-y-8 animate-fade-in px-4 flex flex-col items-center justify-center">
-        {/* Alternating Logo Animation - Centered */}
-        <div className="relative w-48 h-48 flex items-center justify-center mx-auto">
-          <img 
-            src={currentLogo === 0 ? heritageLogoImage1 : heritageLogoImage2}
-            alt="Heritage Bank Logo" 
-            className="w-full h-full object-contain transition-all duration-300 animate-pulse p-2"
+      <div className="relative z-10 w-full max-w-md mx-auto px-4 flex flex-col items-center justify-center">
+        {/* SVG Logo Animation - Centered */}
+        <div className="relative w-48 h-48 flex items-center justify-center mx-auto mb-8">
+          <div 
+            className={cn(
+              "absolute inset-0 rounded-full transition-all duration-500",
+              pulsePhase % 2 === 0 ? "scale-110 opacity-30" : "scale-100 opacity-50"
+            )}
             style={{
-              filter: 'drop-shadow(0 0 20px rgba(212, 175, 55, 0.9)) brightness(1.3)',
+              background: 'radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, transparent 70%)',
             }}
+          />
+          <HeritageSVGLogoTransparent 
+            size="xl"
+            animated={true}
+            className={cn(
+              "w-40 h-40 transition-all duration-500",
+              pulsePhase % 2 === 0 ? "drop-shadow-[0_0_30px_rgba(212,175,55,1)]" : "drop-shadow-[0_0_20px_rgba(212,175,55,0.8)]"
+            )}
           />
         </div>
         
-        <div className="text-center space-y-4">
+        <div className="text-center space-y-4 w-full">
           {/* Enhanced loading dots */}
           <div className="flex space-x-2 justify-center">
             {[...Array(3)].map((_, i) => (
@@ -77,6 +85,9 @@ export const HeritageLoadingScreen = ({
                  }}
             />
           </div>
+          
+          {/* Loading message */}
+          <p className="text-heritage-gold/80 text-sm font-medium">{message}</p>
         </div>
       </div>
     </div>
