@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
-import heritageLogoImage from "@/assets/heritage-logo.png";
+import { HeritageSVGLogoTransparent } from "./HeritageSVGLogoTransparent";
 import { ServicesMenu } from "./ServicesMenu";
 import { NotificationCenter } from "./NotificationCenter";
 import { ProfileMenu } from "./ProfileMenu";
@@ -39,16 +39,12 @@ export const BankingHeader = ({ activeSection, onSectionChange }: BankingHeaderP
     <header className="bg-gradient-to-r from-background via-muted to-background backdrop-blur-xl border-b border-primary/20 text-foreground shadow-neon animate-slide-up sticky top-0 z-50">
       <div className="container mx-auto px-4 lg:px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center space-x-3 animate-fade-in">
-            <div className="relative w-8 h-8 lg:w-10 lg:h-10">
-              <img 
-                src={heritageLogoImage} 
-                alt="Heritage Bank Logo" 
-                className="w-full h-full object-contain animate-float"
-                style={{ 
-                  filter: 'drop-shadow(0 0 12px rgba(212, 175, 55, 0.9)) brightness(1.3) contrast(1.3) saturate(1.2)',
-                }}
+          {/* Logo - Using new transparent SVG */}
+          <Link to="/" className="flex items-center space-x-3 animate-fade-in hover:opacity-90 transition-opacity">
+            <div className="relative">
+              <HeritageSVGLogoTransparent 
+                size="sm"
+                className="w-10 h-10 lg:w-12 lg:h-12 drop-shadow-[0_0_12px_rgba(212,175,55,0.9)]"
               />
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full blur-md -z-10"></div>
             </div>
@@ -60,7 +56,7 @@ export const BankingHeader = ({ activeSection, onSectionChange }: BankingHeaderP
                 Ultra-Modern Banking Solutions
               </p>
             </div>
-          </div>
+          </Link>
           
           {/* Desktop Services Menu */}
           <div className="hidden lg:flex flex-1 justify-center px-8">

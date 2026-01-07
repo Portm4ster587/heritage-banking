@@ -1229,14 +1229,16 @@ export const FullAdminPanel = () => {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 px-2 sm:px-0">
+      {/* Header - Responsive */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Bank Administration</h1>
-          <p className="text-muted-foreground">Full banking ecosystem management</p>
+          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            Bank Administration
+          </h1>
+          <p className="text-sm text-muted-foreground">Full banking ecosystem management</p>
         </div>
-        <Button onClick={fetchAllData} variant="outline">
+        <Button onClick={fetchAllData} variant="outline" size="sm" className="w-full sm:w-auto">
           <RefreshCw className="w-4 h-4 mr-2" />
           Refresh All
         </Button>
@@ -1352,47 +1354,57 @@ export const FullAdminPanel = () => {
         />
       </div>
 
-      {/* Main Tabs */}
+      {/* Main Tabs - Responsive with Scroll */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="flex flex-wrap h-auto gap-1 p-1">
-          <TabsTrigger value="overview" className="text-xs">Overview</TabsTrigger>
-          <TabsTrigger value="accounts" className="text-xs">Accounts ({accounts.length})</TabsTrigger>
-          <TabsTrigger value="transfers" className="text-xs relative">
-            Transfers
-            {stats.pendingTransfers > 0 && <Badge className="ml-1 h-5 bg-orange-500 text-[10px]">{stats.pendingTransfers}</Badge>}
-          </TabsTrigger>
-          <TabsTrigger value="deposits" className="text-xs relative">
-            Deposits
-            {stats.pendingDeposits > 0 && <Badge className="ml-1 h-5 bg-emerald-500 text-[10px]">{stats.pendingDeposits}</Badge>}
-          </TabsTrigger>
-          <TabsTrigger value="withdrawals" className="text-xs relative">
-            Withdrawals
-            {stats.pendingWithdrawals > 0 && <Badge className="ml-1 h-5 bg-red-500 text-[10px]">{stats.pendingWithdrawals}</Badge>}
-          </TabsTrigger>
-          <TabsTrigger value="applications" className="text-xs relative">
-            Applications
-            {stats.pendingApplications > 0 && <Badge className="ml-1 h-5 bg-purple-500 text-[10px]">{stats.pendingApplications}</Badge>}
-          </TabsTrigger>
-          <TabsTrigger value="loans" className="text-xs relative">
-            Loans
-            {stats.pendingLoans > 0 && <Badge className="ml-1 h-5 bg-amber-500 text-[10px]">{stats.pendingLoans}</Badge>}
-          </TabsTrigger>
-          <TabsTrigger value="verifications" className="text-xs relative">
-            KYC
-            {stats.pendingVerifications > 0 && <Badge className="ml-1 h-5 bg-blue-500 text-[10px]">{stats.pendingVerifications}</Badge>}
-          </TabsTrigger>
-          <TabsTrigger value="cards" className="text-xs">Cards ({cards.length})</TabsTrigger>
-          <TabsTrigger value="wire-transfers" className="text-xs">
-            <Send className="w-3 h-3 mr-1" />Wire
-          </TabsTrigger>
-          <TabsTrigger value="ach-transfers" className="text-xs">
-            <Landmark className="w-3 h-3 mr-1" />ACH
-          </TabsTrigger>
-          <TabsTrigger value="crypto-wallets" className="text-xs">
-            <Bitcoin className="w-3 h-3 mr-1" />Crypto
-          </TabsTrigger>
-          <TabsTrigger value="transactions" className="text-xs">History</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto pb-2 -mx-4 px-4 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent">
+          <TabsList className="inline-flex h-auto gap-1 p-1.5 bg-gradient-to-r from-muted/80 via-muted to-muted/80 min-w-max">
+            <TabsTrigger value="overview" className="text-xs px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-primary data-[state=active]:to-primary/80 data-[state=active]:text-primary-foreground transition-all">
+              Overview
+            </TabsTrigger>
+            <TabsTrigger value="accounts" className="text-xs px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-blue-600 data-[state=active]:text-white transition-all">
+              Accounts ({accounts.length})
+            </TabsTrigger>
+            <TabsTrigger value="transfers" className="text-xs px-3 py-2 relative data-[state=active]:bg-gradient-to-r data-[state=active]:from-orange-500 data-[state=active]:to-orange-600 data-[state=active]:text-white transition-all">
+              Transfers
+              {stats.pendingTransfers > 0 && <Badge className="ml-1 h-5 bg-orange-500 text-[10px] px-1.5">{stats.pendingTransfers}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="deposits" className="text-xs px-3 py-2 relative data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white transition-all">
+              Deposits
+              {stats.pendingDeposits > 0 && <Badge className="ml-1 h-5 bg-emerald-500 text-[10px] px-1.5">{stats.pendingDeposits}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="withdrawals" className="text-xs px-3 py-2 relative data-[state=active]:bg-gradient-to-r data-[state=active]:from-red-500 data-[state=active]:to-red-600 data-[state=active]:text-white transition-all">
+              Withdrawals
+              {stats.pendingWithdrawals > 0 && <Badge className="ml-1 h-5 bg-red-500 text-[10px] px-1.5">{stats.pendingWithdrawals}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="applications" className="text-xs px-3 py-2 relative data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-purple-600 data-[state=active]:text-white transition-all">
+              Applications
+              {stats.pendingApplications > 0 && <Badge className="ml-1 h-5 bg-purple-500 text-[10px] px-1.5">{stats.pendingApplications}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="loans" className="text-xs px-3 py-2 relative data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-amber-600 data-[state=active]:text-white transition-all">
+              Loans
+              {stats.pendingLoans > 0 && <Badge className="ml-1 h-5 bg-amber-500 text-[10px] px-1.5">{stats.pendingLoans}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="verifications" className="text-xs px-3 py-2 relative data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500 data-[state=active]:to-cyan-600 data-[state=active]:text-white transition-all">
+              KYC
+              {stats.pendingVerifications > 0 && <Badge className="ml-1 h-5 bg-cyan-500 text-[10px] px-1.5">{stats.pendingVerifications}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="cards" className="text-xs px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-indigo-600 data-[state=active]:text-white transition-all">
+              Cards ({cards.length})
+            </TabsTrigger>
+            <TabsTrigger value="wire-transfers" className="text-xs px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-pink-600 data-[state=active]:text-white transition-all">
+              <Send className="w-3 h-3 mr-1" />Wire
+            </TabsTrigger>
+            <TabsTrigger value="ach-transfers" className="text-xs px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-teal-500 data-[state=active]:to-teal-600 data-[state=active]:text-white transition-all">
+              <Landmark className="w-3 h-3 mr-1" />ACH
+            </TabsTrigger>
+            <TabsTrigger value="crypto-wallets" className="text-xs px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-500 data-[state=active]:to-yellow-600 data-[state=active]:text-white transition-all">
+              <Bitcoin className="w-3 h-3 mr-1" />Crypto
+            </TabsTrigger>
+            <TabsTrigger value="transactions" className="text-xs px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-slate-500 data-[state=active]:to-slate-600 data-[state=active]:text-white transition-all">
+              History
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         {/* Overview Tab */}
         <TabsContent value="overview" className="space-y-4">
