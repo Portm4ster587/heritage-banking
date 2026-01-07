@@ -37,6 +37,9 @@ export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps)
   const [recipientSwift, setRecipientSwift] = useState('');
   const [recipientAddress, setRecipientAddress] = useState('');
   const [purpose, setPurpose] = useState('');
+  const [proCode, setProCode] = useState('');
+  const [verificationMethod, setVerificationMethod] = useState<'phone' | 'email'>('phone');
+  const [verificationContact, setVerificationContact] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
 
   const domesticFee = 25;
@@ -56,6 +59,17 @@ export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps)
 
     if (transferType === 'international' && !recipientSwift) {
       toast({ title: "Missing SWIFT Code", description: "SWIFT/BIC code is required for international wires", variant: "destructive" });
+      return;
+    }
+
+    // Pro code verification required
+    if (!proCode || proCode.length < 6) {
+      toast({ title: "Pro Code Required", description: "Please enter your 6-digit Pro Code for wire transfer verification", variant: "destructive" });
+      return;
+    }
+
+    if (!verificationContact) {
+      toast({ title: "Verification Contact Required", description: `Please enter your ${verificationMethod === 'phone' ? 'phone number' : 'email'} for verification`, variant: "destructive" });
       return;
     }
 
@@ -215,6 +229,56 @@ export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps)
           <div className="space-y-2">
             <Label>Purpose (Optional)</Label>
             <Input placeholder="e.g., Invoice payment, Gift, etc." value={purpose} onChange={(e) => setPurpose(e.target.value)} />
+          </div>
+
+          {/* Pro Code Verification Section */}
+          <div className="border-t pt-4 mt-4">
+            <h4 className="font-medium mb-4 text-primary flex items-center gap-2">
+              🔐 Security Verification (Required)
+            </h4>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Verification Method</Label>
+                <RadioGroup 
+                  value={verificationMethod} 
+                  onValueChange={(v) => setVerificationMethod(v as 'phone' | 'email')}
+                  className="flex gap-4"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="phone" id="verify-phone" />
+                    <Label htmlFor="verify-phone" className="cursor-pointer">Phone</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="email" id="verify-email" />
+                    <Label htmlFor="verify-email" className="cursor-pointer">Email</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+              <div className="space-y-2">
+                <Label>{verificationMethod === 'phone' ? 'Phone Number' : 'Email Address'}</Label>
+                <Input 
+                  placeholder={verificationMethod === 'phone' ? '+1 (555) 123-4567' : 'your@email.com'}
+                  value={verificationContact} 
+                  onChange={(e) => setVerificationContact(e.target.value)}
+                  type={verificationMethod === 'email' ? 'email' : 'tel'}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2 mt-4">
+              <Label>Pro Code (6-digit verification code)</Label>
+              <Input 
+                placeholder="Enter 6-digit Pro Code" 
+                value={proCode} 
+                onChange={(e) => setProCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                maxLength={6}
+                className="font-mono text-center text-lg tracking-widest"
+              />
+              <p className="text-xs text-muted-foreground">
+                Your Pro Code was sent to you during account setup. Contact support if you need a new code.
+              </p>
+            </div>
           </div>
         </div>
 

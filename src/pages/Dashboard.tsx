@@ -29,6 +29,7 @@ import { ComprehensiveAdminPanel } from '@/components/ComprehensiveAdminPanel';
 import { FullAdminPanel } from '@/components/admin/FullAdminPanel';
 import { AccountSettings } from '@/components/AccountSettings';
 import { CryptoExchange } from '@/components/CryptoExchange';
+import { useRealTimeNotifications } from '@/hooks/useRealTimeNotifications';
 
 
 interface Account {
@@ -58,6 +59,10 @@ interface Transfer {
 export default function Dashboard() {
   const { user, isAdmin, signOut } = useAuth();
   const { toast } = useToast();
+  
+  // Enable real-time push notifications for deposit/transfer approvals
+  useRealTimeNotifications();
+  
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [transfers, setTransfers] = useState<Transfer[]>([]);
   const [loading, setLoading] = useState(true);
