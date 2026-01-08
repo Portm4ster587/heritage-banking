@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { signIn, signUp } from '@/lib/auth';
 import { AnimatedHeritageLogo } from '@/components/AnimatedHeritageLogo';
+import { LoginSuccessAnimation } from '@/components/LoginSuccessAnimation';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import heritageBg1 from '@/assets/heritage-bg-1.jpg';
@@ -23,6 +24,7 @@ const Auth = () => {
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+  const [userName, setUserName] = useState('');
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -74,14 +76,9 @@ const Auth = () => {
       }
 
       if (data.user) {
+        setUserName(usernameOrEmail.split('@')[0] || 'User');
         setShowSuccess(true);
-        setTimeout(() => {
-          toast({
-            title: "Welcome back!",
-            description: "You have been signed in successfully."
-          });
-          navigate('/dashboard');
-        }, 2000);
+        // Animation lasts 3 seconds, then navigate
       }
     } catch (error) {
       console.error('Sign in error:', error);
@@ -156,6 +153,20 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
+      {/* Login Success Animation - 3 seconds centered */}
+      {showSuccess && (
+        <LoginSuccessAnimation 
+          userName={userName}
+          onComplete={() => {
+            toast({
+              title: "Welcome back!",
+              description: "You have been signed in successfully."
+            });
+            navigate('/dashboard');
+          }}
+        />
+      )}
+
       {/* Background Slideshow - High Quality */}
       <div className="absolute inset-0">
         {backgroundImages.map((bg, index) => (
@@ -188,6 +199,7 @@ const Auth = () => {
         </Link>
       </div>
 
+      {!showSuccess && (
       <div className="relative flex items-center justify-center min-h-screen py-8 px-4 sm:px-6 lg:px-8">
         <div className="w-full max-w-md">
           <Card className="bg-white/95 backdrop-blur-md shadow-2xl border-0 max-w-sm mx-auto">
@@ -196,11 +208,8 @@ const Auth = () => {
                 <AnimatedHeritageLogo 
                   size="md" 
                   isActive={true} 
-                  variant={showSuccess ? "success" : "login"}
+                  variant="login"
                   onAnimationComplete={() => {
-                    if (showSuccess) {
-                      navigate('/dashboard');
-                    }
                   }}
                 />
               </div>
@@ -212,8 +221,7 @@ const Auth = () => {
               </div>
             </CardHeader>
             
-            {!showSuccess && (
-              <CardContent>
+            <CardContent>
                 <Tabs defaultValue="signin" className="space-y-4">
                   <TabsList className="grid w-full grid-cols-2 bg-heritage-blue/10">
                     <TabsTrigger value="signin" className="data-[state=active]:bg-heritage-gold data-[state=active]:text-heritage-blue">
@@ -340,18 +348,10 @@ const Auth = () => {
                   </TabsContent>
                 </Tabs>
               </CardContent>
-            )}
-            
-            {showSuccess && (
-              <CardContent className="text-center py-6">
-                <div className="space-y-3">
-                  <h3 className="text-lg font-semibold text-heritage-blue">Authentication Successful!</h3>
-                </div>
-              </CardContent>
-            )}
           </Card>
         </div>
       </div>
+      )}
     </div>
   );
 };
