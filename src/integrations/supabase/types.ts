@@ -1474,6 +1474,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      setup_invest_group_overseas_account: { Args: never; Returns: undefined }
       setup_premium_user_accounts: { Args: never; Returns: undefined }
     }
     Enums: {
