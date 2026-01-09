@@ -204,13 +204,13 @@ const Index = () => {
 
                 <Card className="banking-card hover-lift border-2 hover:border-heritage-gold transition-all">
                   <CardHeader className="text-center">
-                    <CardTitle>Credit Cards</CardTitle>
+                    <CardTitle className="text-foreground">Credit Cards</CardTitle>
                     <CardDescription>Premium rewards cards</CardDescription>
                   </CardHeader>
                   <CardContent className="text-center">
                     <Button 
                       onClick={() => setShowCards(true)}
-                      className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90"
+                      className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-semibold"
                     >
                       Explore Cards
                     </Button>

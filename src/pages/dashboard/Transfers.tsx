@@ -6,6 +6,7 @@ import { InternalTransferForm } from "@/components/transfers/InternalTransferFor
 import { ExternalBankTransfer } from "@/components/ExternalBankTransfer";
 import { WireTransferForm } from "@/components/transfers/WireTransferForm";
 import { HeritageLoadingScreen } from "@/components/HeritageLoadingScreen";
+import { BackButton } from "@/components/BackButton";
 import { ArrowRightLeft, Building2, Globe } from "lucide-react";
 
 export default function Transfers() {
@@ -42,6 +43,7 @@ export default function Transfers() {
 
   return (
     <main className="container mx-auto px-6 py-8">
+      <BackButton to="/dashboard" label="Back to Dashboard" className="mb-4" />
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-primary">Transfer Funds</h1>
         <p className="text-muted-foreground">Send money between accounts, to external banks, or via wire transfer</p>
