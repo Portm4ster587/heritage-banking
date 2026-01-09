@@ -37,7 +37,7 @@ export const ProfileMenu = ({ onMenuAction }: ProfileMenuProps) => {
     try {
       const { data } = await supabase
         .from('profiles')
-        .select('*')
+        .select('*, avatar_url')
         .eq('user_id', user?.id)
         .maybeSingle();
       setProfile(data);
@@ -52,7 +52,7 @@ export const ProfileMenu = ({ onMenuAction }: ProfileMenuProps) => {
     email: user?.email || '',
     accountType: 'Heritage Business',
     memberSince: profile?.created_at ? new Date(profile.created_at).getFullYear().toString() : '2024',
-    avatar: undefined
+    avatar: profile?.avatar_url || undefined
   };
 
   const handleSignOut = async () => {

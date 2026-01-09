@@ -3,6 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { EnhancedDepositForm } from "@/components/deposits/EnhancedDepositForm";
 import { HeritageLoadingScreen } from "@/components/HeritageLoadingScreen";
+import { BackButton } from "@/components/BackButton";
 
 export default function TopUp() {
   const { user } = useAuth();
@@ -38,6 +39,7 @@ export default function TopUp() {
 
   return (
     <main className="container mx-auto px-6 py-8">
+      <BackButton to="/dashboard" label="Back to Dashboard" className="mb-4" />
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-primary">Deposit Funds</h1>
         <p className="text-muted-foreground">Add money to your Heritage Bank accounts via crypto, card, check, ACH, or wire transfer</p>

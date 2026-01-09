@@ -1100,6 +1100,7 @@ export type Database = {
         Row: {
           address: string | null
           annual_income: number | null
+          avatar_url: string | null
           city: string | null
           created_at: string | null
           date_of_birth: string | null
@@ -1119,6 +1120,7 @@ export type Database = {
         Insert: {
           address?: string | null
           annual_income?: number | null
+          avatar_url?: string | null
           city?: string | null
           created_at?: string | null
           date_of_birth?: string | null
@@ -1138,6 +1140,7 @@ export type Database = {
         Update: {
           address?: string | null
           annual_income?: number | null
+          avatar_url?: string | null
           city?: string | null
           created_at?: string | null
           date_of_birth?: string | null

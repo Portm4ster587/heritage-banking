@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { CryptoWallet } from "@/components/CryptoWallet";
+import { BackButton } from "@/components/BackButton";
 
 export default function Crypto() {
   useEffect(() => {
@@ -8,7 +9,8 @@ export default function Crypto() {
 
   return (
     <main className="container mx-auto px-6 py-8">
-      <h1 className="sr-only">Crypto</h1>
+      <BackButton to="/dashboard" label="Back to Dashboard" className="mb-4" />
+      <h1 className="text-3xl font-bold text-primary mb-6">Heritage Crypto</h1>
       <CryptoWallet />
     </main>
   );

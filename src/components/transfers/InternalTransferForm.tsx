@@ -9,7 +9,7 @@ import { ArrowRightLeft, Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { EnhancedTransferProgress } from '@/components/EnhancedTransferProgress';
+import { TransferHIHProgress } from '@/components/TransferHIHProgress';
 import { TransferSuccessScreen } from '@/components/TransferSuccessScreen';
 
 interface Account {
@@ -121,6 +121,28 @@ export const InternalTransferForm = ({ accounts, onSuccess }: InternalTransferFo
         toAccount: targetAccount || null,
         transactionId
       });
+
+      // Send email notification
+      try {
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        if (currentUser?.email) {
+          await supabase.functions.invoke('send-notification-email', {
+            body: {
+              to: currentUser.email,
+              subject: `Transfer Completed - $${transferAmount.toLocaleString()}`,
+              type: 'transfer',
+              data: {
+                amount: transferAmount,
+                recipientName: formatAccountType(targetAccount?.account_type || 'Account'),
+                transactionId,
+                status: 'completed'
+              }
+            }
+          });
+        }
+      } catch (emailError) {
+        console.log('Email notification failed:', emailError);
+      }
 
       setShowProgress(false);
       setShowSuccess(true);
@@ -242,8 +264,8 @@ export const InternalTransferForm = ({ accounts, onSuccess }: InternalTransferFo
         </CardContent>
       </Card>
 
-      {/* Transfer Progress Animation */}
-      <EnhancedTransferProgress 
+      {/* Transfer Progress Animation with HIH Logo */}
+      <TransferHIHProgress 
         isVisible={showProgress} 
         onComplete={handleProgressComplete}
       />
