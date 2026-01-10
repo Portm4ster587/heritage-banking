@@ -67,19 +67,19 @@ const Index = () => {
         {/* Quick Apply Section */}
         <section className="text-center animate-fade-in" style={{ animationDelay: '0.8s' }}>
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-primary mb-6">Open Your Heritage Account</h2>
-            <p className="text-xl text-muted-foreground mb-12">
+            <h2 className="text-4xl font-bold text-heritage-blue dark:text-heritage-gold mb-6">Open Your Heritage Account</h2>
+            <p className="text-xl text-heritage-blue/80 dark:text-foreground/80 mb-12 font-medium">
               Choose from our comprehensive range of banking products designed for your financial success.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Personal Checking */}
-              <Card className="banking-card hover-lift cursor-pointer group border-2 hover:border-heritage-gold transition-all duration-300">
+              <Card className="banking-card hover-lift cursor-pointer group border-2 hover:border-heritage-gold transition-all duration-300 bg-gradient-to-br from-white to-gray-50 dark:from-card dark:to-card/90">
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-heritage-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-heritage-blue rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                     <Shield className="w-8 h-8 text-heritage-gold" />
                   </div>
-                  <CardTitle className="text-lg">Personal Checking</CardTitle>
-                  <CardDescription>No monthly fees</CardDescription>
+                  <CardTitle className="text-lg text-heritage-blue dark:text-heritage-gold font-bold">Personal Checking</CardTitle>
+                  <CardDescription className="text-heritage-blue/70 dark:text-foreground/70 font-medium">No monthly fees</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                   <Button 
@@ -88,7 +88,7 @@ const Index = () => {
                       setApplicationType('checking');
                       setShowGuestApplication(true);
                     }}
-                    className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-semibold"
+                    className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-bold shadow-md"
                   >
                     Apply Now
                   </Button>
@@ -96,13 +96,13 @@ const Index = () => {
               </Card>
 
               {/* Personal Savings */}
-              <Card className="banking-card hover-lift cursor-pointer group border-2 hover:border-heritage-gold transition-all duration-300">
+              <Card className="banking-card hover-lift cursor-pointer group border-2 hover:border-heritage-gold transition-all duration-300 bg-gradient-to-br from-white to-gray-50 dark:from-card dark:to-card/90">
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-heritage-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-heritage-blue rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                     <Sparkles className="w-8 h-8 text-heritage-gold" />
                   </div>
-                  <CardTitle className="text-lg">Personal Savings</CardTitle>
-                  <CardDescription>High yield rates</CardDescription>
+                  <CardTitle className="text-lg text-heritage-blue dark:text-heritage-gold font-bold">Personal Savings</CardTitle>
+                  <CardDescription className="text-heritage-blue/70 dark:text-foreground/70 font-medium">High yield rates</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                   <Button 
@@ -111,7 +111,7 @@ const Index = () => {
                       setApplicationType('savings');
                       setShowGuestApplication(true);
                     }}
-                    className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-semibold"
+                    className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-bold shadow-md"
                   >
                     Apply Now
                   </Button>
@@ -119,13 +119,13 @@ const Index = () => {
               </Card>
 
               {/* Business Checking */}
-              <Card className="banking-card hover-lift cursor-pointer group border-2 hover:border-heritage-gold transition-all duration-300">
+              <Card className="banking-card hover-lift cursor-pointer group border-2 hover:border-heritage-gold transition-all duration-300 bg-gradient-to-br from-white to-gray-50 dark:from-card dark:to-card/90">
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-heritage-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-heritage-blue rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                     <Users className="w-8 h-8 text-heritage-gold" />
                   </div>
-                  <CardTitle className="text-lg">Business Checking</CardTitle>
-                  <CardDescription>Designed for business</CardDescription>
+                  <CardTitle className="text-lg text-heritage-blue dark:text-heritage-gold font-bold">Business Checking</CardTitle>
+                  <CardDescription className="text-heritage-blue/70 dark:text-foreground/70 font-medium">Designed for business</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                   <Button 
@@ -134,7 +134,7 @@ const Index = () => {
                       setApplicationType('business');
                       setShowGuestApplication(true);
                     }}
-                    className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-semibold"
+                    className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-bold shadow-md"
                   >
                     Apply Now
                   </Button>
@@ -142,13 +142,13 @@ const Index = () => {
               </Card>
 
               {/* Business Savings */}
-              <Card className="banking-card hover-lift cursor-pointer group border-2 hover:border-heritage-gold transition-all duration-300">
+              <Card className="banking-card hover-lift cursor-pointer group border-2 hover:border-heritage-gold transition-all duration-300 bg-gradient-to-br from-white to-gray-50 dark:from-card dark:to-card/90">
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-heritage-blue rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-heritage-blue rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                     <Zap className="w-8 h-8 text-heritage-gold" />
                   </div>
-                  <CardTitle className="text-lg">Business Savings</CardTitle>
-                  <CardDescription>Grow your business</CardDescription>
+                  <CardTitle className="text-lg text-heritage-blue dark:text-heritage-gold font-bold">Business Savings</CardTitle>
+                  <CardDescription className="text-heritage-blue/70 dark:text-foreground/70 font-medium">Grow your business</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                   <Button 
@@ -157,7 +157,7 @@ const Index = () => {
                       setApplicationType('savings');
                       setShowGuestApplication(true);
                     }}
-                    className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-semibold"
+                    className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-bold shadow-md"
                   >
                     Apply Now
                   </Button>
@@ -167,12 +167,12 @@ const Index = () => {
 
             {/* Loan Products */}
             <div className="mt-12">
-              <h3 className="text-2xl font-bold text-primary mb-6">Loan Products & Services</h3>
+              <h3 className="text-2xl font-bold text-heritage-blue dark:text-heritage-gold mb-6">Loan Products & Services</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="banking-card hover-lift border-2 hover:border-heritage-gold transition-all">
+                <Card className="banking-card hover-lift border-2 hover:border-heritage-gold transition-all bg-gradient-to-br from-white to-blue-50 dark:from-card dark:to-blue-950/20">
                   <CardHeader className="text-center">
-                    <CardTitle>Mortgage Loans</CardTitle>
-                    <CardDescription>Home financing solutions</CardDescription>
+                    <CardTitle className="text-heritage-blue dark:text-heritage-gold font-bold">Mortgage Loans</CardTitle>
+                    <CardDescription className="text-heritage-blue/70 dark:text-foreground/70 font-medium">Home financing solutions</CardDescription>
                   </CardHeader>
                   <CardContent className="text-center">
                     <Button 
@@ -180,39 +180,39 @@ const Index = () => {
                         setApplicationType('home_loan');
                         setShowGuestApplication(true);
                       }}
-                      className="w-full bg-heritage-blue hover:bg-heritage-blue-dark text-white"
+                      className="w-full bg-heritage-blue hover:bg-heritage-blue-dark text-white font-bold"
                     >
                       Learn More
                     </Button>
                   </CardContent>
                 </Card>
 
-                <Card className="banking-card hover-lift border-2 hover:border-heritage-gold transition-all">
+                <Card className="banking-card hover-lift border-2 hover:border-heritage-gold transition-all bg-gradient-to-br from-white to-green-50 dark:from-card dark:to-green-950/20">
                   <CardHeader className="text-center">
-                    <CardTitle>IRA Accounts</CardTitle>
-                    <CardDescription>Retirement planning</CardDescription>
+                    <CardTitle className="text-heritage-blue dark:text-heritage-gold font-bold">IRA Accounts</CardTitle>
+                    <CardDescription className="text-heritage-blue/70 dark:text-foreground/70 font-medium">Retirement planning</CardDescription>
                   </CardHeader>
                   <CardContent className="text-center">
                     <Button 
                       onClick={() => setShowGuestApplication(true)}
-                      className="w-full bg-heritage-blue hover:bg-heritage-blue-dark text-white"
+                      className="w-full bg-heritage-blue hover:bg-heritage-blue-dark text-white font-bold"
                     >
                       Open IRA
                     </Button>
                   </CardContent>
                 </Card>
 
-                <Card className="banking-card hover-lift border-2 hover:border-heritage-gold transition-all">
+                <Card className="banking-card hover-lift border-2 hover:border-heritage-gold transition-all bg-gradient-to-br from-heritage-blue/5 to-heritage-gold/10">
                   <CardHeader className="text-center">
-                    <CardTitle className="text-foreground">Credit Cards</CardTitle>
-                    <CardDescription>Premium rewards cards</CardDescription>
+                    <CardTitle className="text-heritage-blue dark:text-heritage-gold font-bold text-xl">Credit Cards</CardTitle>
+                    <CardDescription className="text-heritage-blue/80 dark:text-foreground/80 font-medium">Premium rewards cards</CardDescription>
                   </CardHeader>
                   <CardContent className="text-center">
                     <Button 
                       onClick={() => setShowCards(true)}
-                      className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-semibold"
+                      className="w-full bg-gradient-to-r from-heritage-gold to-amber-500 text-heritage-blue hover:from-heritage-gold/90 hover:to-amber-500/90 font-bold text-lg py-6 shadow-lg hover:shadow-xl transition-all"
                     >
-                      Explore Cards
+                      ✨ Explore Premium Cards
                     </Button>
                   </CardContent>
                 </Card>

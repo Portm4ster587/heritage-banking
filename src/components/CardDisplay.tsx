@@ -97,12 +97,12 @@ export const CardDisplay = ({ card, className }: CardDisplayProps) => {
               {getNetworkIcon(card.card_network)}
             </div>
 
-            {/* Card Number */}
+            {/* Card Number - Show last 5 digits */}
             <div className="relative">
               <div className="flex items-center gap-3 mb-4">
                 <Wallet className="w-6 h-6 text-white/60" />
                 <p className="text-white text-2xl font-mono tracking-widest">
-                  •••• •••• •••• {card.last4}
+                  •••• •••• ••• {card.card_number ? card.card_number.slice(-5) : card.last4}
                 </p>
               </div>
 
