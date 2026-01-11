@@ -53,6 +53,7 @@ import {
 import { AdminCryptoWallets } from './AdminCryptoWallets';
 import { AdminWireTransfers } from './AdminWireTransfers';
 import { AdminACHTransfers } from './AdminACHTransfers';
+import { AdminBalanceEditor } from './AdminBalanceEditor';
 
 interface UserAccount {
   id: string;

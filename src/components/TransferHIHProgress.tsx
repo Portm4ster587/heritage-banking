@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { CheckCircle } from 'lucide-react';
 import hihLogoAnimated from '@/assets/hih-logo-animated.png';
+import heritageCrownLogo from '@/assets/heritage-crown-logo.png';
 
 interface TransferHIHProgressProps {
   isVisible: boolean;
@@ -14,6 +15,7 @@ export const TransferHIHProgress = ({ isVisible, onComplete, title = 'Processing
   const [currentStep, setCurrentStep] = useState(0);
   const [logoRotation, setLogoRotation] = useState(0);
   const [logoScale, setLogoScale] = useState(1);
+  const [currentLogo, setCurrentLogo] = useState<'gold' | 'blue'>('gold');
 
   const steps = [
     'Validating transfer details',
@@ -30,6 +32,7 @@ export const TransferHIHProgress = ({ isVisible, onComplete, title = 'Processing
       setCurrentStep(0);
       setLogoRotation(0);
       setLogoScale(1);
+      setCurrentLogo('gold');
       return;
     }
 
@@ -47,15 +50,21 @@ export const TransferHIHProgress = ({ isVisible, onComplete, title = 'Processing
       });
     }, 80);
 
-    // Logo animation interval
+    // Logo animation interval - switch between gold and blue logos
     const logoInterval = setInterval(() => {
       setLogoRotation(prev => prev + 2);
       setLogoScale(prev => 1 + Math.sin(Date.now() / 500) * 0.05);
     }, 50);
 
+    // Logo switching interval - alternate between the two logos
+    const logoSwitchInterval = setInterval(() => {
+      setCurrentLogo(prev => prev === 'gold' ? 'blue' : 'gold');
+    }, 1200);
+
     return () => {
       clearInterval(interval);
       clearInterval(logoInterval);
+      clearInterval(logoSwitchInterval);
     };
   }, [isVisible, onComplete]);
 
@@ -89,7 +98,7 @@ export const TransferHIHProgress = ({ isVisible, onComplete, title = 'Processing
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-heritage-gold via-heritage-gold/50 to-heritage-gold" />
 
         <CardContent className="p-8 text-center space-y-6">
-          {/* HIH Logo Image Animation */}
+          {/* HIH Logo Image Animation - Switching between gold and blue */}
           <div className="flex justify-center mb-6">
             <div 
               className="relative w-48 h-48 flex items-center justify-center"
@@ -101,7 +110,9 @@ export const TransferHIHProgress = ({ isVisible, onComplete, title = 'Processing
               <div 
                 className="absolute inset-0 rounded-full"
                 style={{
-                  background: 'conic-gradient(from 0deg, rgba(212, 175, 55, 0.8), rgba(30, 58, 95, 0.8), rgba(212, 175, 55, 0.8), rgba(30, 58, 95, 0.8), rgba(212, 175, 55, 0.8))',
+                  background: currentLogo === 'gold' 
+                    ? 'conic-gradient(from 0deg, rgba(212, 175, 55, 0.8), rgba(30, 58, 95, 0.8), rgba(212, 175, 55, 0.8), rgba(30, 58, 95, 0.8), rgba(212, 175, 55, 0.8))'
+                    : 'conic-gradient(from 0deg, rgba(30, 58, 95, 0.8), rgba(212, 175, 55, 0.8), rgba(30, 58, 95, 0.8), rgba(212, 175, 55, 0.8), rgba(30, 58, 95, 0.8))',
                   animation: 'spin 3s linear infinite',
                   padding: '4px',
                   borderRadius: '50%'
@@ -114,33 +125,51 @@ export const TransferHIHProgress = ({ isVisible, onComplete, title = 'Processing
               <div 
                 className="absolute inset-4 rounded-full animate-pulse"
                 style={{
-                  background: 'radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, transparent 70%)',
+                  background: currentLogo === 'gold' 
+                    ? 'radial-gradient(circle, rgba(212, 175, 55, 0.4) 0%, transparent 70%)'
+                    : 'radial-gradient(circle, rgba(30, 58, 95, 0.4) 0%, transparent 70%)',
                   filter: 'blur(10px)'
                 }}
               />
               
-              {/* Logo Image */}
-              <img 
-                src={hihLogoAnimated} 
-                alt="HIH Logo" 
-                className="relative z-10 w-32 h-32 object-contain transition-transform duration-100"
-                style={{
-                  transform: `scale(${logoScale})`,
-                  filter: 'drop-shadow(0 0 15px rgba(212, 175, 55, 0.6))'
-                }}
-              />
+              {/* Logo Images - Fade between them */}
+              <div className="relative z-10 w-32 h-32">
+                <img 
+                  src={hihLogoAnimated} 
+                  alt="HIH Logo Gold" 
+                  className="absolute inset-0 w-full h-full object-contain transition-all duration-500"
+                  style={{
+                    transform: `scale(${logoScale})`,
+                    filter: 'drop-shadow(0 0 15px rgba(212, 175, 55, 0.6))',
+                    opacity: currentLogo === 'gold' ? 1 : 0
+                  }}
+                />
+                <img 
+                  src={heritageCrownLogo} 
+                  alt="HIH Logo Blue" 
+                  className="absolute inset-0 w-full h-full object-contain transition-all duration-500"
+                  style={{
+                    transform: `scale(${logoScale})`,
+                    filter: 'drop-shadow(0 0 15px rgba(30, 58, 95, 0.6))',
+                    opacity: currentLogo === 'blue' ? 1 : 0
+                  }}
+                />
+              </div>
               
               {/* Particle effects */}
               {[...Array(8)].map((_, i) => (
                 <div
                   key={i}
-                  className="absolute w-2 h-2 bg-heritage-gold rounded-full"
+                  className="absolute w-2 h-2 rounded-full"
                   style={{
                     top: `${50 + Math.sin((logoRotation + i * 45) * Math.PI / 180) * 45}%`,
                     left: `${50 + Math.cos((logoRotation + i * 45) * Math.PI / 180) * 45}%`,
                     transform: 'translate(-50%, -50%)',
                     opacity: 0.8,
-                    boxShadow: '0 0 10px rgba(212, 175, 55, 0.8)'
+                    backgroundColor: currentLogo === 'gold' ? '#d4af37' : '#1e3a5f',
+                    boxShadow: currentLogo === 'gold' 
+                      ? '0 0 10px rgba(212, 175, 55, 0.8)'
+                      : '0 0 10px rgba(30, 58, 95, 0.8)'
                   }}
                 />
               ))}
