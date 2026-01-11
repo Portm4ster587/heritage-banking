@@ -155,6 +155,25 @@ export const ExternalBankTransfer = ({
         description: `Transfer of $${amt.toLocaleString()} to ${ext?.bank_name || 'external account'} initiated.`,
       });
 
+      // Send email notification
+      try {
+        await supabase.functions.invoke('send-notification-email', {
+          body: {
+            to: user?.email,
+            subject: 'Heritage Bank - External Transfer Initiated',
+            type: 'transfer',
+            data: {
+              amount: amt,
+              recipientName: ext?.bank_name || 'External Bank',
+              transactionId: `ACH-${Date.now()}`,
+              status: 'pending'
+            }
+          }
+        });
+      } catch (emailError) {
+        console.log('Email notification failed:', emailError);
+      }
+
       // Send SMS notification if phone available
       if (userPhone) {
         sendTransactionAlert(userPhone, amt, 'debit', `to ${ext?.bank_name || 'external bank'}`);

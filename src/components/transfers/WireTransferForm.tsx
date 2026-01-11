@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,7 @@ import { Send, Globe, Building2, AlertTriangle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useSmsNotification } from '@/hooks/useSmsNotification';
 
 interface Account {
   id: string;
@@ -27,7 +28,23 @@ interface WireTransferFormProps {
 export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { sendTransactionAlert, sendSecurityAlert } = useSmsNotification();
+  const [userPhone, setUserPhone] = useState<string | null>(null);
   const [transferType, setTransferType] = useState<'domestic' | 'international'>('domestic');
+
+  // Fetch user phone for SMS alerts
+  useEffect(() => {
+    const fetchPhone = async () => {
+      if (!user?.id) return;
+      const { data } = await supabase
+        .from('profiles')
+        .select('phone')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (data?.phone) setUserPhone(data.phone);
+    };
+    fetchPhone();
+  }, [user?.id]);
   const [fromAccount, setFromAccount] = useState('');
   const [amount, setAmount] = useState('');
   const [recipientName, setRecipientName] = useState('');
@@ -101,6 +118,35 @@ export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps)
       });
 
       if (error) throw error;
+
+      // Send email notification
+      try {
+        await supabase.functions.invoke('send-notification-email', {
+          body: {
+            to: user?.email,
+            subject: 'Heritage Bank - Wire Transfer Submitted',
+            type: 'transfer',
+            data: {
+              amount: parseFloat(amount),
+              recipientName,
+              recipientBank,
+              transactionId: `WIRE-${Date.now()}`,
+              status: 'pending_approval'
+            }
+          }
+        });
+      } catch (emailError) {
+        console.log('Email notification failed:', emailError);
+      }
+
+      // Send SMS notification
+      if (userPhone) {
+        try {
+          await sendSecurityAlert(userPhone, `Wire transfer of $${parseFloat(amount).toLocaleString()} to ${recipientBank} submitted for approval.`);
+        } catch (smsError) {
+          console.log('SMS notification failed:', smsError);
+        }
+      }
 
       toast({
         title: "Wire Transfer Submitted",

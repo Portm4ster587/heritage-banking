@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +11,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { TransferHIHProgress } from '@/components/TransferHIHProgress';
 import { TransferSuccessScreen } from '@/components/TransferSuccessScreen';
+import { useSmsNotification } from '@/hooks/useSmsNotification';
 
 interface Account {
   id: string;
@@ -28,7 +29,23 @@ interface InternalTransferFormProps {
 export const InternalTransferForm = ({ accounts, onSuccess }: InternalTransferFormProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { sendTransactionAlert } = useSmsNotification();
   const [fromAccount, setFromAccount] = useState('');
+  const [userPhone, setUserPhone] = useState<string | null>(null);
+
+  // Fetch user phone for SMS alerts
+  useEffect(() => {
+    const fetchPhone = async () => {
+      if (!user?.id) return;
+      const { data } = await supabase
+        .from('profiles')
+        .select('phone')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (data?.phone) setUserPhone(data.phone);
+    };
+    fetchPhone();
+  }, [user?.id]);
   const [toAccount, setToAccount] = useState('');
   const [amount, setAmount] = useState('');
   const [memo, setMemo] = useState('');
@@ -142,6 +159,15 @@ export const InternalTransferForm = ({ accounts, onSuccess }: InternalTransferFo
         }
       } catch (emailError) {
         console.log('Email notification failed:', emailError);
+      }
+
+      // Send SMS notification
+      if (userPhone) {
+        try {
+          await sendTransactionAlert(userPhone, transferAmount, 'debit', `to ${formatAccountType(targetAccount?.account_type || 'Heritage account')}`);
+        } catch (smsError) {
+          console.log('SMS notification failed:', smsError);
+        }
       }
 
       setShowProgress(false);
