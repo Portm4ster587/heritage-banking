@@ -1459,7 +1459,21 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      admin_user_summary: {
+        Row: {
+          account_count: number | null
+          created_at: string | null
+          email: string | null
+          first_name: string | null
+          is_admin: boolean | null
+          last_name: string | null
+          phone: string | null
+          total_balance: number | null
+          user_id: string | null
+          username: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       generate_application_number: { Args: never; Returns: string }
