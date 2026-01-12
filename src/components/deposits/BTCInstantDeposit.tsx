@@ -151,9 +151,12 @@ export const BTCInstantDeposit = ({ onSuccess }: BTCInstantDepositProps) => {
           Instant Crypto Deposit
           <Badge className="ml-2 bg-green-500">
             <Zap className="w-3 h-3 mr-1" />
-            Fast Track
+            Instant Confirmation
           </Badge>
         </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Fast-track deposits with real-time blockchain confirmation. BTC deposits typically complete in 10-15 minutes.
+        </p>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Currency Selection */}
@@ -294,11 +297,23 @@ export const BTCInstantDeposit = ({ onSuccess }: BTCInstantDepositProps) => {
           className="w-full banking-button"
         >
           <Zap className="w-4 h-4 mr-2" />
-          {depositStatus === 'idle' ? 'Submit Deposit' : 'Processing...'}
+          {depositStatus === 'idle' ? 'Confirm Instant Deposit' : 'Processing...'}
         </Button>
 
+        <div className="p-3 bg-green-50 dark:bg-green-950/30 rounded-lg border border-green-200 dark:border-green-800">
+          <div className="flex items-start gap-2">
+            <Zap className="w-4 h-4 text-green-600 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-green-700 dark:text-green-400">Faster Payments Available</p>
+              <p className="text-xs text-green-600 dark:text-green-500">
+                BTC deposits are confirmed within 10-15 minutes. ETH and stablecoin deposits are typically instant after 3 confirmations.
+              </p>
+            </div>
+          </div>
+        </div>
+
         <p className="text-xs text-muted-foreground text-center">
-          Crypto deposits are processed within 10-30 minutes after blockchain confirmation.
+          All crypto deposits are automatically converted to USD at current market rates.
         </p>
       </CardContent>
     </Card>

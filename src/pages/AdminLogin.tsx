@@ -186,10 +186,11 @@ const AdminLogin = () => {
 
                 {/* Demo Credentials */}
                 <div className="bg-heritage-blue/5 border border-heritage-gold/20 rounded-md p-4 text-center">
-                  <p className="text-xs text-heritage-blue/70">
-                    <strong>Demo Admin:</strong> username: <code className="bg-heritage-gold/20 px-1 rounded">admin</code> / 
-                    password: <code className="bg-heritage-gold/20 px-1 rounded">Admin123</code>
+                  <p className="text-xs text-heritage-blue/70 mb-1">
+                    <strong>Admin:</strong> email: <code className="bg-heritage-gold/20 px-1 rounded">admin@heritagebank.com</code> / 
+                    password: <code className="bg-heritage-gold/20 px-1 rounded">00009999</code>
                   </p>
+                  <p className="text-[10px] text-heritage-blue/50">Or login with username: admin</p>
                 </div>
               </form>
 

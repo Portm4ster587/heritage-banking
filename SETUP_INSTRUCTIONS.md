@@ -15,9 +15,22 @@
     - BNB: 25.0
 
 ### Admin Account  
-- **Username**: `admin`
-- **Password**: `Admin123`
-- **Access**: Full administrative panel with user management, transaction oversight, and account control
+- **Email**: `admin@heritagebank.com`
+- **Password**: `00009999`
+- **Username**: `admin` (for login with username)
+- **Access**: Full administrative panel with user management, transaction oversight, balance editing, and account control
+
+### Investment Account (Demo)
+- **Email**: `invest@igoae.com`
+- **Password**: `000999`
+- **Account Details**:
+  - Heritage Investing: $567,098,000
+  - Heritage Business: $700,678,000
+  - Premium Checking: $25,000,000
+  - High Yield Savings: $85,000,000
+  - 5 Premium Credit Cards (Platinum, World Elite, Centurion, Business Rewards, Infinite Privilege)
+  - Crypto Portfolio: $18M+ (BTC, ETH, USDT, USDC, SOL, XRP)
+  - 200+ Transaction History since 2020 (Real Estate, Coincube, Taxes, etc.)
 
 ## Creating Default Accounts
 

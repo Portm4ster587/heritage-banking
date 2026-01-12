@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Eye, EyeOff, Copy, Check, Building2, Loader2, Wallet, ArrowUpRight, ArrowDownLeft, RefreshCw, TrendingUp, TrendingDown, Bitcoin, Coins } from 'lucide-react';
+import { Eye, EyeOff, Copy, Check, Building2, Loader2, Wallet, ArrowUpRight, ArrowDownLeft, RefreshCw, TrendingUp, TrendingDown, Bitcoin, Coins, CreditCard } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -7,6 +7,7 @@ import { HeritageSVGLogo } from '@/components/HeritageSVGLogo';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { LinkedCardsDisplay } from '@/components/LinkedCardsDisplay';
 
 interface Account {
   id: string;
@@ -446,6 +447,9 @@ export const DashboardAccountSummary = () => {
           </Card>
         ))}
       </div>
+
+      {/* Linked Cards Section */}
+      <LinkedCardsDisplay />
     </div>
   );
 };

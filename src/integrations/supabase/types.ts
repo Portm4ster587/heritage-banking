@@ -1463,7 +1463,6 @@ export type Database = {
         Row: {
           account_count: number | null
           created_at: string | null
-          email: string | null
           first_name: string | null
           is_admin: boolean | null
           last_name: string | null
@@ -1471,6 +1470,28 @@ export type Database = {
           total_balance: number | null
           user_id: string | null
           username: string | null
+        }
+        Insert: {
+          account_count?: never
+          created_at?: string | null
+          first_name?: string | null
+          is_admin?: never
+          last_name?: string | null
+          phone?: string | null
+          total_balance?: never
+          user_id?: string | null
+          username?: string | null
+        }
+        Update: {
+          account_count?: never
+          created_at?: string | null
+          first_name?: string | null
+          is_admin?: never
+          last_name?: string | null
+          phone?: string | null
+          total_balance?: never
+          user_id?: string | null
+          username?: string | null
         }
         Relationships: []
       }
