@@ -1401,6 +1401,9 @@ export const FullAdminPanel = () => {
             <TabsTrigger value="crypto-wallets" className="text-xs px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-500 data-[state=active]:to-yellow-600 data-[state=active]:text-white transition-all">
               <Bitcoin className="w-3 h-3 mr-1" />Crypto
             </TabsTrigger>
+            <TabsTrigger value="balance-editor" className="text-xs px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-emerald-500 data-[state=active]:to-emerald-600 data-[state=active]:text-white transition-all">
+              <DollarSign className="w-3 h-3 mr-1" />Balance
+            </TabsTrigger>
             <TabsTrigger value="transactions" className="text-xs px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-slate-500 data-[state=active]:to-slate-600 data-[state=active]:text-white transition-all">
               History
             </TabsTrigger>
@@ -1996,6 +1999,11 @@ export const FullAdminPanel = () => {
         {/* Crypto Wallets Tab */}
         <TabsContent value="crypto-wallets">
           <AdminCryptoWallets />
+        </TabsContent>
+
+        {/* Balance Editor Tab */}
+        <TabsContent value="balance-editor">
+          <AdminBalanceEditor />
         </TabsContent>
 
         {/* All Transactions Tab */}
