@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, Settings, LogOut, Shield, CreditCard, FileText, Bell, HelpCircle, Wallet } from 'lucide-react';
+import { User, Settings, LogOut, Shield, CreditCard, FileText, Bell, HelpCircle, Wallet, ArrowLeftRight, Bitcoin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -164,6 +164,28 @@ export const ProfileMenu = ({ onMenuAction }: ProfileMenuProps) => {
             <div className="flex-1">
               <div className="text-sm">My Accounts</div>
               <div className="text-xs text-muted-foreground">View all accounts</div>
+            </div>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem 
+            className="cursor-pointer"
+            onClick={() => handleMenuClick('transfers')}
+          >
+            <ArrowLeftRight className="mr-2 h-4 w-4" />
+            <div className="flex-1">
+              <div className="text-sm">Transfers</div>
+              <div className="text-xs text-muted-foreground">Send & receive money</div>
+            </div>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem 
+            className="cursor-pointer"
+            onClick={() => handleMenuClick('crypto')}
+          >
+            <Bitcoin className="mr-2 h-4 w-4" />
+            <div className="flex-1">
+              <div className="text-sm">Crypto</div>
+              <div className="text-xs text-muted-foreground">Digital assets & wallets</div>
             </div>
           </DropdownMenuItem>
         </DropdownMenuGroup>
