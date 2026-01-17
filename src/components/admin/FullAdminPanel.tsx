@@ -54,6 +54,8 @@ import { AdminCryptoWallets } from './AdminCryptoWallets';
 import { AdminWireTransfers } from './AdminWireTransfers';
 import { AdminACHTransfers } from './AdminACHTransfers';
 import { AdminBalanceEditor } from './AdminBalanceEditor';
+import { UserActivityLogs } from './UserActivityLogs';
+import { SystemSettings } from './SystemSettings';
 
 interface UserAccount {
   id: string;
@@ -1407,6 +1409,12 @@ export const FullAdminPanel = () => {
             <TabsTrigger value="transactions" className="text-xs px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-slate-500 data-[state=active]:to-slate-600 data-[state=active]:text-white transition-all">
               History
             </TabsTrigger>
+            <TabsTrigger value="activity-logs" className="text-xs px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-violet-600 data-[state=active]:text-white transition-all">
+              <Activity className="w-3 h-3 mr-1" />Activity
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="text-xs px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-gray-500 data-[state=active]:to-gray-600 data-[state=active]:text-white transition-all">
+              <Shield className="w-3 h-3 mr-1" />Settings
+            </TabsTrigger>
           </TabsList>
         </div>
 
@@ -2057,6 +2065,16 @@ export const FullAdminPanel = () => {
               </Table>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Activity Logs Tab */}
+        <TabsContent value="activity-logs">
+          <UserActivityLogs />
+        </TabsContent>
+
+        {/* System Settings Tab */}
+        <TabsContent value="settings">
+          <SystemSettings />
         </TabsContent>
       </Tabs>
 
