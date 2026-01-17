@@ -37,6 +37,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { AnimatedHeritageLogo } from '@/components/AnimatedHeritageLogo';
 import { MobileNavMenu } from '@/components/MobileNavMenu';
+import { AccountDetailsPanel } from '@/components/dashboard/AccountDetailsPanel';
 
 interface Account {
   id: string;
@@ -352,38 +353,13 @@ export default function ModernDashboard() {
                 </a>
               </div>
 
-              {accounts.map((account) => {
-                const IconComponent = getAccountIcon(account.account_type);
-                return (
-                  <Card key={account.id} className="hover:shadow-md transition-shadow cursor-pointer">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center">
-                            <IconComponent className="w-6 h-6 text-slate-600" />
-                          </div>
-                          <div>
-                            <h3 className="font-semibold text-slate-900">
-                              {getAccountDisplayName(account.account_type)}
-                            </h3>
-                            <p className="text-sm text-slate-500">
-                              ••••{account.account_number.slice(-4)}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-lg font-semibold text-slate-900">
-                            {balanceVisible ? `$${account.balance.toLocaleString()}` : '••••••'}
-                          </p>
-                          <Badge variant={account.status === 'active' ? 'default' : 'secondary'}>
-                            {account.status}
-                          </Badge>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
+              {accounts.map((account) => (
+                <AccountDetailsPanel
+                  key={account.id}
+                  account={account}
+                  balanceVisible={balanceVisible}
+                />
+              ))}
             </div>
           </div>
 
@@ -394,29 +370,47 @@ export default function ModernDashboard() {
               <CardHeader>
                 <CardTitle className="text-lg">Quick Actions</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-2">
                 <a href="/dashboard/transfers">
-                  <Button className="w-full justify-start bg-heritage-blue hover:bg-heritage-blue-dark text-white">
+                  <Button className="w-full justify-start bg-heritage-blue hover:bg-heritage-blue-dark text-white mb-2">
                     <Send className="w-4 h-4 mr-3" />
                     Send Money
                   </Button>
                 </a>
                 <a href="/dashboard/topup">
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button variant="outline" className="w-full justify-start mb-2">
                     <ArrowDownRight className="w-4 h-4 mr-3" />
                     Deposit / Top Up
                   </Button>
                 </a>
                 <a href="/dashboard/withdraw">
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button variant="outline" className="w-full justify-start mb-2">
                     <ArrowUpRight className="w-4 h-4 mr-3" />
                     Withdraw
                   </Button>
                 </a>
+                <a href="/dashboard/crypto">
+                  <Button variant="outline" className="w-full justify-start mb-2">
+                    <TrendingUp className="w-4 h-4 mr-3" />
+                    Crypto Portfolio
+                  </Button>
+                </a>
                 <a href="/dashboard/history">
-                  <Button variant="outline" className="w-full justify-start">
+                  <Button variant="outline" className="w-full justify-start mb-2">
                     <CreditCard className="w-4 h-4 mr-3" />
-                    View Bills & History
+                    Transaction History
+                  </Button>
+                </a>
+                <a href="/dashboard/profile">
+                  <Button variant="outline" className="w-full justify-start mb-2">
+                    <User className="w-4 h-4 mr-3" />
+                    My Profile
+                  </Button>
+                </a>
+                <a href="/dashboard/settings">
+                  <Button variant="outline" className="w-full justify-start">
+                    <Settings className="w-4 h-4 mr-3" />
+                    Account Settings
                   </Button>
                 </a>
               </CardContent>

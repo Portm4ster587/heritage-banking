@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { signIn } from '@/lib/auth';
+import { supabase } from '@/integrations/supabase/client';
 import { AnimatedHeritageLogo } from '@/components/AnimatedHeritageLogo';
 import { Loader2, Shield, ArrowLeft, Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -26,8 +26,11 @@ const AdminLogin = () => {
       const normalized = username.trim().toLowerCase();
       const normalizedPassword = password.trim();
 
-      // Validate admin credentials
-      if (normalized !== 'admin') {
+      // Check if it's the admin email or username
+      const isAdminEmail = normalized === 'admin@heritagebank.com';
+      const isAdminUsername = normalized === 'admin';
+
+      if (!isAdminEmail && !isAdminUsername) {
         toast({
           title: "Access Denied",
           description: "Invalid administrator credentials. Only authorized personnel can access this portal.",
@@ -37,18 +40,45 @@ const AdminLogin = () => {
         return;
       }
 
-      const { data, error } = await signIn(normalized, normalizedPassword);
+      // Use email for authentication
+      const loginEmail = isAdminEmail ? normalized : 'admin@heritagebank.com';
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: loginEmail,
+        password: normalizedPassword
+      });
       
       if (error) {
+        console.error('Admin auth error:', error);
         toast({
           title: "Authentication Failed",
-          description: "Invalid administrator credentials. Please verify your login details.",
+          description: error.message || "Invalid administrator credentials. Please verify your login details.",
           variant: "destructive"
         });
+        setLoading(false);
         return;
       }
 
       if (data.user) {
+        // Verify admin role
+        const { data: roleData } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', data.user.id)
+          .eq('role', 'admin')
+          .maybeSingle();
+
+        if (!roleData) {
+          await supabase.auth.signOut();
+          toast({
+            title: "Access Denied",
+            description: "This account does not have administrator privileges.",
+            variant: "destructive"
+          });
+          setLoading(false);
+          return;
+        }
+
         setShowSuccess(true);
         setTimeout(() => {
           toast({
