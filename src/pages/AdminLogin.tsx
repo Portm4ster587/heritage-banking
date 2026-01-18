@@ -40,14 +40,17 @@ const AdminLogin = () => {
         return;
       }
 
+      // Ensure we're not re-using a previous session
+      await supabase.auth.signOut();
+
       // Use email for authentication
       const loginEmail = isAdminEmail ? normalized : 'admin@heritagebank.com';
-      
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email: loginEmail,
         password: normalizedPassword
       });
-      
+
       if (error) {
         console.error('Admin auth error:', error);
         toast({
@@ -60,15 +63,13 @@ const AdminLogin = () => {
       }
 
       if (data.user) {
-        // Verify admin role
-        const { data: roleData } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', data.user.id)
-          .eq('role', 'admin')
-          .maybeSingle();
+        // Verify admin role via security definer function (avoids RLS issues)
+        const { data: hasAdminRole, error: roleError } = await supabase.rpc('has_role', {
+          _user_id: data.user.id,
+          _role: 'admin'
+        });
 
-        if (!roleData) {
+        if (roleError || !hasAdminRole) {
           await supabase.auth.signOut();
           toast({
             title: "Access Denied",
@@ -85,8 +86,8 @@ const AdminLogin = () => {
             title: "Admin Access Granted",
             description: "Welcome to Heritage Bank Administration Portal."
           });
-          navigate('/dashboard', { state: { section: 'admin' } });
-        }, 2000);
+          navigate('/admin/dashboard');
+        }, 1200);
       }
     } catch (error) {
       console.error('Admin login error:', error);

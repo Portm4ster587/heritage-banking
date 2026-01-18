@@ -512,7 +512,7 @@ export default function Profile() {
                   </Button>
                   
                   {isAdmin && (
-                    <Button variant="outline" className="w-full justify-between border-primary/30" onClick={() => navigate('/dashboard?section=admin')}>
+                    <Button variant="outline" className="w-full justify-between border-primary/30" onClick={() => navigate('/admin/dashboard')}>
                       <span className="flex items-center gap-2 text-primary">
                         <Shield className="w-4 h-4" />
                         Admin Panel

@@ -25,6 +25,7 @@ import OpenAccount from "./pages/OpenAccount";
 import LinkExternalBank from "./pages/LinkExternalBank";
 import ConnectExternalBank from "./pages/ConnectExternalBank";
 import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -51,6 +52,42 @@ function AuthRoute({ children }: { children: React.ReactNode }) {
 
   // If user is already logged in, redirect to dashboard
   if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <>{children}</>;
+}
+
+function AdminAuthRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading, isAdmin } = useAuth();
+
+  if (loading) {
+    return <HeritageLoadingScreen message="Loading..." />;
+  }
+
+  if (user) {
+    return isAdmin ? (
+      <Navigate to="/admin/dashboard" replace />
+    ) : (
+      <Navigate to="/dashboard" replace />
+    );
+  }
+
+  return <>{children}</>;
+}
+
+function AdminProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading, isAdmin } = useAuth();
+
+  if (loading) {
+    return <HeritageLoadingScreen message="Loading admin portal..." />;
+  }
+
+  if (!user) {
+    return <Navigate to="/admin-login" replace />;
+  }
+
+  if (!isAdmin) {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -169,12 +206,23 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/open-account" element={<OpenAccount />} />
+
+            {/* Admin Routes */}
+            <Route path="/admin" element={<Navigate to="/admin-login" replace />} />
             <Route 
-              path="/admin" 
+              path="/admin-login" 
               element={
-                <AuthRoute>
+                <AdminAuthRoute>
                   <AdminLogin />
-                </AuthRoute>
+                </AdminAuthRoute>
+              } 
+            />
+            <Route
+              path="/admin/dashboard"
+              element={
+                <AdminProtectedRoute>
+                  <AdminDashboard />
+                </AdminProtectedRoute>
               }
             />
             
