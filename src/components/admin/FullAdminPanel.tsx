@@ -48,7 +48,8 @@ import {
   UserCheck,
   FileCheck,
   Globe,
-  Bitcoin
+  Bitcoin,
+  MessageCircle
 } from 'lucide-react';
 import { AdminCryptoWallets } from './AdminCryptoWallets';
 import { AdminWireTransfers } from './AdminWireTransfers';
@@ -56,6 +57,7 @@ import { AdminACHTransfers } from './AdminACHTransfers';
 import { AdminBalanceEditor } from './AdminBalanceEditor';
 import { UserActivityLogs } from './UserActivityLogs';
 import { SystemSettings } from './SystemSettings';
+import { AdminSupportInbox } from './AdminSupportInbox';
 
 interface UserAccount {
   id: string;
@@ -1415,6 +1417,9 @@ export const FullAdminPanel = () => {
             <TabsTrigger value="settings" className="text-xs px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-gray-500 data-[state=active]:to-gray-600 data-[state=active]:text-white transition-all">
               <Shield className="w-3 h-3 mr-1" />Settings
             </TabsTrigger>
+            <TabsTrigger value="support" className="text-xs px-3 py-2 data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-pink-600 data-[state=active]:text-white transition-all">
+              <MessageCircle className="w-3 h-3 mr-1" />Support
+            </TabsTrigger>
           </TabsList>
         </div>
 
@@ -2075,6 +2080,11 @@ export const FullAdminPanel = () => {
         {/* System Settings Tab */}
         <TabsContent value="settings">
           <SystemSettings />
+        </TabsContent>
+
+        {/* Customer Support Inbox Tab */}
+        <TabsContent value="support">
+          <AdminSupportInbox />
         </TabsContent>
       </Tabs>
 
