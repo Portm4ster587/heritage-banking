@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BankingHeader } from "../components/BankingHeader";
@@ -16,7 +16,7 @@ import heritageAtmImage from "@/assets/heritage-atm.jpg";
 import heritageAtmImage2 from "@/assets/heritage-atm-2.png";
 import bankInterior1 from "@/assets/bank-interior-1.jpg";
 import bankInterior2 from "@/assets/bank-interior-2.jpg";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
 
 const Index = () => {
   const { user } = useAuth();
@@ -24,7 +24,18 @@ const Index = () => {
   const [showGuestApplication, setShowGuestApplication] = useState(false);
   const [applicationType, setApplicationType] = useState<'checking' | 'savings' | 'business' | 'credit_card' | 'personal_loan' | 'home_loan' | 'auto_loan' | 'business_loan'>('checking');
   const [showCards, setShowCards] = useState(false);
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
 
+  // Auto-slide effect for the carousel
+  useEffect(() => {
+    if (!carouselApi) return;
+    
+    const interval = setInterval(() => {
+      carouselApi.scrollNext();
+    }, 3500);
+
+    return () => clearInterval(interval);
+  }, [carouselApi]);
   const features = [
     {
       title: 'Secure Banking',
@@ -221,65 +232,94 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Banking Services Showcase - Image Carousel */}
+        {/* Banking Services Showcase - Image Carousel with Auto-slide */}
         <section className="py-16 bg-muted/30 rounded-3xl">
           <div className="max-w-6xl mx-auto px-6">
-            <h2 className="text-3xl font-bold text-center mb-12">Experience Heritage Banking</h2>
-            <Carousel opts={{ loop: true, align: "start" }} className="w-full">
+            <h2 className="text-3xl font-bold text-center mb-12 text-heritage-blue dark:text-heritage-gold">Experience Heritage Banking</h2>
+            <Carousel 
+              opts={{ loop: true, align: "start" }} 
+              className="w-full"
+              setApi={setCarouselApi}
+            >
               <CarouselContent>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                  <div className="relative h-64 rounded-lg overflow-hidden">
+                  <div className="relative h-72 rounded-xl overflow-hidden shadow-xl">
                     <img 
                       src={bankInterior1} 
                       alt="Heritage Bank Interior" 
                       className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                      style={{ filter: 'contrast(1.1) saturate(1.2) brightness(1.05)' }}
+                      style={{ filter: 'contrast(1.15) saturate(1.3) brightness(1.15)' }}
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <p className="font-semibold">Premium Service</p>
+                      <p className="text-sm opacity-90">World-class banking experience</p>
+                    </div>
                   </div>
                 </CarouselItem>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                  <div className="relative h-64 rounded-lg overflow-hidden">
+                  <div className="relative h-72 rounded-xl overflow-hidden shadow-xl">
                     <img 
                       src={bankInterior2} 
                       alt="Heritage Bank Customer Service" 
                       className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                      style={{ filter: 'contrast(1.1) saturate(1.2) brightness(1.05)' }}
+                      style={{ filter: 'contrast(1.15) saturate(1.3) brightness(1.15)' }}
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <p className="font-semibold">Expert Team</p>
+                      <p className="text-sm opacity-90">Dedicated financial advisors</p>
+                    </div>
                   </div>
                 </CarouselItem>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                  <div className="relative h-64 rounded-lg overflow-hidden">
+                  <div className="relative h-72 rounded-xl overflow-hidden shadow-xl">
                     <img 
                       src={cardsShowcaseImage} 
                       alt="Heritage Bank Cards" 
                       className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                      style={{ filter: 'contrast(1.1) saturate(1.2) brightness(1.05)' }}
+                      style={{ filter: 'contrast(1.15) saturate(1.3) brightness(1.15)' }}
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <p className="font-semibold">Premium Cards</p>
+                      <p className="text-sm opacity-90">Exclusive rewards & benefits</p>
+                    </div>
                   </div>
                 </CarouselItem>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                  <div className="relative h-64 rounded-lg overflow-hidden">
+                  <div className="relative h-72 rounded-xl overflow-hidden shadow-xl">
                     <img 
                       src={heritageAtmImage} 
                       alt="Heritage Bank ATM" 
                       className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                      style={{ filter: 'contrast(1.1) saturate(1.2) brightness(1.05)' }}
+                      style={{ filter: 'contrast(1.15) saturate(1.3) brightness(1.15)' }}
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <p className="font-semibold">ATM Network</p>
+                      <p className="text-sm opacity-90">Fee-free withdrawals worldwide</p>
+                    </div>
                   </div>
                 </CarouselItem>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                  <div className="relative h-64 rounded-lg overflow-hidden">
+                  <div className="relative h-72 rounded-xl overflow-hidden shadow-xl">
                     <img 
                       src={heritageAtmImage2} 
                       alt="Heritage Bank ATM Night" 
                       className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                      style={{ filter: 'contrast(1.1) saturate(1.2) brightness(1.05)' }}
+                      style={{ filter: 'contrast(1.15) saturate(1.3) brightness(1.15)' }}
                     />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <p className="font-semibold">24/7 Access</p>
+                      <p className="text-sm opacity-90">Banking that never sleeps</p>
+                    </div>
                   </div>
                 </CarouselItem>
               </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
+              <CarouselPrevious className="hidden md:flex" />
+              <CarouselNext className="hidden md:flex" />
             </Carousel>
           </div>
         </section>
