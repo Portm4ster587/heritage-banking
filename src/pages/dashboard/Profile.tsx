@@ -158,17 +158,16 @@ export default function Profile() {
     return `${profile?.first_name?.[0] || ''}${profile?.last_name?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}`;
   };
 
-  // Quick action menu items (matching homepage profile menu)
+  // Quick action menu items (matching homepage profile menu - no redundant settings)
   const quickActions = [
-    { icon: Settings, label: 'Account Settings', path: '/dashboard/settings' },
-    { icon: CreditCard, label: 'My Cards', path: '/dashboard?section=cards' },
-    { icon: Wallet, label: 'My Accounts', path: '/dashboard' },
-    { icon: ArrowLeftRight, label: 'Transfers', path: '/dashboard/transfers' },
-    { icon: Bitcoin, label: 'Crypto', path: '/dashboard/crypto' },
-    { icon: FileText, label: 'Statements', path: '/dashboard/history' },
-    { icon: Shield, label: 'Security Center', path: '/dashboard/id-me' },
-    { icon: Bell, label: 'Notifications', path: '/dashboard/settings' },
-    { icon: HelpCircle, label: 'Help & Support', path: '/contact' },
+    { icon: CreditCard, label: 'My Cards', description: 'Manage credit & debit cards', path: '/dashboard?section=cards' },
+    { icon: Wallet, label: 'My Accounts', description: 'View all accounts', path: '/dashboard' },
+    { icon: ArrowLeftRight, label: 'Transfers', description: 'Send & receive money', path: '/dashboard/transfers' },
+    { icon: Bitcoin, label: 'Crypto', description: 'Digital assets & wallets', path: '/dashboard/crypto' },
+    { icon: FileText, label: 'Statements & Documents', description: 'View account history', path: '/dashboard/history' },
+    { icon: Shield, label: 'Security Center', description: 'ID verification & safety', path: '/dashboard/id-me' },
+    { icon: Bell, label: 'Notification Preferences', description: 'Manage alerts', path: '/dashboard/settings' },
+    { icon: HelpCircle, label: 'Help & Support', description: 'Get assistance', path: '/contact' },
   ];
 
   if (loading) {
@@ -238,7 +237,7 @@ export default function Profile() {
             <CardTitle className="text-lg">Quick Actions</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {quickActions.map((action, index) => (
                 <Button
                   key={index}
@@ -247,7 +246,8 @@ export default function Profile() {
                   onClick={() => navigate(action.path)}
                 >
                   <action.icon className="w-5 h-5 text-primary" />
-                  <span className="text-xs text-center">{action.label}</span>
+                  <span className="text-sm font-medium text-center">{action.label}</span>
+                  <span className="text-xs text-muted-foreground text-center">{action.description}</span>
                 </Button>
               ))}
             </div>
