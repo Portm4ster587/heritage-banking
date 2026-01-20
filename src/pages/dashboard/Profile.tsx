@@ -160,6 +160,24 @@ export default function Profile() {
     return `${profile?.first_name?.[0] || ''}${profile?.last_name?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}`;
   };
 
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast({ 
+        title: "Signed out successfully", 
+        description: "You have been logged out of your account." 
+      });
+      navigate('/');
+    } catch (error) {
+      console.error('Sign out error:', error);
+      toast({ 
+        title: "Error", 
+        description: "Failed to sign out. Please try again.", 
+        variant: "destructive" 
+      });
+    }
+  };
+
   // Quick action menu items - matching homepage ProfileMenu exactly
   const baseQuickActions = [
     { icon: User, label: 'My Profile', description: 'View complete account information', action: 'profile' },
@@ -172,6 +190,7 @@ export default function Profile() {
     { icon: Shield, label: 'Security Center', description: 'ID verification & safety', path: '/dashboard/id-me' },
     { icon: Bell, label: 'Notification Preferences', description: 'Manage alerts', path: '/dashboard/settings' },
     { icon: HelpCircle, label: 'Help & Support', description: 'Get assistance', path: '/contact' },
+    { icon: LogOut, label: 'Sign Out', description: 'Log out of your account', action: 'signout' },
   ];
 
   // Add Admin Panel for admin users
@@ -186,6 +205,8 @@ export default function Profile() {
       if (profileTab) {
         (profileTab as HTMLElement).click();
       }
+    } else if (action.action === 'signout') {
+      handleSignOut();
     } else if (action.path) {
       navigate(action.path);
     }

@@ -46,7 +46,7 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
             style={{
               backgroundImage: `url(${bg})`,
               opacity: currentBgIndex === index ? 1 : 0,
-              filter: 'contrast(1.15) saturate(1.25) brightness(1.05)',
+              filter: 'contrast(1.15) saturate(1.3) brightness(1.5)',
             }}
           />
         ))}
