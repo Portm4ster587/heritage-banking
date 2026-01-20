@@ -26,7 +26,8 @@ import {
   HelpCircle,
   ArrowLeftRight,
   Bitcoin,
-  ShieldCheck
+  ShieldCheck,
+  LogOut
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { CardDisplay } from "@/components/CardDisplay";
@@ -159,8 +160,10 @@ export default function Profile() {
     return `${profile?.first_name?.[0] || ''}${profile?.last_name?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}`;
   };
 
-  // Quick action menu items (matching homepage profile menu - no redundant settings)
+  // Quick action menu items - matching homepage ProfileMenu exactly
   const baseQuickActions = [
+    { icon: User, label: 'My Profile', description: 'View complete account information', action: 'profile' },
+    { icon: Settings, label: 'Account Settings', description: 'Security & preferences', path: '/dashboard/settings' },
     { icon: CreditCard, label: 'My Cards', description: 'Manage credit & debit cards', path: '/dashboard?section=cards' },
     { icon: Wallet, label: 'My Accounts', description: 'View all accounts', path: '/dashboard' },
     { icon: ArrowLeftRight, label: 'Transfers', description: 'Send & receive money', path: '/dashboard/transfers' },
@@ -175,6 +178,18 @@ export default function Profile() {
   const quickActions = isAdmin 
     ? [{ icon: ShieldCheck, label: 'Admin Panel', description: 'Manage system & users', path: '/admin-dashboard' }, ...baseQuickActions]
     : baseQuickActions;
+
+  const handleQuickAction = (action: typeof quickActions[0]) => {
+    if (action.action === 'profile') {
+      // Scroll to profile tab
+      const profileTab = document.querySelector('[value="profile"]');
+      if (profileTab) {
+        (profileTab as HTMLElement).click();
+      }
+    } else if (action.path) {
+      navigate(action.path);
+    }
+  };
 
   if (loading) {
     return (
@@ -249,7 +264,7 @@ export default function Profile() {
                   key={index}
                   variant="outline"
                   className="flex flex-col items-center gap-2 h-auto py-4 hover:bg-primary/5 hover:border-primary/30"
-                  onClick={() => navigate(action.path)}
+                  onClick={() => handleQuickAction(action)}
                 >
                   <action.icon className="w-5 h-5 text-primary" />
                   <span className="text-sm font-medium text-center">{action.label}</span>

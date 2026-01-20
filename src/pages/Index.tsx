@@ -248,7 +248,7 @@ const Index = () => {
                       src={bankInterior1} 
                       alt="Heritage Bank Interior" 
                       className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                      style={{ filter: 'contrast(1.15) saturate(1.3) brightness(1.15)' }}
+                      style={{ filter: 'contrast(1.2) saturate(1.4) brightness(1.35)' }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-4 text-white">
@@ -263,7 +263,7 @@ const Index = () => {
                       src={bankInterior2} 
                       alt="Heritage Bank Customer Service" 
                       className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                      style={{ filter: 'contrast(1.15) saturate(1.3) brightness(1.15)' }}
+                      style={{ filter: 'contrast(1.2) saturate(1.4) brightness(1.35)' }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-4 text-white">
@@ -278,7 +278,7 @@ const Index = () => {
                       src={cardsShowcaseImage} 
                       alt="Heritage Bank Cards" 
                       className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                      style={{ filter: 'contrast(1.15) saturate(1.3) brightness(1.15)' }}
+                      style={{ filter: 'contrast(1.2) saturate(1.4) brightness(1.35)' }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-4 text-white">
@@ -293,7 +293,7 @@ const Index = () => {
                       src={heritageAtmImage} 
                       alt="Heritage Bank ATM" 
                       className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                      style={{ filter: 'contrast(1.15) saturate(1.3) brightness(1.15)' }}
+                      style={{ filter: 'contrast(1.2) saturate(1.4) brightness(1.35)' }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-4 text-white">
@@ -308,7 +308,7 @@ const Index = () => {
                       src={heritageAtmImage2} 
                       alt="Heritage Bank ATM Night" 
                       className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                      style={{ filter: 'contrast(1.15) saturate(1.3) brightness(1.15)' }}
+                      style={{ filter: 'contrast(1.2) saturate(1.4) brightness(1.35)' }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                     <div className="absolute bottom-4 left-4 text-white">
