@@ -53,18 +53,36 @@ const generateInvestmentHistory = (): Transaction[] => {
     'Houston Energy Corridor Office',
     'Phoenix Desert Ridge Estates',
     'Las Vegas Strip Commercial',
-    'Atlanta Midtown Tower'
+    'Atlanta Midtown Tower',
+    'Dallas Heritage Plaza',
+    'Nashville Music Row Complex'
   ];
   
   const cryptoAssets = ['BTC', 'ETH', 'SOL', 'USDC', 'LINK', 'AVAX', 'DOT', 'ADA', 'XRP', 'MATIC'];
+  
+  // Coincube specific investment amounts matching memory ($370K-$1.4M)
+  const coincubeCredits = [
+    { amount: 370000, desc: 'Coincube Quarterly Investment Credit - BTC Portfolio Q1' },
+    { amount: 485000, desc: 'Coincube Investment Return - ETH Staking Yield' },
+    { amount: 720000, desc: 'Coincube Capital Appreciation - Multi-Asset Portfolio' },
+    { amount: 890000, desc: 'Coincube Profit Distribution - Institutional Fund' },
+    { amount: 1100000, desc: 'Coincube Year-End Distribution - Premium Tier' },
+    { amount: 1250000, desc: 'Coincube Realized Gains - BTC/ETH Rebalancing' },
+    { amount: 1400000, desc: 'Coincube Dividend Reinvestment - Growth Fund' },
+    { amount: 550000, desc: 'Coincube Staking Rewards - Validator Pool' },
+    { amount: 680000, desc: 'Coincube Yield Farming Returns - DeFi Strategy' },
+    { amount: 920000, desc: 'Coincube Arbitrage Profits - Cross-Exchange' },
+  ];
   
   const investmentTypes = [
     { type: 'credit', prefix: 'Dividend Payment -', category: 'Real Estate Dividend' },
     { type: 'credit', prefix: 'Rental Income -', category: 'Rental Income' },
     { type: 'credit', prefix: 'Property Sale Profit -', category: 'Capital Gains' },
     { type: 'credit', prefix: 'Quarterly Distribution -', category: 'Investment Distribution' },
+    { type: 'credit', prefix: 'Coincube Investment Credit -', category: 'Coincube Investment' },
     { type: 'credit', prefix: 'Coincube Profit -', category: 'Crypto Gains' },
     { type: 'credit', prefix: 'Coincube Staking Rewards -', category: 'Crypto Staking' },
+    { type: 'credit', prefix: 'Coincube Yield -', category: 'Coincube Investment' },
     { type: 'credit', prefix: 'Interest Payment -', category: 'Interest Income' },
     { type: 'credit', prefix: 'Tax Refund -', category: 'Tax Refund' },
     { type: 'debit', prefix: 'Property Tax -', category: 'Property Tax' },
@@ -87,7 +105,27 @@ const generateInvestmentHistory = (): Transaction[] => {
     { type: 'credit', prefix: 'Refinance Proceeds -', category: 'Refinance' },
     { type: 'debit', prefix: 'Closing Costs -', category: 'Closing Costs' },
     { type: 'credit', prefix: 'Appreciation Sale -', category: 'Capital Gains' },
+    { type: 'credit', prefix: 'Coincube Quarterly Credit -', category: 'Coincube Investment' },
   ];
+
+  // Add specific Coincube high-value transactions
+  coincubeCredits.forEach((credit, idx) => {
+    const year = 2020 + Math.floor(idx / 3);
+    const month = (idx % 12) + 1;
+    const day = Math.floor(Math.random() * 25) + 1;
+    balance += credit.amount;
+    
+    transactions.push({
+      id: String(id++),
+      date: `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`,
+      description: credit.desc,
+      amount: credit.amount,
+      type: 'credit',
+      category: 'Coincube Investment',
+      balance: Math.max(balance, 1000000),
+      reference: `CC${year}${String(id).padStart(6, '0')}`
+    });
+  });
 
   const startDate = new Date('2020-01-05');
   const endDate = new Date();
@@ -170,17 +208,20 @@ export const RealTimeInvestmentHistory = () => {
 
   const categories = [
     'all',
+    'Coincube Investment',
+    'Crypto Gains',
+    'Crypto Staking',
     'Real Estate Dividend',
     'Rental Income',
     'Capital Gains',
-    'Crypto Gains',
-    'Crypto Staking',
     'Property Tax',
     'Federal Tax',
     'State Tax',
     'Bank Transfer',
     'Wire Transfer',
-    'Investment'
+    'Investment',
+    'Trust Distribution',
+    'Tax Deferred Exchange'
   ];
 
   useEffect(() => {
