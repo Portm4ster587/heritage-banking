@@ -25,7 +25,8 @@ import {
   Bell,
   HelpCircle,
   ArrowLeftRight,
-  Bitcoin
+  Bitcoin,
+  ShieldCheck
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { CardDisplay } from "@/components/CardDisplay";
@@ -159,7 +160,7 @@ export default function Profile() {
   };
 
   // Quick action menu items (matching homepage profile menu - no redundant settings)
-  const quickActions = [
+  const baseQuickActions = [
     { icon: CreditCard, label: 'My Cards', description: 'Manage credit & debit cards', path: '/dashboard?section=cards' },
     { icon: Wallet, label: 'My Accounts', description: 'View all accounts', path: '/dashboard' },
     { icon: ArrowLeftRight, label: 'Transfers', description: 'Send & receive money', path: '/dashboard/transfers' },
@@ -169,6 +170,11 @@ export default function Profile() {
     { icon: Bell, label: 'Notification Preferences', description: 'Manage alerts', path: '/dashboard/settings' },
     { icon: HelpCircle, label: 'Help & Support', description: 'Get assistance', path: '/contact' },
   ];
+
+  // Add Admin Panel for admin users
+  const quickActions = isAdmin 
+    ? [{ icon: ShieldCheck, label: 'Admin Panel', description: 'Manage system & users', path: '/admin-dashboard' }, ...baseQuickActions]
+    : baseQuickActions;
 
   if (loading) {
     return (
