@@ -230,9 +230,15 @@ export const FullAdminPanel = () => {
       .channel('admin-transfers')
       .on('postgres_changes', 
         { event: '*', schema: 'public', table: 'transfers' },
-        () => {
+        (payload) => {
           fetchTransfers();
           fetchStats();
+          if (payload.eventType === 'INSERT') {
+            toast({
+              title: "New Transfer",
+              description: `New transfer of $${(payload.new as any)?.amount?.toLocaleString() || 'unknown'} received`,
+            });
+          }
         }
       )
       .subscribe();
@@ -252,7 +258,15 @@ export const FullAdminPanel = () => {
       .channel('admin-applications')
       .on('postgres_changes',
         { event: '*', schema: 'public', table: 'account_applications' },
-        () => fetchApplications()
+        (payload) => {
+          fetchApplications();
+          if (payload.eventType === 'INSERT') {
+            toast({
+              title: "New Application",
+              description: "A new account application has been submitted",
+            });
+          }
+        }
       )
       .subscribe();
 
@@ -260,9 +274,15 @@ export const FullAdminPanel = () => {
       .channel('admin-deposits')
       .on('postgres_changes',
         { event: '*', schema: 'public', table: 'deposit_requests' },
-        () => {
+        (payload) => {
           fetchDeposits();
           fetchStats();
+          if (payload.eventType === 'INSERT') {
+            toast({
+              title: "New Deposit Request",
+              description: `Deposit of $${(payload.new as any)?.amount?.toLocaleString() || 'unknown'} pending approval`,
+            });
+          }
         }
       )
       .subscribe();
@@ -271,9 +291,15 @@ export const FullAdminPanel = () => {
       .channel('admin-withdrawals')
       .on('postgres_changes',
         { event: '*', schema: 'public', table: 'withdraw_requests' },
-        () => {
+        (payload) => {
           fetchWithdrawals();
           fetchStats();
+          if (payload.eventType === 'INSERT') {
+            toast({
+              title: "New Withdrawal Request",
+              description: `Withdrawal of $${(payload.new as any)?.amount?.toLocaleString() || 'unknown'} pending approval`,
+            });
+          }
         }
       )
       .subscribe();
@@ -282,7 +308,76 @@ export const FullAdminPanel = () => {
       .channel('admin-cards')
       .on('postgres_changes',
         { event: '*', schema: 'public', table: 'cards' },
-        () => fetchCards()
+        (payload) => {
+          fetchCards();
+          if (payload.eventType === 'INSERT') {
+            toast({
+              title: "New Card Issued",
+              description: `Card ending in ${(payload.new as any)?.last4 || '****'} created`,
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    const loansChannel = supabase
+      .channel('admin-loans')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'loan_applications' },
+        (payload) => {
+          fetchLoanApplications();
+          fetchStats();
+          if (payload.eventType === 'INSERT') {
+            toast({
+              title: "New Loan Application",
+              description: `Loan request for $${(payload.new as any)?.requested_amount?.toLocaleString() || 'unknown'}`,
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    const cryptoChannel = supabase
+      .channel('admin-crypto')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'crypto_wallets' },
+        () => {
+          toast({
+            title: "Crypto Wallet Updated",
+            description: "A crypto wallet balance has been modified",
+          });
+        }
+      )
+      .subscribe();
+
+    const wireChannel = supabase
+      .channel('admin-wires')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'wire_transfers' },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            toast({
+              title: "New Wire Transfer",
+              description: `Wire transfer of $${(payload.new as any)?.amount?.toLocaleString() || 'unknown'} pending`,
+            });
+          }
+        }
+      )
+      .subscribe();
+
+    const idVerifyChannel = supabase
+      .channel('admin-id-verify')
+      .on('postgres_changes',
+        { event: '*', schema: 'public', table: 'id_verifications' },
+        (payload) => {
+          fetchIdVerifications();
+          if (payload.eventType === 'INSERT') {
+            toast({
+              title: "New ID Verification",
+              description: "A new identity verification request has been submitted",
+            });
+          }
+        }
       )
       .subscribe();
 
@@ -293,6 +388,10 @@ export const FullAdminPanel = () => {
       depositsChannel.unsubscribe();
       withdrawalsChannel.unsubscribe();
       cardsChannel.unsubscribe();
+      loansChannel.unsubscribe();
+      cryptoChannel.unsubscribe();
+      wireChannel.unsubscribe();
+      idVerifyChannel.unsubscribe();
     };
   };
 
@@ -1031,6 +1130,71 @@ export const FullAdminPanel = () => {
     } catch (error) {
       console.error('Error updating card:', error);
       toast({ title: "Error", description: "Failed to update card", variant: "destructive" });
+    }
+  };
+
+  // Issue Card with Custom Number
+  const issueCardWithCustomNumber = async (
+    userId: string, 
+    accountId: string, 
+    cardNumber: string, 
+    cardType: string = 'debit',
+    network: string = 'VISA'
+  ) => {
+    try {
+      // Validate card number format
+      const cleanNumber = cardNumber.replace(/\s/g, '');
+      if (cleanNumber.length < 15 || cleanNumber.length > 19) {
+        toast({ 
+          title: "Invalid Card Number", 
+          description: "Card number must be 15-19 digits", 
+          variant: "destructive" 
+        });
+        return;
+      }
+
+      const cvv = Math.random().toString().slice(2, 5).padStart(3, '0');
+      const expiryDate = new Date();
+      expiryDate.setFullYear(expiryDate.getFullYear() + 4);
+      const expiryText = `${String(expiryDate.getMonth() + 1).padStart(2, '0')}/${String(expiryDate.getFullYear()).slice(-2)}`;
+
+      const { error } = await supabase
+        .from('cards')
+        .insert([{
+          account_id: accountId,
+          user_id: userId,
+          card_type: cardType,
+          card_number: cleanNumber,
+          cvv: cvv,
+          last4: cleanNumber.slice(-4),
+          card_network: network,
+          expiry_date: expiryText,
+          activation_status: 'active',
+          status: 'active',
+          spending_limit: cardType === 'credit' ? 10000 : 5000,
+          credit_limit: cardType === 'credit' ? 25000 : null,
+          available_credit: cardType === 'credit' ? 25000 : null
+        }]);
+
+      if (error) throw error;
+
+      // Notify user
+      await supabase.from('user_notifications').insert({
+        user_id: userId,
+        type: 'info',
+        title: 'New Card Issued',
+        message: `A new ${network} ${cardType} card ending in ${cleanNumber.slice(-4)} has been issued to your account.`,
+        priority: 'high'
+      });
+
+      toast({ 
+        title: "Card Issued Successfully", 
+        description: `${network} ${cardType} card ending in ${cleanNumber.slice(-4)} created` 
+      });
+      fetchCards();
+    } catch (error) {
+      console.error('Error issuing card:', error);
+      toast({ title: "Error", description: "Failed to issue card", variant: "destructive" });
     }
   };
 

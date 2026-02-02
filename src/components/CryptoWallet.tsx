@@ -1,13 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Bitcoin, Send, Wallet, TrendingUp, Download, Upload, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import cryptoBgImage from "@/assets/crypto-bg.jpg";
 
 interface CryptoAsset {
@@ -109,20 +109,17 @@ export const CryptoWallet = () => {
   const [walletAddress, setWalletAddress] = useState<string>('');
   const [wallets, setWallets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [transactions, setTransactions] = useState<Transaction[]>(recentTransactions);
+  const { user } = useAuth();
   const { toast } = useToast();
 
-  useEffect(() => {
-    fetchWallets();
-  }, []);
+  const fetchWallets = useCallback(async () => {
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
-  const fetchWallets = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-
       const { data, error } = await supabase
         .from('crypto_wallets')
         .select('*')
@@ -140,7 +137,33 @@ export const CryptoWallet = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, toast]);
+
+  // Setup real-time subscription for crypto wallets
+  useEffect(() => {
+    if (!user) return;
+
+    fetchWallets();
+
+    // Real-time subscription for wallet updates
+    const channel = supabase
+      .channel('crypto-wallet-changes')
+      .on('postgres_changes', 
+        { event: '*', schema: 'public', table: 'crypto_wallets', filter: `user_id=eq.${user.id}` },
+        () => {
+          fetchWallets();
+          toast({
+            title: "Wallet Updated",
+            description: "Your crypto wallet balance has been updated",
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      channel.unsubscribe();
+    };
+  }, [user, fetchWallets, toast]);
 
   useEffect(() => {
     // Generate a mock wallet address for the selected asset
