@@ -60,6 +60,40 @@ export const TransferSystem = () => {
     if (user) {
       fetchAccounts();
       fetchTransfers();
+
+      // Real-time subscription for transfer updates
+      const channel = supabase
+        .channel('transfer-updates')
+        .on('postgres_changes', 
+          { event: '*', schema: 'public', table: 'transfers', filter: `user_id=eq.${user.id}` },
+          (payload) => {
+            fetchTransfers();
+            fetchAccounts();
+            if (payload.eventType === 'UPDATE' && (payload.new as any)?.status === 'completed') {
+              toast({
+                title: "Transfer Completed",
+                description: `Your transfer of $${(payload.new as any)?.amount?.toLocaleString()} has been completed`,
+              });
+            } else if (payload.eventType === 'UPDATE' && (payload.new as any)?.status === 'rejected') {
+              toast({
+                title: "Transfer Rejected",
+                description: "Your transfer was not approved. Please check details.",
+                variant: "destructive"
+              });
+            }
+          }
+        )
+        .on('postgres_changes',
+          { event: '*', schema: 'public', table: 'accounts', filter: `user_id=eq.${user.id}` },
+          () => {
+            fetchAccounts();
+          }
+        )
+        .subscribe();
+
+      return () => {
+        channel.unsubscribe();
+      };
     }
   }, [user]);
 

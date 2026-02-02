@@ -3,8 +3,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { HeritageLoadingScreen } from '@/components/HeritageLoadingScreen';
 import { 
   Eye, 
@@ -18,26 +16,14 @@ import {
   Landmark,
   Plus,
   Send,
-  MoreHorizontal,
-  Bell,
   Settings,
-  LogOut,
   User,
   ChevronRight
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { AnimatedHeritageLogo } from '@/components/AnimatedHeritageLogo';
-import { MobileNavMenu } from '@/components/MobileNavMenu';
 import { AccountDetailsPanel } from '@/components/dashboard/AccountDetailsPanel';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { useNavigate } from 'react-router-dom';
 
 interface Account {
   id: string;
@@ -63,6 +49,7 @@ interface Transaction {
 export default function ModernDashboard() {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [transactions] = useState<Transaction[]>([
     { id: '1', description: 'Direct Deposit - Salary', amount: 5420.00, date: '2024-01-15', type: 'credit', category: 'Income' },
@@ -206,106 +193,21 @@ export default function ModernDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Modern Header */}
-      <header className="bg-background border-b border-border sticky top-0 z-50 backdrop-blur-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <a href="/dashboard" className="flex items-center space-x-3 hover:opacity-80 transition-opacity">
-              <AnimatedHeritageLogo size="sm" isActive={true} variant="loading" />
-              <div>
-                <span className="text-xl font-bold text-heritage-blue">HERITAGE</span>
-                <p className="text-xs text-heritage-blue/70">BANK</p>
-              </div>
-            </a>
-
-            {/* Navigation */}
-            <nav className="hidden md:flex space-x-6">
-              <a href="/dashboard" className="text-heritage-blue font-medium border-b-2 border-heritage-blue pb-4 hover:text-heritage-blue-dark transition-colors">
-                Accounts
-              </a>
-              <a href="/dashboard/transfers" className="text-muted-foreground hover:text-foreground pb-4 transition-colors">
-                Transfer
-              </a>
-              <a href="/dashboard/topup" className="text-muted-foreground hover:text-foreground pb-4 transition-colors">
-                Deposit
-              </a>
-              <a href="/dashboard/withdraw" className="text-muted-foreground hover:text-foreground pb-4 transition-colors">
-                Withdraw
-              </a>
-              <a href="/dashboard/crypto" className="text-muted-foreground hover:text-foreground pb-4 transition-colors">
-                Crypto
-              </a>
-              <a href="/dashboard/history" className="text-muted-foreground hover:text-foreground pb-4 transition-colors">
-                History
-              </a>
-              <a href="/dashboard/settings" className="text-muted-foreground hover:text-foreground pb-4 transition-colors">
-                Settings
-              </a>
-            </nav>
-
-            {/* User Menu */}
-            <div className="flex items-center space-x-2">
-              <MobileNavMenu />
-              
-              <Button variant="ghost" size="icon" className="hover:bg-muted hidden sm:flex">
-                <Bell className="w-5 h-5 text-muted-foreground" />
-              </Button>
-              
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-9 w-9 rounded-full hover:bg-muted">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-heritage-blue text-white">
-                        {userProfile?.first_name?.[0] || user?.email?.[0]?.toUpperCase() || 'U'}
-                      </AvatarFallback>
-                    </Avatar>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56" align="end">
-                  <DropdownMenuLabel>
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium">
-                        {userProfile?.first_name && userProfile?.last_name 
-                          ? `${userProfile.first_name} ${userProfile.last_name}`
-                          : user?.email?.split('@')[0]
-                        }
-                      </p>
-                      <p className="text-xs text-slate-500">
-                        {user?.email}
-                      </p>
-                    </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <User className="mr-2 h-4 w-4" />
-                    Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
-                    <Settings className="mr-2 h-4 w-4" />
-                    Settings
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleSignOut} className="text-red-600">
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Sign out
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-muted/30">
+      {/* Modern Header with Full Profile Menu */}
+      <DashboardHeader onSectionChange={(section) => {
+        if (section === 'accounts') navigate('/dashboard');
+        else navigate(`/dashboard/${section}`);
+      }} />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-slate-900 mb-2">
+          <h1 className="text-2xl font-semibold text-foreground mb-2">
             Good morning, {userProfile?.first_name || user?.email?.split('@')[0] || 'there'}
           </h1>
-          <p className="text-slate-600">Here's what's happening with your money today.</p>
+          <p className="text-muted-foreground">Here's what's happening with your money today.</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
