@@ -186,7 +186,7 @@ export default function Profile() {
     { icon: Wallet, label: 'My Accounts', description: 'View all accounts', path: '/dashboard' },
     { icon: ArrowLeftRight, label: 'Transfers', description: 'Send & receive money', path: '/dashboard/transfers' },
     { icon: Bitcoin, label: 'Crypto', description: 'Digital assets & wallets', path: '/dashboard/crypto' },
-    { icon: FileText, label: 'Statements & Documents', description: 'View account history', path: '/dashboard/history' },
+    { icon: FileText, label: 'Statements & Documents', description: 'Download PDFs & tax docs', path: '/dashboard/statements' },
     { icon: Shield, label: 'Security Center', description: 'ID verification & safety', path: '/dashboard/id-me' },
     { icon: Bell, label: 'Notification Preferences', description: 'Manage alerts', path: '/dashboard/settings' },
     { icon: HelpCircle, label: 'Help & Support', description: 'Get assistance', path: '/contact' },

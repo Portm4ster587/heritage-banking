@@ -19,6 +19,7 @@ import History from "./pages/dashboard/History";
 import TransactionHistory from "./pages/dashboard/TransactionHistory";
 import Withdraw from "./pages/dashboard/Withdraw";
 import Profile from "./pages/dashboard/Profile";
+import Statements from "./pages/dashboard/Statements";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import OpenAccount from "./pages/OpenAccount";
@@ -198,6 +199,14 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              }
+            />
+            <Route 
+              path="/dashboard/statements" 
+              element={
+                <ProtectedRoute>
+                  <Statements />
                 </ProtectedRoute>
               }
             />
