@@ -18,12 +18,15 @@ import {
   Send,
   Settings,
   User,
-  ChevronRight
+  ChevronRight,
+  FileText
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { AccountDetailsPanel } from '@/components/dashboard/AccountDetailsPanel';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { useNavigate } from 'react-router-dom';
+import { useEnhancedRealTimeNotifications } from '@/hooks/useEnhancedRealTimeNotifications';
+import { CustomerChatWidget } from '@/components/support/CustomerChatWidget';
 
 interface Account {
   id: string;
@@ -50,6 +53,10 @@ export default function ModernDashboard() {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  
+  // Use enhanced real-time notifications
+  useEnhancedRealTimeNotifications();
+  
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [transactions] = useState<Transaction[]>([
     { id: '1', description: 'Direct Deposit - Salary', amount: 5420.00, date: '2024-01-15', type: 'credit', category: 'Income' },
@@ -309,6 +316,12 @@ export default function ModernDashboard() {
                     My Profile
                   </Button>
                 </a>
+                <a href="/dashboard/statements">
+                  <Button variant="outline" className="w-full justify-start mb-2">
+                    <FileText className="w-4 h-4 mr-3" />
+                    Statements & Documents
+                  </Button>
+                </a>
                 <a href="/dashboard/settings">
                   <Button variant="outline" className="w-full justify-start">
                     <Settings className="w-4 h-4 mr-3" />
@@ -361,6 +374,9 @@ export default function ModernDashboard() {
           </div>
         </div>
       </main>
+      
+      {/* Customer Support Chat Widget */}
+      <CustomerChatWidget />
     </div>
   );
 }

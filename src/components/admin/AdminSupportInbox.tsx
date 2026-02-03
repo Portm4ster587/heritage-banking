@@ -5,10 +5,11 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MessageCircle, Send, Clock, User, CheckCircle, Loader2, RefreshCw } from 'lucide-react';
+import { MessageCircle, Send, Clock, User, CheckCircle, Loader2, RefreshCw, Circle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useChatPresence } from '@/hooks/useChatPresence';
 
 interface Message {
   id: string;
@@ -45,6 +46,9 @@ export const AdminSupportInbox = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const scrollRef = useRef<HTMLDivElement>(null);
+  
+  // Use chat presence hook for selected conversation
+  const { isOtherUserOnline, isOtherUserTyping, handleTyping, stopTyping } = useChatPresence(selectedConversation?.id || null);
 
   useEffect(() => {
     fetchConversations();
@@ -391,9 +395,28 @@ export const AdminSupportInbox = () => {
                   <div className="p-4 border-b bg-muted/30 shrink-0">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="font-semibold">{getUserName(selectedConversation)}</h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold">{getUserName(selectedConversation)}</h3>
+                          {isOtherUserOnline && (
+                            <span className="flex items-center gap-1 text-xs bg-green-500/20 text-green-700 dark:text-green-400 px-2 py-0.5 rounded-full">
+                              <Circle className="h-2 w-2 fill-current" />
+                              Online
+                            </span>
+                          )}
+                        </div>
                         <p className="text-sm text-muted-foreground">
-                          {selectedConversation.subject || 'Support Request'}
+                          {isOtherUserTyping ? (
+                            <span className="flex items-center gap-1 text-primary">
+                              <span className="flex gap-0.5">
+                                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                                <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                              </span>
+                              Customer is typing...
+                            </span>
+                          ) : (
+                            selectedConversation.subject || 'Support Request'
+                          )}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
@@ -462,8 +485,12 @@ export const AdminSupportInbox = () => {
                       <Input
                         placeholder="Type your response..."
                         value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
+                        onChange={(e) => {
+                          setNewMessage(e.target.value);
+                          handleTyping();
+                        }}
                         onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && handleSendMessage()}
+                        onBlur={stopTyping}
                         disabled={sending}
                         className="flex-1"
                       />

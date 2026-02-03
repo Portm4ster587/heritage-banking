@@ -3,10 +3,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { MessageCircle, X, Send, Loader2 } from 'lucide-react';
+import { MessageCircle, X, Send, Loader2, Circle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useChatPresence } from '@/hooks/useChatPresence';
 
 interface Message {
   id: string;
@@ -34,6 +35,9 @@ export const CustomerChatWidget = () => {
   const { user } = useAuth();
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Use chat presence hook
+  const { isOtherUserOnline, isOtherUserTyping, handleTyping, stopTyping } = useChatPresence(conversation?.id || null);
 
   useEffect(() => {
     if (isOpen && user) {
@@ -240,8 +244,27 @@ export const CustomerChatWidget = () => {
             <CardTitle className="text-lg flex items-center gap-2">
               <MessageCircle className="h-5 w-5" />
               <span>Heritage Support</span>
+              {isOtherUserOnline && (
+                <span className="flex items-center gap-1 text-xs bg-green-500/20 px-2 py-0.5 rounded-full">
+                  <Circle className="h-2 w-2 fill-green-400 text-green-400" />
+                  Online
+                </span>
+              )}
             </CardTitle>
-            <p className="text-sm text-primary-foreground/80">We typically reply within minutes</p>
+            <p className="text-sm text-primary-foreground/80">
+              {isOtherUserTyping ? (
+                <span className="flex items-center gap-1">
+                  <span className="flex gap-0.5">
+                    <span className="w-1.5 h-1.5 bg-primary-foreground/80 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-1.5 h-1.5 bg-primary-foreground/80 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-1.5 h-1.5 bg-primary-foreground/80 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </span>
+                  Support is typing...
+                </span>
+              ) : (
+                'We typically reply within minutes'
+              )}
+            </p>
           </CardHeader>
           
           <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
@@ -295,8 +318,12 @@ export const CustomerChatWidget = () => {
                       ref={inputRef}
                       placeholder="Type a message..."
                       value={message}
-                      onChange={(e) => setMessage(e.target.value)}
+                      onChange={(e) => {
+                        setMessage(e.target.value);
+                        handleTyping();
+                      }}
                       onKeyPress={handleKeyPress}
+                      onBlur={stopTyping}
                       disabled={sending}
                       className="flex-1"
                     />
