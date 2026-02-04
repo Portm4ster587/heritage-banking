@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { FileText, TrendingUp, History, RefreshCw, ArrowUpCircle, ArrowDownCircle, Send, Landmark, ExternalLink } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { FileText, TrendingUp, History, RefreshCw, ArrowUpCircle, ArrowDownCircle, Send, Landmark, ExternalLink, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { format } from "date-fns";
@@ -29,29 +30,53 @@ export default function HistoryPage() {
   const [activeTab, setActiveTab] = useState('transactions');
   const [transactions, setTransactions] = useState<RealTransaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     document.title = "Heritage Bank - Transaction History";
     if (user) {
       fetchRealTransactions();
+      setupRealTimeSubscription();
     }
+    
+    return () => {
+      supabase.removeAllChannels();
+    };
   }, [user]);
+
+  const setupRealTimeSubscription = () => {
+    if (!user) return;
+
+    // Subscribe to real-time updates on all transaction tables
+    const channel = supabase
+      .channel('transaction-updates')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'transfers', filter: `user_id=eq.${user.id}` }, () => fetchRealTransactions())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'deposit_requests', filter: `user_id=eq.${user.id}` }, () => fetchRealTransactions())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'withdraw_requests', filter: `user_id=eq.${user.id}` }, () => fetchRealTransactions())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'wire_transfers', filter: `user_id=eq.${user.id}` }, () => fetchRealTransactions())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'ach_transfers', filter: `user_id=eq.${user.id}` }, () => fetchRealTransactions())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'check_deposits', filter: `user_id=eq.${user.id}` }, () => fetchRealTransactions())
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  };
 
   const fetchRealTransactions = async () => {
     if (!user) return;
-    setLoading(true);
     
     try {
       const allTransactions: RealTransaction[] = [];
 
       // Fetch all transaction types in parallel
       const [transfers, deposits, withdrawals, wires, ach, checks] = await Promise.all([
-        supabase.from('transfers').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(50),
-        supabase.from('deposit_requests').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(50),
-        supabase.from('withdraw_requests').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(50),
-        supabase.from('wire_transfers').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(50),
-        supabase.from('ach_transfers').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(50),
-        supabase.from('check_deposits').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(50),
+        supabase.from('transfers').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(100),
+        supabase.from('deposit_requests').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(100),
+        supabase.from('withdraw_requests').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(100),
+        supabase.from('wire_transfers').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(100),
+        supabase.from('ach_transfers').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(100),
+        supabase.from('check_deposits').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(100),
       ]);
 
       transfers.data?.forEach(t => {
@@ -129,7 +154,13 @@ export default function HistoryPage() {
       console.error('Error fetching transactions:', error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchRealTransactions();
   };
 
   const getTypeIcon = (type: string) => {
@@ -147,53 +178,84 @@ export default function HistoryPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'completed':
-        return <Badge className="bg-green-500/20 text-green-600 border-green-500/30">Completed</Badge>;
+        return <Badge className="bg-green-500/20 text-green-600 border-green-500/30 animate-fade-in">Completed</Badge>;
       case 'pending':
-        return <Badge className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30">Pending</Badge>;
+        return <Badge className="bg-yellow-500/20 text-yellow-600 border-yellow-500/30 animate-pulse">Pending</Badge>;
       case 'pending_approval':
-        return <Badge className="bg-orange-500/20 text-orange-600 border-orange-500/30">Awaiting Approval</Badge>;
+        return <Badge className="bg-orange-500/20 text-orange-600 border-orange-500/30 animate-pulse">Awaiting Approval</Badge>;
       case 'rejected':
         return <Badge className="bg-red-500/20 text-red-600 border-red-500/30">Rejected</Badge>;
+      case 'approved':
+        return <Badge className="bg-blue-500/20 text-blue-600 border-blue-500/30">Approved</Badge>;
       default:
         return <Badge variant="secondary">{status || 'Unknown'}</Badge>;
     }
   };
 
+  const LoadingSkeleton = () => (
+    <div className="space-y-4">
+      {[1, 2, 3, 4, 5].map((i) => (
+        <div key={i} className="flex items-center space-x-4 p-4">
+          <Skeleton className="h-10 w-10 rounded-full" />
+          <div className="space-y-2 flex-1">
+            <Skeleton className="h-4 w-[200px]" />
+            <Skeleton className="h-3 w-[150px]" />
+          </div>
+          <Skeleton className="h-4 w-[80px]" />
+          <Skeleton className="h-6 w-[100px]" />
+        </div>
+      ))}
+    </div>
+  );
+
   return (
     <main className="container mx-auto px-6 py-8">
       <BackButton to="/dashboard" label="Back to Dashboard" className="mb-4" />
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-primary">Transaction History</h1>
-        <p className="text-muted-foreground">View your account statements, transactions, and investment history</p>
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-heritage-gold bg-clip-text text-transparent">
+          Transaction History
+        </h1>
+        <p className="text-muted-foreground">Real-time updates • View your account statements, transactions, and investment history</p>
+        <div className="flex items-center gap-2 mt-2">
+          <span className="flex items-center gap-1 text-xs text-green-600">
+            <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+            Live Updates Active
+          </span>
+        </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="transactions" className="flex items-center gap-2">
+        <TabsList className="grid w-full grid-cols-3 banking-tabs">
+          <TabsTrigger value="transactions" className="flex items-center gap-2 transition-all duration-300">
             <History className="w-4 h-4" />
             All Transactions
           </TabsTrigger>
-          <TabsTrigger value="statements" className="flex items-center gap-2">
+          <TabsTrigger value="statements" className="flex items-center gap-2 transition-all duration-300">
             <FileText className="w-4 h-4" />
             Investment Statements
           </TabsTrigger>
-          <TabsTrigger value="realtime" className="flex items-center gap-2">
+          <TabsTrigger value="realtime" className="flex items-center gap-2 transition-all duration-300">
             <TrendingUp className="w-4 h-4" />
             Investment History
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="transactions">
-          <Card>
+        <TabsContent value="transactions" className="tab-content-animate">
+          <Card className="hightech-card">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
                 <History className="w-5 h-5" />
                 Recent Transactions
+                <Badge variant="secondary" className="ml-2">{transactions.length}</Badge>
               </CardTitle>
               <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={fetchRealTransactions}>
-                  <RefreshCw className="w-4 h-4 mr-2" />
-                  Refresh
+                <Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshing}>
+                  {refreshing ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                  )}
+                  {refreshing ? 'Refreshing...' : 'Refresh'}
                 </Button>
                 <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/transaction-history')}>
                   <ExternalLink className="w-4 h-4 mr-2" />
@@ -203,14 +265,12 @@ export default function HistoryPage() {
             </CardHeader>
             <CardContent>
               {loading ? (
-                <div className="flex items-center justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-                </div>
+                <LoadingSkeleton />
               ) : transactions.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  <History className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>No transactions found</p>
-                  <p className="text-sm">Your transactions will appear here</p>
+                <div className="text-center py-12 text-muted-foreground animate-fade-in">
+                  <History className="w-16 h-16 mx-auto mb-4 opacity-30" />
+                  <p className="text-lg font-medium">No transactions found</p>
+                  <p className="text-sm">Your transactions will appear here in real-time</p>
                 </div>
               ) : (
                 <Table>
@@ -224,8 +284,12 @@ export default function HistoryPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {transactions.slice(0, 20).map((tx) => (
-                      <TableRow key={tx.id}>
+                    {transactions.slice(0, 30).map((tx, index) => (
+                      <TableRow 
+                        key={tx.id} 
+                        className="animate-fade-in hover:bg-muted/50 transition-colors"
+                        style={{ animationDelay: `${index * 50}ms` }}
+                      >
                         <TableCell className="whitespace-nowrap">
                           {format(new Date(tx.created_at), 'MMM dd, yyyy')}
                           <span className="block text-xs text-muted-foreground">
@@ -235,13 +299,13 @@ export default function HistoryPage() {
                         <TableCell>
                           <div className="flex items-center gap-2">
                             {getTypeIcon(tx.type)}
-                            <span className="capitalize">{tx.type}</span>
+                            <span className="capitalize font-medium">{tx.type}</span>
                           </div>
                         </TableCell>
-                        <TableCell className="max-w-[200px] truncate">
+                        <TableCell className="max-w-[250px] truncate">
                           {tx.description}
                         </TableCell>
-                        <TableCell className={`font-semibold ${['deposit', 'check'].includes(tx.type) ? 'text-green-600' : 'text-red-600'}`}>
+                        <TableCell className={`font-bold ${['deposit', 'check'].includes(tx.type) ? 'text-green-600' : 'text-red-600'}`}>
                           {['deposit', 'check'].includes(tx.type) ? '+' : '-'}${tx.amount.toLocaleString()}
                         </TableCell>
                         <TableCell>{getStatusBadge(tx.status)}</TableCell>
@@ -254,11 +318,11 @@ export default function HistoryPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="statements">
+        <TabsContent value="statements" className="tab-content-animate">
           <AccountStatements />
         </TabsContent>
 
-        <TabsContent value="realtime">
+        <TabsContent value="realtime" className="tab-content-animate">
           <RealTimeInvestmentHistory />
         </TabsContent>
       </Tabs>

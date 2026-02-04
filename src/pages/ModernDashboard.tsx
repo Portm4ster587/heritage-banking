@@ -200,7 +200,7 @@ export default function ModernDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30">
+    <div className="min-h-screen bg-gradient-to-br from-muted/30 via-background to-muted/50">
       {/* Modern Header with Full Profile Menu */}
       <DashboardHeader onSectionChange={(section) => {
         if (section === 'accounts') navigate('/dashboard');
@@ -209,9 +209,9 @@ export default function ModernDashboard() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-2xl font-semibold text-foreground mb-2">
+        {/* Welcome Section with Gradient */}
+        <div className="mb-8 animate-fade-in">
+          <h1 className="text-2xl font-semibold bg-gradient-to-r from-foreground via-primary to-foreground bg-clip-text text-transparent mb-2">
             Good morning, {userProfile?.first_name || user?.email?.split('@')[0] || 'there'}
           </h1>
           <p className="text-muted-foreground">Here's what's happening with your money today.</p>
@@ -220,16 +220,18 @@ export default function ModernDashboard() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Accounts Section */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Account Summary */}
-            <Card className="bg-gradient-to-r from-heritage-blue to-heritage-blue-dark text-white shadow-lg">
-              <CardHeader>
+            {/* Account Summary with Enhanced Gradient */}
+            <Card className="hightech-gradient text-white shadow-xl overflow-hidden relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-heritage-blue-dark to-primary-dark" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]" />
+              <CardHeader className="relative z-10">
                 <div className="flex justify-between items-start">
                   <div>
                     <CardTitle className="text-lg font-medium text-white/90">
                       Total Balance
                     </CardTitle>
                     <div className="flex items-center mt-2">
-                      <span className="text-3xl font-bold">
+                      <span className="text-4xl font-bold neon-balance">
                         {balanceVisible ? `$${totalBalance.toLocaleString()}` : '••••••••'}
                       </span>
                       <Button
@@ -242,9 +244,9 @@ export default function ModernDashboard() {
                       </Button>
                     </div>
                   </div>
-                  <div className="flex items-center text-green-300">
-                    <TrendingUp className="w-4 h-4 mr-1" />
-                    <span className="text-sm">+2.1%</span>
+                  <div className="flex items-center bg-white/10 px-3 py-1 rounded-full backdrop-blur-sm">
+                    <TrendingUp className="w-4 h-4 mr-1 text-green-300" />
+                    <span className="text-sm text-green-300 font-medium">+2.1%</span>
                   </div>
                 </div>
               </CardHeader>
@@ -255,7 +257,7 @@ export default function ModernDashboard() {
               <div className="flex justify-between items-center">
                 <h2 className="text-lg font-semibold">Your Accounts</h2>
                 <a href="/">
-                  <Button className="bg-heritage-blue hover:bg-heritage-blue-dark text-white">
+                  <Button className="banking-button text-white">
                     <Plus className="w-4 h-4 mr-2" />
                     Open Account
                   </Button>
@@ -274,14 +276,17 @@ export default function ModernDashboard() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Quick Actions</CardTitle>
+            {/* Quick Actions with Gradient Background */}
+            <Card className="hightech-card overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-primary/5 to-heritage-gold/5">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Send className="w-5 h-5 text-primary" />
+                  Quick Actions
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-2 pt-4">
                 <a href="/dashboard/transfers">
-                  <Button className="w-full justify-start bg-heritage-blue hover:bg-heritage-blue-dark text-white mb-2">
+                  <Button className="w-full justify-start banking-button text-white mb-2">
                     <Send className="w-4 h-4 mr-3" />
                     Send Money
                   </Button>
@@ -332,12 +337,19 @@ export default function ModernDashboard() {
             </Card>
 
             {/* Recent Activity */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Recent Activity</CardTitle>
+            <Card className="hightech-card">
+              <CardHeader className="bg-gradient-to-r from-primary/5 to-heritage-gold/5">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-primary" />
+                  Recent Activity
+                  <span className="flex items-center gap-1 text-xs text-green-600 font-normal ml-auto">
+                    <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    Live
+                  </span>
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {transactions.slice(0, 4).map((transaction) => (
+              <CardContent className="space-y-4 pt-4">
+                {transactions.slice(0, 4).map((transaction, idx) => (
                   <div key={transaction.id} className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center ${

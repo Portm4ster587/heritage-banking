@@ -2,12 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-/* US Heritage & Investments Bank Design System - Professional Banking Interface */
+/* US Heritage & Investments Bank Design System - High-Tech Gradient Interface */
 
 @layer base {
   :root {
-    /* Heritage Banking Color Palette */
-    --background: 0 0% 100%;
+    /* High-Tech Banking Color Palette */
+    --background: 220 15% 97%;
     --foreground: 222.2 84% 4.9%;
     
     --card: 0 0% 100%;
@@ -16,30 +16,35 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
     
-    /* Heritage Blue Primary */
-    --primary: 220 100% 25%;
+    /* Heritage Blue Primary with Gradient */
+    --primary: 220 100% 28%;
     --primary-foreground: 210 40% 98%;
-    --primary-light: 220 85% 65%;
-    --primary-dark: 220 100% 15%;
+    --primary-light: 220 85% 60%;
+    --primary-dark: 225 100% 18%;
     
-    /* Heritage Secondary */
+    /* High-Tech Secondary */
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --secondary-light: 217.2 32.6% 25%;
     
-    /* Heritage Gold Accent */
-    --accent: 45 90% 60%;
+    /* Cyber Gold Accent */
+    --accent: 45 95% 55%;
     --accent-foreground: 222.2 84% 4.9%;
-    --accent-light: 45 90% 75%;
+    --accent-light: 45 90% 70%;
     
     /* Heritage Brand Colors */
-    --heritage-gold: 45 90% 60%;
-    --heritage-blue: 220 100% 25%;
-    --heritage-blue-dark: 220 100% 15%;
+    --heritage-gold: 45 95% 55%;
+    --heritage-blue: 220 100% 28%;
+    --heritage-blue-dark: 225 100% 18%;
+    
+    /* High-Tech Gradient Colors */
+    --gradient-start: 240 100% 50%;
+    --gradient-mid: 280 100% 50%;
+    --gradient-end: 320 100% 50%;
     
     /* Neutral Grays */
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
     
     /* Status Colors */
     --success: 142 76% 50%;
@@ -50,66 +55,62 @@
     --destructive-foreground: 0 0% 98%;
     
     /* UI Elements */
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
     --ring: 222.2 84% 4.9%;
     
     /* Heritage Banking Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--heritage-blue)), hsl(var(--heritage-blue-dark)));
     --gradient-secondary: linear-gradient(135deg, hsl(var(--heritage-gold)), hsl(var(--accent-light)));
     --gradient-hero: linear-gradient(135deg, hsl(var(--heritage-blue)) 0%, hsl(var(--heritage-blue-dark)) 100%);
+    --gradient-hightech: linear-gradient(135deg, hsl(225, 100%, 15%) 0%, hsl(240, 80%, 25%) 50%, hsl(260, 60%, 20%) 100%);
+    --gradient-cyber: linear-gradient(135deg, hsl(200, 100%, 50%) 0%, hsl(260, 100%, 50%) 50%, hsl(320, 100%, 50%) 100%);
     
     /* Banking Shadows */
-    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.08);
-    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.12);
-    --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.16);
-    --shadow-heritage: 0 4px 24px rgba(34, 45, 123, 0.15);
+    --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.06);
+    --shadow-medium: 0 4px 16px rgba(0, 0, 0, 0.1);
+    --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.14);
+    --shadow-heritage: 0 4px 24px rgba(34, 45, 123, 0.12);
+    --shadow-glow: 0 0 40px rgba(59, 130, 246, 0.3);
     
     /* Banking Radius */
     --radius: 0.75rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    --background: 224 71% 4%;
     --foreground: 210 40% 98%;
 
-    --card: 222.2 84% 4.9%;
+    --card: 224 71% 6%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222.2 84% 4.9%;
+    --popover: 224 71% 6%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 220 100% 25%;
+    --primary: 220 100% 50%;
     --primary-foreground: 210 40% 98%;
 
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
+    --muted: 217.2 32.6% 12%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 45 90% 60%;
+    --accent: 45 95% 55%;
     --accent-foreground: 222.2 84% 4.9%;
 
-    --heritage-gold: 45 90% 60%;
-    --heritage-blue: 220 100% 25%;
-    --heritage-blue-dark: 220 100% 15%;
+    --heritage-gold: 45 95% 55%;
+    --heritage-blue: 220 100% 50%;
+    --heritage-blue-dark: 225 100% 30%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
@@ -128,7 +129,7 @@
   }
 }
 
-/* Banking-specific utility classes with Heritage theme */
+/* High-Tech Banking utility classes */
 @layer components {
   .banking-gradient-primary {
     background: var(--gradient-primary);
@@ -142,9 +143,23 @@
     animation: gradient-shift 8s ease infinite;
   }
   
+  .hightech-gradient {
+    background: var(--gradient-hightech);
+  }
+  
+  .cyber-gradient {
+    background: var(--gradient-cyber);
+    background-size: 400% 400%;
+    animation: cyber-shift 15s ease infinite;
+  }
+  
   .banking-shadow {
     box-shadow: var(--shadow-heritage);
     transition: box-shadow 0.3s ease;
+  }
+  
+  .glow-effect {
+    box-shadow: var(--shadow-glow);
   }
   
   .banking-card {
@@ -156,6 +171,17 @@
   .banking-card:hover {
     box-shadow: var(--shadow-medium);
     transform: translateY(-2px);
+  }
+  
+  .hightech-card {
+    @apply bg-gradient-to-br from-card via-card to-muted rounded-2xl border border-border/30 p-6 transition-all duration-500;
+    box-shadow: var(--shadow-heritage);
+    backdrop-filter: blur(12px);
+  }
+  
+  .hightech-card:hover {
+    box-shadow: var(--shadow-strong), var(--shadow-glow);
+    transform: translateY(-4px) scale(1.01);
   }
   
   .balance-meter {
@@ -175,12 +201,17 @@
   }
   
   .hover-lift {
-    @apply transition-all duration-200 hover:scale-105 hover:shadow-lg;
+    @apply transition-all duration-300 hover:scale-105 hover:shadow-lg;
   }
   
   .banking-button {
-    @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:shadow-md;
+    @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 active:shadow-md;
     background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-dark)) 100%);
+  }
+  
+  .banking-button:hover {
+    background: linear-gradient(135deg, hsl(var(--primary-light)) 0%, hsl(var(--primary)) 100%);
+    box-shadow: 0 10px 40px -10px hsl(var(--primary) / 0.5);
   }
   
   /* Enhanced gradient tabs for dashboard */
@@ -226,12 +257,49 @@
   .stagger-fade-in > *:nth-child(4) { animation-delay: 0.4s; }
   .stagger-fade-in > *:nth-child(5) { animation-delay: 0.5s; }
   .stagger-fade-in > *:nth-child(6) { animation-delay: 0.6s; }
+  
+  /* Tab content animations */
+  .tab-content-animate {
+    animation: tab-fade-in 0.4s ease-out;
+  }
+  
+  /* High-tech dashboard header */
+  .hightech-header {
+    background: linear-gradient(135deg, hsl(225, 100%, 12%) 0%, hsl(240, 80%, 18%) 50%, hsl(260, 60%, 15%) 100%);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Glassmorphism effect */
+  .glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  /* Neon glow for balances */
+  .neon-balance {
+    text-shadow: 0 0 10px hsl(var(--heritage-gold) / 0.5), 0 0 30px hsl(var(--heritage-gold) / 0.3);
+  }
+  
+  /* Loading skeleton with gradient */
+  .skeleton-gradient {
+    background: linear-gradient(90deg, hsl(var(--muted)) 0%, hsl(var(--muted) / 0.5) 50%, hsl(var(--muted)) 100%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  }
 }
 
-/* Additional Keyframes */
+/* Keyframes */
 @keyframes gradient-shift {
   0%, 100% { background-position: 0% 50%; }
   50% { background-position: 100% 50%; }
+}
+
+@keyframes cyber-shift {
+  0%, 100% { background-position: 0% 0%; }
+  25% { background-position: 100% 0%; }
+  50% { background-position: 100% 100%; }
+  75% { background-position: 0% 100%; }
 }
 
 @keyframes rotate {
@@ -246,6 +314,22 @@
   50% {
     box-shadow: 0 0 40px hsl(var(--heritage-gold) / 0.6), 0 0 60px hsl(var(--heritage-blue) / 0.3);
   }
+}
+
+@keyframes tab-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 /* Float animation for background elements */
