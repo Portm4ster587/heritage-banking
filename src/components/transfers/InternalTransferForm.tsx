@@ -5,13 +5,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowRightLeft, Send } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { ArrowRightLeft, Send, User, CheckCircle, Loader2, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { TransferHIHProgress } from '@/components/TransferHIHProgress';
 import { TransferSuccessScreen } from '@/components/TransferSuccessScreen';
 import { useSmsNotification } from '@/hooks/useSmsNotification';
+import { useAccountLookup } from '@/hooks/useAccountLookup';
 
 interface Account {
   id: string;
@@ -30,8 +32,13 @@ export const InternalTransferForm = ({ accounts, onSuccess }: InternalTransferFo
   const { user } = useAuth();
   const { toast } = useToast();
   const { sendTransactionAlert } = useSmsNotification();
+  const { lookupAccount, loading: lookupLoading, result: lookupResult, clearResult } = useAccountLookup();
+  
   const [fromAccount, setFromAccount] = useState('');
   const [userPhone, setUserPhone] = useState<string | null>(null);
+  const [externalAccountNumber, setExternalAccountNumber] = useState('');
+  const [recipientVerified, setRecipientVerified] = useState(false);
+  const [transferMode, setTransferMode] = useState<'internal' | 'heritage'>('internal');
 
   // Fetch user phone for SMS alerts
   useEffect(() => {
@@ -46,6 +53,30 @@ export const InternalTransferForm = ({ accounts, onSuccess }: InternalTransferFo
     };
     fetchPhone();
   }, [user?.id]);
+
+  // Auto-lookup recipient when external account number changes
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (externalAccountNumber.length >= 8 && transferMode === 'heritage') {
+        handleAccountLookup();
+      } else {
+        clearResult();
+        setRecipientVerified(false);
+      }
+    }, 500);
+    return () => clearTimeout(delayDebounce);
+  }, [externalAccountNumber, transferMode]);
+
+  const handleAccountLookup = async () => {
+    if (!externalAccountNumber) return;
+    const result = await lookupAccount(externalAccountNumber);
+    if (result?.found) {
+      setRecipientVerified(true);
+    } else {
+      setRecipientVerified(false);
+    }
+  };
+
   const [toAccount, setToAccount] = useState('');
   const [amount, setAmount] = useState('');
   const [memo, setMemo] = useState('');
@@ -209,18 +240,42 @@ export const InternalTransferForm = ({ accounts, onSuccess }: InternalTransferFo
 
   return (
     <>
-      <Card className="banking-card">
+      <Card className="hightech-card">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <ArrowRightLeft className="h-6 w-6 text-primary" />
             <span>Internal Transfer</span>
+            <Badge variant="secondary" className="ml-2">Instant</Badge>
           </CardTitle>
+          <p className="text-sm text-muted-foreground mt-1">
+            Transfer funds between your accounts or to other Heritage members
+          </p>
         </CardHeader>
         <CardContent className="space-y-6">
+          {/* Transfer Mode Toggle */}
+          <div className="flex gap-2 p-1 bg-muted rounded-lg">
+            <Button 
+              variant={transferMode === 'internal' ? 'default' : 'ghost'}
+              size="sm" 
+              className={`flex-1 ${transferMode === 'internal' ? 'banking-button' : ''}`}
+              onClick={() => setTransferMode('internal')}
+            >
+              My Accounts
+            </Button>
+            <Button 
+              variant={transferMode === 'heritage' ? 'default' : 'ghost'}
+              size="sm" 
+              className={`flex-1 ${transferMode === 'heritage' ? 'banking-button' : ''}`}
+              onClick={() => setTransferMode('heritage')}
+            >
+              Other Heritage Member
+            </Button>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="from-account">From Account</Label>
             <Select value={fromAccount} onValueChange={setFromAccount}>
-              <SelectTrigger>
+              <SelectTrigger className="h-12">
                 <SelectValue placeholder="Select source account" />
               </SelectTrigger>
               <SelectContent>
@@ -233,21 +288,81 @@ export const InternalTransferForm = ({ accounts, onSuccess }: InternalTransferFo
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="to-account">To Account</Label>
-            <Select value={toAccount} onValueChange={setToAccount}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select destination account" />
-              </SelectTrigger>
-              <SelectContent>
-                {accounts.map((account) => (
-                  <SelectItem key={account.id} value={account.id}>
-                    {formatAccountDisplay(account)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {transferMode === 'internal' ? (
+            <div className="space-y-2">
+              <Label htmlFor="to-account">To Account</Label>
+              <Select value={toAccount} onValueChange={setToAccount}>
+                <SelectTrigger className="h-12">
+                  <SelectValue placeholder="Select destination account" />
+                </SelectTrigger>
+                <SelectContent>
+                  {accounts.map((account) => (
+                    <SelectItem key={account.id} value={account.id}>
+                      {formatAccountDisplay(account)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <Label htmlFor="external-account">Recipient Account Number</Label>
+              <div className="relative">
+                <Input
+                  id="external-account"
+                  placeholder="Enter Heritage account number"
+                  value={externalAccountNumber}
+                  onChange={(e) => setExternalAccountNumber(e.target.value)}
+                  className="h-12 pr-10"
+                />
+                {lookupLoading && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <Loader2 className="w-5 h-5 text-primary animate-spin" />
+                  </div>
+                )}
+                {recipientVerified && !lookupLoading && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                  </div>
+                )}
+              </div>
+              
+              {/* Account Name Display */}
+              {lookupResult && (
+                <div className={`p-3 rounded-lg border animate-fade-in ${
+                  lookupResult.found 
+                    ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800' 
+                    : 'bg-yellow-50 dark:bg-yellow-950/30 border-yellow-200 dark:border-yellow-800'
+                }`}>
+                  {lookupResult.found ? (
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 rounded-full bg-green-100 dark:bg-green-900">
+                        <User className="w-4 h-4 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-green-700 dark:text-green-400">
+                          {lookupResult.accountName}
+                        </p>
+                        <p className="text-sm text-green-600 dark:text-green-500">
+                          {lookupResult.bankName} • {lookupResult.accountType}
+                          {lookupResult.verified && (
+                            <Badge className="ml-2 bg-green-500/20 text-green-600 text-xs">Verified</Badge>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <AlertCircle className="w-5 h-5 text-yellow-600" />
+                      <p className="text-sm text-yellow-700 dark:text-yellow-400">
+                        {lookupResult.message || 'Account not found. Please verify the account number.'}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="amount">Amount</Label>
