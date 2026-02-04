@@ -17,11 +17,12 @@
 ### Admin Account  
 - **Email**: `admin@heritagebank.com`
 - **Password**: `00009999`
-- **Username**: `admin` (for login with username)
+- **Username**: `admin` (can also login with username)
 - **Access**: Full administrative panel with user management, transaction oversight, balance editing, and account control
 
-### Investment Account (Demo)
+### Investment Account (Invest Group Overseas LTD)
 - **Email**: `invest@igoae.com`
+- **Username**: `invest` (can also login with username)
 - **Password**: `000999`
 - **Account Details**:
   - Heritage Investing: $567,098,000

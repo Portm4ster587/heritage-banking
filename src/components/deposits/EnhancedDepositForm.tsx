@@ -6,10 +6,11 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Bitcoin, CreditCard, Building2, ArrowDownCircle, Smartphone, FileText, Banknote, Copy, QrCode } from 'lucide-react';
+import { Bitcoin, CreditCard, Building2, ArrowDownCircle, Smartphone, FileText, Banknote, Copy, QrCode, Zap } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { BTCInstantDeposit } from './BTCInstantDeposit';
 
 interface Account {
   id: string;
@@ -303,9 +304,12 @@ export const EnhancedDepositForm = ({ accounts, onSuccess }: EnhancedDepositForm
         </div>
 
         <Tabs defaultValue="crypto" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
+          <TabsList className="grid w-full grid-cols-6">
             <TabsTrigger value="crypto" className="text-xs">
               <Bitcoin className="w-4 h-4 mr-1" />Crypto
+            </TabsTrigger>
+            <TabsTrigger value="instant-crypto" className="text-xs">
+              <Zap className="w-4 h-4 mr-1" />Instant
             </TabsTrigger>
             <TabsTrigger value="card" className="text-xs">
               <CreditCard className="w-4 h-4 mr-1" />Card
@@ -373,6 +377,10 @@ export const EnhancedDepositForm = ({ accounts, onSuccess }: EnhancedDepositForm
             >
               {isProcessing ? "Processing..." : `Submit ${selectedCrypto} Deposit`}
             </Button>
+          </TabsContent>
+
+          <TabsContent value="instant-crypto" className="space-y-4">
+            <BTCInstantDeposit onSuccess={onSuccess} />
           </TabsContent>
 
           <TabsContent value="card" className="space-y-4">
