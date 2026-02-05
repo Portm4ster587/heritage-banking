@@ -25,13 +25,14 @@
 - **Username**: `invest` (can also login with username)
 - **Password**: `000999`
 - **Account Details**:
-  - Heritage Investing: $567,098,000
-  - Heritage Business: $700,678,000
-  - Premium Checking: $25,000,000
-  - High Yield Savings: $85,000,000
-  - 5 Premium Credit Cards (Platinum, World Elite, Centurion, Business Rewards, Infinite Privilege)
-  - Crypto Portfolio: $18M+ (BTC, ETH, USDT, USDC, SOL, XRP)
-  - 200+ Transaction History since 2020 (Real Estate, Coincube, Taxes, etc.)
+   - Heritage Investing: $4,200,000,000 (4.2 Billion)
+   - Heritage Business: $1,800,000,000 (1.8 Billion)
+   - Premium Checking: $3,500,000,000 (3.5 Billion)
+   - High Yield Savings: $2,800,000,000 (2.8 Billion)
+   - **Total: Over $12.3 Billion across all accounts**
+   - Premium Credit Cards (Platinum, World Elite, Centurion, Business Rewards, Infinite Privilege)
+   - Crypto Portfolio: $18M+ (BTC, ETH, USDT, USDC, SOL, XRP)
+   - Transaction History since 2020 (Real Estate, Investments, Taxes, etc.)
 
 ## Creating Default Accounts
 
