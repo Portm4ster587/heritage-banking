@@ -9,6 +9,10 @@ import bankInterior1 from "@/assets/bank-interior-1.jpg";
 import bankInterior2 from "@/assets/bank-interior-2.jpg";
 import heritageAtmImage from "@/assets/heritage-atm.jpg";
 import heritageAtmImage2 from "@/assets/heritage-atm-2.png";
+ import heritageHQHero from "@/assets/heritage-hq-hero.jpg";
+ import premiumCardsShowcase from "@/assets/premium-cards-showcase.jpg";
+ import bankInteriorLuxury from "@/assets/bank-interior-luxury.jpg";
+ import digitalEcosystem from "@/assets/digital-ecosystem.jpg";
 
 interface HeroSectionProps {
   user: any;
@@ -20,12 +24,12 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
   
   const backgroundImages = [
+    heritageHQHero,
+    premiumCardsShowcase,
+    bankInteriorLuxury,
+    digitalEcosystem,
     bankingHeroImage,
-    cardsShowcaseImage,
-    bankInterior1,
-    bankInterior2,
-    heritageAtmImage,
-    heritageAtmImage2
+    bankInterior1
   ];
 
   useEffect(() => {
