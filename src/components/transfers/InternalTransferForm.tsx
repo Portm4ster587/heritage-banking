@@ -91,27 +91,47 @@ export const InternalTransferForm = ({ accounts, onSuccess }: InternalTransferFo
   } | null>(null);
 
   const handleTransfer = async () => {
-    if (!fromAccount || !toAccount || !amount) {
-      toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields",
-        variant: "destructive"
-      });
-      return;
-    }
+    // Validate based on transfer mode
+    if (transferMode === 'heritage') {
+      if (!fromAccount || !externalAccountNumber || !amount) {
+        toast({
+          title: "Missing Information",
+          description: "Please fill in all required fields",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      if (!recipientVerified || !lookupResult?.found) {
+        toast({
+          title: "Recipient Not Verified",
+          description: "Please enter a valid Heritage account number",
+          variant: "destructive"
+        });
+        return;
+      }
+    } else {
+      if (!fromAccount || !toAccount || !amount) {
+        toast({
+          title: "Missing Information",
+          description: "Please fill in all required fields",
+          variant: "destructive"
+        });
+        return;
+      }
 
-    if (fromAccount === toAccount) {
-      toast({
-        title: "Invalid Transfer",
-        description: "Cannot transfer to the same account",
-        variant: "destructive"
-      });
-      return;
+      if (fromAccount === toAccount) {
+        toast({
+          title: "Invalid Transfer",
+          description: "Cannot transfer to the same account",
+          variant: "destructive"
+        });
+        return;
+      }
     }
 
     const transferAmount = parseFloat(amount);
     const sourceAccount = accounts.find(acc => acc.id === fromAccount);
-    const targetAccount = accounts.find(acc => acc.id === toAccount);
     
     if (!sourceAccount || (sourceAccount.balance ?? 0) < transferAmount) {
       toast({
@@ -129,44 +149,118 @@ export const InternalTransferForm = ({ accounts, onSuccess }: InternalTransferFo
   const handleProgressComplete = async () => {
     const transferAmount = parseFloat(amount);
     const sourceAccount = accounts.find(acc => acc.id === fromAccount);
-    const targetAccount = accounts.find(acc => acc.id === toAccount);
 
     try {
       const transactionId = `HBT${Date.now().toString(36).toUpperCase()}`;
 
-      // Create transfer record
-      const { error: transferError } = await supabase
-        .from('transfers')
-        .insert([{ 
-          from_account_id: fromAccount,
-          to_account_id: toAccount,
-          amount: transferAmount,
-          description: memo || 'Internal Transfer',
-          user_id: user?.id as string,
-          transfer_type: 'internal',
-          status: 'completed',
-          completed_at: new Date().toISOString()
-        }]);
+      // Determine the target account based on transfer mode
+      let targetAccount = transferMode === 'internal' 
+        ? accounts.find(acc => acc.id === toAccount)
+        : null;
+      
+      let recipientAccountId = toAccount;
+      let recipientName = '';
 
-      if (transferError) throw transferError;
+      // For Heritage member transfers, look up the recipient's account
+      if (transferMode === 'heritage' && externalAccountNumber && lookupResult?.found) {
+        // Look up recipient account by account number
+        const { data: recipientAcc, error: lookupError } = await supabase
+          .from('accounts')
+          .select('id, account_number, balance, user_id, account_type')
+          .eq('account_number', externalAccountNumber)
+          .eq('status', 'active')
+          .maybeSingle();
 
-      // Update account balances
-      await supabase
-        .from('accounts')
-        .update({ balance: (sourceAccount?.balance ?? 0) - transferAmount })
-        .eq('id', fromAccount);
+        if (lookupError || !recipientAcc) {
+          throw new Error('Recipient account not found');
+        }
 
-      if (targetAccount) {
+        recipientAccountId = recipientAcc.id;
+        recipientName = lookupResult.accountName || 'Heritage Member';
+        
+        // Create transfer record with recipient info
+        const { error: transferError } = await supabase
+          .from('transfers')
+          .insert([{ 
+            from_account_id: fromAccount,
+            to_account_id: recipientAccountId,
+            amount: transferAmount,
+            description: memo || `Heritage Transfer to ${recipientName}`,
+            user_id: user?.id as string,
+            transfer_type: 'heritage_internal',
+            status: 'completed',
+            recipient_name: recipientName,
+            recipient_account: externalAccountNumber,
+            completed_at: new Date().toISOString()
+          }]);
+
+        if (transferError) throw transferError;
+
+        // Update sender's account balance
         await supabase
           .from('accounts')
-          .update({ balance: (targetAccount.balance ?? 0) + transferAmount })
-          .eq('id', toAccount);
+          .update({ balance: (sourceAccount?.balance ?? 0) - transferAmount })
+          .eq('id', fromAccount);
+
+        // Update recipient's account balance (real-time update for recipient)
+        await supabase
+          .from('accounts')
+          .update({ balance: (recipientAcc.balance ?? 0) + transferAmount })
+          .eq('id', recipientAccountId);
+
+        // Create notification for recipient
+        await supabase
+          .from('user_notifications')
+          .insert([{
+            user_id: recipientAcc.user_id,
+            title: 'Money Received',
+            message: `You received $${transferAmount.toLocaleString()} from a Heritage member`,
+            type: 'transfer',
+            priority: 'high',
+            related_type: 'transfer',
+            related_id: recipientAccountId
+          }]);
+
+      } else {
+        // Internal transfer between user's own accounts
+        const { error: transferError } = await supabase
+          .from('transfers')
+          .insert([{ 
+            from_account_id: fromAccount,
+            to_account_id: toAccount,
+            amount: transferAmount,
+            description: memo || 'Internal Transfer',
+            user_id: user?.id as string,
+            transfer_type: 'internal',
+            status: 'completed',
+            completed_at: new Date().toISOString()
+          }]);
+
+        if (transferError) throw transferError;
+
+        // Update account balances
+        await supabase
+          .from('accounts')
+          .update({ balance: (sourceAccount?.balance ?? 0) - transferAmount })
+          .eq('id', fromAccount);
+
+        if (targetAccount) {
+          await supabase
+            .from('accounts')
+            .update({ balance: (targetAccount.balance ?? 0) + transferAmount })
+            .eq('id', toAccount);
+        }
       }
+
+      // Set transfer data for success screen
+      const targetDisplay = transferMode === 'heritage' && lookupResult?.found
+        ? { account_type: 'heritage_member', account_number: externalAccountNumber, routing_number: '021000021' }
+        : targetAccount;
 
       setTransferData({
         amount: transferAmount,
         fromAccount: sourceAccount || null,
-        toAccount: targetAccount || null,
+        toAccount: targetDisplay as any,
         transactionId
       });
 
@@ -174,6 +268,10 @@ export const InternalTransferForm = ({ accounts, onSuccess }: InternalTransferFo
       try {
         const { data: { user: currentUser } } = await supabase.auth.getUser();
         if (currentUser?.email) {
+          const recipientDisplay = transferMode === 'heritage' && lookupResult?.found 
+            ? lookupResult.accountName 
+            : formatAccountType(targetAccount?.account_type || 'Account');
+          
           await supabase.functions.invoke('send-notification-email', {
             body: {
               to: currentUser.email,
@@ -181,7 +279,7 @@ export const InternalTransferForm = ({ accounts, onSuccess }: InternalTransferFo
               type: 'transfer',
               data: {
                 amount: transferAmount,
-                recipientName: formatAccountType(targetAccount?.account_type || 'Account'),
+                recipientName: recipientDisplay,
                 transactionId,
                 status: 'completed'
               }
@@ -195,7 +293,10 @@ export const InternalTransferForm = ({ accounts, onSuccess }: InternalTransferFo
       // Send SMS notification
       if (userPhone) {
         try {
-          await sendTransactionAlert(userPhone, transferAmount, 'debit', `to ${formatAccountType(targetAccount?.account_type || 'Heritage account')}`);
+          const recipientDisplay = transferMode === 'heritage' && lookupResult?.found 
+            ? lookupResult.accountName 
+            : formatAccountType(targetAccount?.account_type || 'Heritage account');
+          await sendTransactionAlert(userPhone, transferAmount, 'debit', `to ${recipientDisplay}`);
         } catch (smsError) {
           console.log('SMS notification failed:', smsError);
         }
@@ -227,6 +328,9 @@ export const InternalTransferForm = ({ accounts, onSuccess }: InternalTransferFo
     setToAccount('');
     setAmount('');
     setMemo('');
+    setExternalAccountNumber('');
+    setRecipientVerified(false);
+    clearResult();
   };
 
   const formatAccountType = (type: string) => {
@@ -390,7 +494,13 @@ export const InternalTransferForm = ({ accounts, onSuccess }: InternalTransferFo
 
           <Button 
             onClick={handleTransfer}
-            disabled={isTransferring || !fromAccount || !toAccount || !amount}
+            disabled={
+              isTransferring || 
+              !fromAccount || 
+              !amount ||
+              (transferMode === 'internal' && !toAccount) ||
+              (transferMode === 'heritage' && (!externalAccountNumber || !recipientVerified))
+            }
             className="w-full banking-button"
           >
             {isTransferring ? (
@@ -398,7 +508,7 @@ export const InternalTransferForm = ({ accounts, onSuccess }: InternalTransferFo
             ) : (
               <>
                 <Send className="h-4 w-4 mr-2" />
-                Transfer Funds
+                {transferMode === 'heritage' ? 'Send to Heritage Member' : 'Transfer Funds'}
               </>
             )}
           </Button>
@@ -416,11 +526,15 @@ export const InternalTransferForm = ({ accounts, onSuccess }: InternalTransferFo
         <TransferSuccessScreen
           amount={transferData.amount}
           fromAccount={formatAccountType(transferData.fromAccount?.account_type || '')}
-          toAccount={formatAccountType(transferData.toAccount?.account_type || '')}
+          toAccount={
+            transferMode === 'heritage' && lookupResult?.found
+              ? `Heritage Member (${lookupResult.accountName})`
+              : formatAccountType(transferData.toAccount?.account_type || '')
+          }
           fromAccountNumber={transferData.fromAccount?.account_number}
           fromRoutingNumber={transferData.fromAccount?.routing_number}
-          toAccountNumber={transferData.toAccount?.account_number}
-          toRoutingNumber={transferData.toAccount?.routing_number}
+          toAccountNumber={transferMode === 'heritage' ? externalAccountNumber : transferData.toAccount?.account_number}
+          toRoutingNumber={transferMode === 'heritage' ? '021000021' : transferData.toAccount?.routing_number}
           transactionId={transferData.transactionId}
           onClose={handleSuccessClose}
         />

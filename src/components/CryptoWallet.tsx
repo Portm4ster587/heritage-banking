@@ -4,11 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Bitcoin, Send, Wallet, TrendingUp, Download, Upload, RefreshCw } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Bitcoin, Send, Wallet, TrendingUp, Download, Upload, RefreshCw, ArrowRightLeft } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import cryptoBgImage from "@/assets/crypto-bg.jpg";
+import { CryptoInternalTransfer } from "./crypto/CryptoInternalTransfer";
+import { HeritageWalletAddress } from "./crypto/HeritageWalletAddress";
 
 interface CryptoAsset {
   symbol: string;
@@ -334,117 +337,38 @@ export const CryptoWallet = () => {
         </Card>
       )}
 
-      {/* Wallet Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card className="banking-card">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Send className="h-6 w-6 text-primary" />
-              <span>Send Crypto</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Select Asset</Label>
-              <div className="flex space-x-2">
-                {cryptoAssets.map((asset) => (
-                  <Button
-                    key={asset.symbol}
-                    variant={selectedAsset === asset.symbol ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedAsset(asset.symbol)}
-                  >
-                    {asset.icon} {asset.symbol}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="send-amount">Amount</Label>
-              <Input
-                id="send-amount"
-                type="number"
-                placeholder="0.00"
-                value={sendAmount}
-                onChange={(e) => setSendAmount(e.target.value)}
-                step="0.00000001"
-              />
-              <p className="text-xs text-muted-foreground">
-                Available: {cryptoAssets.find(a => a.symbol === selectedAsset)?.balance} {selectedAsset}
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="receive-address">Recipient Address</Label>
-              <Input
-                id="receive-address"
-                placeholder="Enter recipient wallet address"
-                value={receiveAddress}
-                onChange={(e) => setReceiveAddress(e.target.value)}
-              />
-            </div>
-
-            <Button onClick={handleSendCrypto} className="w-full banking-button">
-              <Send className="h-4 w-4 mr-2" />
-              Send {selectedAsset}
-            </Button>
-          </CardContent>
-        </Card>
-
-        <Card className="banking-card">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Download className="h-6 w-6 text-secondary" />
-              <span>Receive Crypto</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Select Asset</Label>
-              <div className="flex space-x-2">
-                {cryptoAssets.map((asset) => (
-                  <Button
-                    key={asset.symbol}
-                    variant={selectedAsset === asset.symbol ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedAsset(asset.symbol)}
-                  >
-                    {asset.icon} {asset.symbol}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Your {selectedAsset} Address</Label>
-              <div className="flex space-x-2">
-                <Input 
-                  value={walletAddress} 
-                  readOnly 
-                  className="bg-muted"
-                />
-                <Button 
-                  variant="outline" 
-                  onClick={() => copyToClipboard(walletAddress)}
-                >
-                  Copy
-                </Button>
-              </div>
-            </div>
-
-            <div className="p-4 border-2 border-dashed border-muted rounded-lg text-center">
-              <p className="text-sm text-muted-foreground mb-2">QR Code</p>
-              <div className="w-32 h-32 bg-muted mx-auto rounded-lg flex items-center justify-center">
-                <span className="text-4xl">{cryptoAssets.find(a => a.symbol === selectedAsset)?.icon}</span>
-              </div>
-              <p className="text-xs text-muted-foreground mt-2">
-                Scan to send {selectedAsset} to this wallet
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Heritage Ecosystem Transfers */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <ArrowRightLeft className="h-5 w-5 text-primary" />
+          <h3 className="text-xl font-bold">Heritage Ecosystem</h3>
+          <Badge className="bg-primary/10 text-primary">Instant Transfers</Badge>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Send and receive crypto instantly between Heritage Bank members using ecosystem wallet addresses.
+        </p>
       </div>
+
+      <Tabs defaultValue="send" className="space-y-6">
+        <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsTrigger value="send" className="flex items-center gap-2">
+            <Send className="w-4 h-4" />
+            Send Crypto
+          </TabsTrigger>
+          <TabsTrigger value="receive" className="flex items-center gap-2">
+            <Download className="w-4 h-4" />
+            Receive Crypto
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="send">
+          <CryptoInternalTransfer wallets={wallets} onSuccess={fetchWallets} />
+        </TabsContent>
+
+        <TabsContent value="receive">
+          <HeritageWalletAddress wallets={wallets} onWalletsUpdate={fetchWallets} />
+        </TabsContent>
+      </Tabs>
 
       {/* Transaction History */}
       <Card className="banking-card">

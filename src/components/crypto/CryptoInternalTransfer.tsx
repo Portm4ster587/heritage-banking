@@ -1,0 +1,335 @@
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Send, User, CheckCircle, Loader2, AlertCircle, Wallet } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { HeritageSVGLogoTransparent } from '@/components/HeritageSVGLogoTransparent';
+
+interface CryptoInternalTransferProps {
+  wallets: any[];
+  onSuccess?: () => void;
+}
+
+export const CryptoInternalTransfer = ({ wallets, onSuccess }: CryptoInternalTransferProps) => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  
+  const [selectedAsset, setSelectedAsset] = useState('');
+  const [recipientAddress, setRecipientAddress] = useState('');
+  const [amount, setAmount] = useState('');
+  const [isTransferring, setIsTransferring] = useState(false);
+  const [recipientVerified, setRecipientVerified] = useState(false);
+  const [lookupLoading, setLookupLoading] = useState(false);
+  const [recipientInfo, setRecipientInfo] = useState<{name: string; symbol: string} | null>(null);
+
+  // Generate Heritage ecosystem wallet address format
+  const generateHeritageWalletAddress = (symbol: string, userId: string) => {
+    const prefix = symbol === 'BTC' ? 'hb1' : symbol === 'ETH' ? '0xhb' : 'hbt';
+    const hash = userId.replace(/-/g, '').substring(0, 24);
+    return `${prefix}${hash}${symbol.toLowerCase()}`;
+  };
+
+  // Auto-lookup recipient when address changes
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      if (recipientAddress.length >= 20 && recipientAddress.startsWith('hb')) {
+        handleRecipientLookup();
+      } else {
+        setRecipientVerified(false);
+        setRecipientInfo(null);
+      }
+    }, 500);
+    return () => clearTimeout(delayDebounce);
+  }, [recipientAddress]);
+
+  const handleRecipientLookup = async () => {
+    setLookupLoading(true);
+    try {
+      // Extract user ID and symbol from Heritage wallet address
+      const isHeritageBTC = recipientAddress.startsWith('hb1');
+      const isHeritageETH = recipientAddress.startsWith('0xhb');
+      const isHeritageOther = recipientAddress.startsWith('hbt');
+      
+      if (isHeritageBTC || isHeritageETH || isHeritageOther) {
+        // Look up wallet in the system
+        const { data: wallet, error } = await supabase
+          .from('crypto_wallets')
+          .select('user_id, asset_symbol')
+          .eq('wallet_address', recipientAddress)
+          .maybeSingle();
+
+        if (wallet) {
+          // Get user profile
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('first_name, last_name')
+            .eq('user_id', wallet.user_id)
+            .maybeSingle();
+
+          if (profile) {
+            const name = `${profile.first_name?.[0] || ''}***${profile.last_name?.[0] || ''}***`;
+            setRecipientInfo({ name, symbol: wallet.asset_symbol });
+            setRecipientVerified(true);
+          }
+        } else {
+          setRecipientVerified(false);
+          setRecipientInfo(null);
+        }
+      }
+    } catch (error) {
+      console.error('Lookup error:', error);
+    } finally {
+      setLookupLoading(false);
+    }
+  };
+
+  const handleTransfer = async () => {
+    if (!selectedAsset || !recipientAddress || !amount) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!recipientVerified) {
+      toast({
+        title: "Invalid Recipient",
+        description: "Please enter a valid Heritage ecosystem wallet address",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const transferAmount = parseFloat(amount);
+    const sourceWallet = wallets.find(w => w.asset_symbol === selectedAsset);
+    
+    if (!sourceWallet || (sourceWallet.balance ?? 0) < transferAmount) {
+      toast({
+        title: "Insufficient Balance",
+        description: "You don't have enough balance for this transfer",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsTransferring(true);
+
+    try {
+      // Find recipient wallet
+      const { data: recipientWallet, error: findError } = await supabase
+        .from('crypto_wallets')
+        .select('id, user_id, balance')
+        .eq('wallet_address', recipientAddress)
+        .maybeSingle();
+
+      if (findError || !recipientWallet) {
+        throw new Error('Recipient wallet not found');
+      }
+
+      // Update sender's balance
+      await supabase
+        .from('crypto_wallets')
+        .update({ balance: (sourceWallet.balance ?? 0) - transferAmount })
+        .eq('id', sourceWallet.id);
+
+      // Update recipient's balance
+      await supabase
+        .from('crypto_wallets')
+        .update({ balance: (recipientWallet.balance ?? 0) + transferAmount })
+        .eq('id', recipientWallet.id);
+
+      // Create notification for recipient
+      await supabase
+        .from('user_notifications')
+        .insert([{
+          user_id: recipientWallet.user_id,
+          title: `${selectedAsset} Received`,
+          message: `You received ${transferAmount} ${selectedAsset} via Heritage Ecosystem`,
+          type: 'crypto',
+          priority: 'high'
+        }]);
+
+      toast({
+        title: "Transfer Complete",
+        description: `Successfully sent ${transferAmount} ${selectedAsset}`,
+      });
+
+      // Reset form
+      setAmount('');
+      setRecipientAddress('');
+      setRecipientVerified(false);
+      setRecipientInfo(null);
+      
+      onSuccess?.();
+
+    } catch (error) {
+      console.error('Transfer error:', error);
+      toast({
+        title: "Transfer Failed",
+        description: error instanceof Error ? error.message : "Failed to process transfer",
+        variant: "destructive"
+      });
+    } finally {
+      setIsTransferring(false);
+    }
+  };
+
+  const getWalletBalance = (symbol: string) => {
+    const wallet = wallets.find(w => w.asset_symbol === symbol);
+    return wallet?.balance || 0;
+  };
+
+  const availableAssets = ['BTC', 'ETH', 'USDT', 'USDC', 'SOL', 'XRP', 'BNB'];
+
+  return (
+    <Card className="hightech-card">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <Send className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <span>Heritage Ecosystem Transfer</span>
+            <Badge variant="outline" className="ml-2 text-xs">Instant</Badge>
+          </div>
+        </CardTitle>
+        <p className="text-sm text-muted-foreground mt-1">
+          Transfer crypto instantly to other Heritage members using ecosystem wallet addresses
+        </p>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="p-4 rounded-lg bg-gradient-to-r from-primary/5 to-secondary/5 border border-primary/20">
+          <div className="flex items-center gap-3 mb-2">
+            <HeritageSVGLogoTransparent size="sm" className="w-8 h-8" />
+            <div>
+              <p className="font-semibold text-sm">Heritage Ecosystem Addresses</p>
+              <p className="text-xs text-muted-foreground">
+                Start with <code className="text-primary">hb1</code> (BTC), <code className="text-primary">0xhb</code> (ETH), or <code className="text-primary">hbt</code> (others)
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Select Asset</Label>
+          <Select value={selectedAsset} onValueChange={setSelectedAsset}>
+            <SelectTrigger className="h-12">
+              <SelectValue placeholder="Choose cryptocurrency" />
+            </SelectTrigger>
+            <SelectContent>
+              {availableAssets.map((symbol) => {
+                const balance = getWalletBalance(symbol);
+                return (
+                  <SelectItem key={symbol} value={symbol}>
+                    <div className="flex items-center justify-between w-full gap-4">
+                      <span className="font-medium">{symbol}</span>
+                      <span className="text-sm text-muted-foreground">
+                        Balance: {balance.toFixed(6)}
+                      </span>
+                    </div>
+                  </SelectItem>
+                );
+              })}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Recipient Wallet Address</Label>
+          <div className="relative">
+            <Input
+              placeholder="Enter Heritage ecosystem wallet address"
+              value={recipientAddress}
+              onChange={(e) => setRecipientAddress(e.target.value)}
+              className="h-12 pr-10 font-mono text-sm"
+            />
+            {lookupLoading && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <Loader2 className="w-5 h-5 text-primary animate-spin" />
+              </div>
+            )}
+            {recipientVerified && !lookupLoading && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <CheckCircle className="w-5 h-5 text-green-500" />
+              </div>
+            )}
+          </div>
+
+          {recipientInfo && recipientVerified && (
+            <div className="p-3 rounded-lg bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 animate-fade-in">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-full bg-green-100 dark:bg-green-900">
+                  <User className="w-4 h-4 text-green-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-green-700 dark:text-green-400">
+                    {recipientInfo.name}
+                  </p>
+                  <p className="text-sm text-green-600 dark:text-green-500">
+                    Heritage Member • {recipientInfo.symbol} Wallet
+                    <Badge className="ml-2 bg-green-500/20 text-green-600 text-xs">Verified</Badge>
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {recipientAddress.length >= 10 && !recipientVerified && !lookupLoading && (
+            <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-600" />
+                <p className="text-sm text-amber-700 dark:text-amber-400">
+                  Invalid Heritage ecosystem address. Check the format and try again.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <Label>Amount</Label>
+          <Input
+            type="number"
+            placeholder="0.00000000"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            step="0.00000001"
+            min="0"
+            className="h-12 font-mono"
+          />
+          {selectedAsset && (
+            <p className="text-xs text-muted-foreground">
+              Available: {getWalletBalance(selectedAsset).toFixed(8)} {selectedAsset}
+            </p>
+          )}
+        </div>
+
+        <Button
+          onClick={handleTransfer}
+          disabled={isTransferring || !selectedAsset || !recipientAddress || !amount || !recipientVerified}
+          className="w-full banking-button h-12"
+        >
+          {isTransferring ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            <>
+              <Send className="h-4 w-4 mr-2" />
+              Send {selectedAsset || 'Crypto'}
+            </>
+          )}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+};
