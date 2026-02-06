@@ -6,6 +6,7 @@ import { CreditCard, Wallet, Eye } from 'lucide-react';
 import premiumCardImage from '@/assets/premium-card.jpg';
 import { cn } from '@/lib/utils';
 import { CardDetailsModal } from './CardDetailsModal';
+import { HeritageSVGLogoTransparent } from './HeritageSVGLogoTransparent';
 
 interface CardDisplayProps {
   card: {
@@ -86,13 +87,16 @@ export const CardDisplay = ({ card, className }: CardDisplayProps) => {
 
             {/* Card Header */}
             <div className="relative flex justify-between items-start">
-              <div>
-                <p className="text-white/80 text-sm font-medium uppercase tracking-wider">
-                  Heritage Bank
-                </p>
-                <p className="text-white text-xs mt-1 capitalize font-semibold">
-                  {card.card_type} Card
-                </p>
+              <div className="flex items-center gap-2">
+                <HeritageSVGLogoTransparent size="sm" className="w-8 h-8" />
+                <div>
+                  <p className="text-white/90 text-sm font-bold uppercase tracking-wider">
+                    Heritage Bank
+                  </p>
+                  <p className="text-white text-xs mt-0.5 capitalize font-semibold">
+                    {card.card_type} Card
+                  </p>
+                </div>
               </div>
               {getNetworkIcon(card.card_network)}
             </div>
