@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { useTransactionRealTime } from '@/hooks/useTransactionRealTime';
 import { format } from 'date-fns';
 import { 
   Search, 
@@ -54,12 +55,17 @@ export default function TransactionHistory() {
   const [dateTo, setDateTo] = useState<Date | undefined>();
   const [activeSection, setActiveSection] = useState('history');
 
+  const fetchCallback = useCallback(() => {
+    if (user) fetchAllTransactions();
+  }, [user]);
+
+  // Real-time subscription for all transaction tables
+  useTransactionRealTime(fetchCallback);
+
   useEffect(() => {
     document.title = "Heritage Bank - Transaction History";
-    if (user) {
-      fetchAllTransactions();
-    }
-  }, [user]);
+    fetchCallback();
+  }, [fetchCallback]);
 
   useEffect(() => {
     applyFilters();
