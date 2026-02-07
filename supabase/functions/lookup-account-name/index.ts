@@ -45,14 +45,13 @@ serve(async (req) => {
 
       if (profile) {
         const fullName = `${profile.first_name || ''} ${profile.last_name || ''}`.trim();
-        const maskedName = maskAccountName(fullName);
         
-        console.log(`Found Heritage account for: ${maskedName}`);
+        console.log(`Found Heritage account for: ${fullName}`);
         
         return new Response(
           JSON.stringify({
             found: true,
-            accountName: maskedName,
+            accountName: fullName,
             bankName: 'Heritage Bank',
             accountType: formatAccountType(internalAccount.account_type),
             isInternal: true,
