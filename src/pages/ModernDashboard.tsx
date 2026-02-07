@@ -25,7 +25,7 @@ import { useToast } from '@/hooks/use-toast';
 import { AccountDetailsPanel } from '@/components/dashboard/AccountDetailsPanel';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { useNavigate } from 'react-router-dom';
-import { useEnhancedRealTimeNotifications } from '@/hooks/useEnhancedRealTimeNotifications';
+import { useComprehensiveNotifications } from '@/hooks/useComprehensiveNotifications';
 import { CustomerChatWidget } from '@/components/support/CustomerChatWidget';
 
 interface Account {
@@ -54,8 +54,8 @@ export default function ModernDashboard() {
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  // Use enhanced real-time notifications
-  useEnhancedRealTimeNotifications();
+  // Comprehensive real-time notifications with SMS, email, and push
+  useComprehensiveNotifications();
   
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [transactions] = useState<Transaction[]>([

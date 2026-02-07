@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Bitcoin, CreditCard, Building2, ArrowDownCircle, Smartphone, FileText, Banknote, Copy, QrCode, Zap } from 'lucide-react';
+import { Bitcoin, CreditCard, Building2, ArrowDownCircle, Smartphone, FileText, Banknote, Copy, QrCode } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -304,12 +304,9 @@ export const EnhancedDepositForm = ({ accounts, onSuccess }: EnhancedDepositForm
         </div>
 
         <Tabs defaultValue="crypto" className="w-full">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="crypto" className="text-xs">
               <Bitcoin className="w-4 h-4 mr-1" />Crypto
-            </TabsTrigger>
-            <TabsTrigger value="instant-crypto" className="text-xs">
-              <Zap className="w-4 h-4 mr-1" />Instant
             </TabsTrigger>
             <TabsTrigger value="card" className="text-xs">
               <CreditCard className="w-4 h-4 mr-1" />Card
@@ -326,60 +323,6 @@ export const EnhancedDepositForm = ({ accounts, onSuccess }: EnhancedDepositForm
           </TabsList>
 
           <TabsContent value="crypto" className="space-y-4">
-            <div className="space-y-2">
-              <Label>Select Cryptocurrency</Label>
-              <div className="flex flex-wrap gap-2">
-                {cryptoWallets.map((wallet) => (
-                  <Button
-                    key={wallet.currency}
-                    variant={selectedCrypto === wallet.currency ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedCrypto(wallet.currency)}
-                  >
-                    {wallet.currency}
-                  </Button>
-                ))}
-              </div>
-            </div>
-            
-            {selectedWallet && selectedWallet.wallet_address && selectedWallet.wallet_address !== 'pending_admin_setup' && (
-              <div className="p-4 bg-muted rounded-lg space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Send {selectedCrypto} to:</span>
-                  <Badge variant="outline">{selectedWallet.network}</Badge>
-                </div>
-                <div className="flex items-center gap-2">
-                  <code className="flex-1 text-xs bg-background p-2 rounded border break-all">
-                    {selectedWallet.wallet_address}
-                  </code>
-                  <Button variant="outline" size="sm" onClick={() => copyToClipboard(selectedWallet.wallet_address)}>
-                    <Copy className="w-4 h-4" />
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Send exactly ${amount || '0'} worth of {selectedCrypto} to this address
-                </p>
-              </div>
-            )}
-            
-            {(!selectedWallet || !selectedWallet.wallet_address || selectedWallet.wallet_address === 'pending_admin_setup') && cryptoWallets.length === 0 && (
-              <div className="p-4 bg-muted rounded-lg text-center">
-                <p className="text-sm text-muted-foreground">
-                  Loading crypto deposit wallets...
-                </p>
-              </div>
-            )}
-
-            <Button 
-              onClick={handleCryptoDeposit}
-              disabled={isProcessing || !selectedWallet || selectedWallet.wallet_address === 'pending_admin_setup'}
-              className="w-full banking-button"
-            >
-              {isProcessing ? "Processing..." : `Submit ${selectedCrypto} Deposit`}
-            </Button>
-          </TabsContent>
-
-          <TabsContent value="instant-crypto" className="space-y-4">
             <BTCInstantDeposit onSuccess={onSuccess} />
           </TabsContent>
 
