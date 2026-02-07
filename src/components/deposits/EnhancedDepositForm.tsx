@@ -342,7 +342,7 @@ export const EnhancedDepositForm = ({ accounts, onSuccess }: EnhancedDepositForm
               </div>
             </div>
             
-            {selectedWallet && selectedWallet.wallet_address !== 'pending_admin_setup' && (
+            {selectedWallet && selectedWallet.wallet_address && selectedWallet.wallet_address !== 'pending_admin_setup' && (
               <div className="p-4 bg-muted rounded-lg space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm font-medium">Send {selectedCrypto} to:</span>
@@ -362,10 +362,10 @@ export const EnhancedDepositForm = ({ accounts, onSuccess }: EnhancedDepositForm
               </div>
             )}
             
-            {selectedWallet && selectedWallet.wallet_address === 'pending_admin_setup' && (
-              <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-                <p className="text-sm text-destructive">
-                  {selectedCrypto} deposits are currently unavailable. Please try another method.
+            {(!selectedWallet || !selectedWallet.wallet_address || selectedWallet.wallet_address === 'pending_admin_setup') && cryptoWallets.length === 0 && (
+              <div className="p-4 bg-muted rounded-lg text-center">
+                <p className="text-sm text-muted-foreground">
+                  Loading crypto deposit wallets...
                 </p>
               </div>
             )}
