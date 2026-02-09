@@ -38,3 +38,6 @@ verify_jwt = false
 
 [functions.lookup-account-name]
 verify_jwt = false
+
+[functions.process-crypto-transfer]
+verify_jwt = false
