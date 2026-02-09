@@ -789,7 +789,7 @@ export const FullAdminPanel = () => {
           status: 'active'
         });
 
-        // Notify user
+        // Notify user in-app
         await supabase.from('user_notifications').insert({
           user_id: application.user_id,
           type: 'application',
@@ -797,6 +797,29 @@ export const FullAdminPanel = () => {
           message: `Your ${application.application_type} application has been approved. Your new account is ready.`,
           priority: 'high'
         });
+
+        // Send welcome email
+        sendEmailNotification(
+          application.email,
+          'Welcome to Heritage Investment Holdings!',
+          'welcome',
+          { userName: `${application.first_name} ${application.last_name}`, applicationType: application.application_type }
+        );
+
+        // Send welcome SMS
+        if (application.phone) {
+          try {
+            await supabase.functions.invoke('send-sms-notification', {
+              body: {
+                to: application.phone,
+                message: `Welcome to Heritage Bank, ${application.first_name}! Your ${application.application_type.replace('_', ' ')} account has been approved and is now active. Log in to get started. - Heritage Investment Holdings`,
+                type: 'welcome'
+              }
+            });
+          } catch (smsErr) {
+            console.log('Welcome SMS failed:', smsErr);
+          }
+        }
       }
 
       toast({

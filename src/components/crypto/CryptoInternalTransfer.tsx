@@ -73,7 +73,7 @@ export const CryptoInternalTransfer = ({ wallets, onSuccess }: CryptoInternalTra
             .maybeSingle();
 
           if (profile) {
-            const name = `${profile.first_name?.[0] || ''}***${profile.last_name?.[0] || ''}***`;
+            const name = `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'Heritage Member';
             setRecipientInfo({ name, symbol: wallet.asset_symbol });
             setRecipientVerified(true);
           }
@@ -123,43 +123,22 @@ export const CryptoInternalTransfer = ({ wallets, onSuccess }: CryptoInternalTra
     setIsTransferring(true);
 
     try {
-      // Find recipient wallet
-      const { data: recipientWallet, error: findError } = await supabase
-        .from('crypto_wallets')
-        .select('id, user_id, balance')
-        .eq('wallet_address', recipientAddress)
-        .maybeSingle();
+      // Use edge function with service role to handle both sender and recipient updates
+      const { data, error } = await supabase.functions.invoke('process-crypto-transfer', {
+        body: {
+          senderWalletId: sourceWallet.id,
+          recipientWalletAddress: recipientAddress,
+          amount: transferAmount,
+          assetSymbol: selectedAsset
+        }
+      });
 
-      if (findError || !recipientWallet) {
-        throw new Error('Recipient wallet not found');
-      }
-
-      // Update sender's balance
-      await supabase
-        .from('crypto_wallets')
-        .update({ balance: (sourceWallet.balance ?? 0) - transferAmount })
-        .eq('id', sourceWallet.id);
-
-      // Update recipient's balance
-      await supabase
-        .from('crypto_wallets')
-        .update({ balance: (recipientWallet.balance ?? 0) + transferAmount })
-        .eq('id', recipientWallet.id);
-
-      // Create notification for recipient
-      await supabase
-        .from('user_notifications')
-        .insert([{
-          user_id: recipientWallet.user_id,
-          title: `${selectedAsset} Received`,
-          message: `You received ${transferAmount} ${selectedAsset} via Heritage Ecosystem`,
-          type: 'crypto',
-          priority: 'high'
-        }]);
+      if (error) throw new Error(error.message || 'Transfer failed');
+      if (data?.error) throw new Error(data.error);
 
       toast({
         title: "Transfer Complete",
-        description: `Successfully sent ${transferAmount} ${selectedAsset}`,
+        description: `Successfully sent ${transferAmount} ${selectedAsset} to ${recipientInfo?.name}`,
       });
 
       // Reset form
