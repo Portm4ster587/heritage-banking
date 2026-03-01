@@ -69,18 +69,28 @@ export const DashboardHeader = ({ onSectionChange }: DashboardHeaderProps) => {
   };
 
   const handleMenuClick = (action: string) => {
-    if (onSectionChange) {
-      onSectionChange(action);
-    }
     setIsOpen(false);
     
-    // Handle specific navigation
-    if (action === 'admin') {
-      navigate('/admin-dashboard');
-    } else if (action === 'profile') {
-      navigate('/dashboard/profile');
-    } else if (action === 'settings') {
-      navigate('/dashboard/settings');
+    const routeMap: Record<string, string> = {
+      admin: '/admin/dashboard',
+      profile: '/dashboard/profile',
+      settings: '/dashboard/settings',
+      cards: '/dashboard/cards',
+      accounts: '/dashboard',
+      transfers: '/dashboard/transfers',
+      crypto: '/dashboard/crypto',
+      statements: '/dashboard/statements',
+      security: '/dashboard/settings',
+      notifications: '/dashboard/notifications',
+      help: '/contact',
+      bills: '/dashboard/bills',
+    };
+
+    const route = routeMap[action];
+    if (route) {
+      navigate(route);
+    } else if (onSectionChange) {
+      onSectionChange(action);
     }
   };
 
