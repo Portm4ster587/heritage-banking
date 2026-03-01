@@ -13,6 +13,9 @@ import NotFound from "./pages/NotFound";
 import Transfers from "./pages/dashboard/Transfers";
 import TopUp from "./pages/dashboard/TopUp";
 import Crypto from "./pages/dashboard/Crypto";
+import Cards from "./pages/dashboard/Cards";
+import Bills from "./pages/dashboard/Bills";
+import Notifications from "./pages/dashboard/Notifications";
 import Settings from "./pages/dashboard/Settings";
 import IDMe from "./pages/dashboard/IDMe";
 import History from "./pages/dashboard/History";
@@ -151,6 +154,30 @@ const App = () => (
               element={
                 <ProtectedRoute>
                   <Crypto />
+                </ProtectedRoute>
+              }
+            />
+            <Route 
+              path="/dashboard/cards" 
+              element={
+                <ProtectedRoute>
+                  <Cards />
+                </ProtectedRoute>
+              }
+            />
+            <Route 
+              path="/dashboard/bills" 
+              element={
+                <ProtectedRoute>
+                  <Bills />
+                </ProtectedRoute>
+              }
+            />
+            <Route 
+              path="/dashboard/notifications" 
+              element={
+                <ProtectedRoute>
+                  <Notifications />
                 </ProtectedRoute>
               }
             />

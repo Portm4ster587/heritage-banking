@@ -19,7 +19,8 @@ import {
   Settings,
   User,
   ChevronRight,
-  FileText
+  FileText,
+  Receipt
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { AccountDetailsPanel } from '@/components/dashboard/AccountDetailsPanel';
@@ -107,18 +108,18 @@ export default function ModernDashboard() {
           .insert([
             {
               user_id: user.id,
-              account_number: `CHK${Date.now()}`,
+              account_number: `${Math.floor(1000000000 + Math.random() * 9000000000)}`,
               account_type: 'personal_checking',
-              routing_number: '123456789',
-              balance: 12547.83,
+              routing_number: '021000021',
+              balance: 0,
               status: 'active'
             },
             {
               user_id: user.id,
-              account_number: `SAV${Date.now()}`,
+              account_number: `${Math.floor(1000000000 + Math.random() * 9000000000)}`,
               account_type: 'personal_savings',
-              routing_number: '123456789',
-              balance: 45680.92,
+              routing_number: '021000021',
+              balance: 0,
               status: 'active'
             }
           ]);
@@ -307,6 +308,18 @@ export default function ModernDashboard() {
                   <Button variant="outline" className="w-full justify-start mb-2">
                     <TrendingUp className="w-4 h-4 mr-3" />
                     Crypto Portfolio
+                  </Button>
+                </a>
+                <a href="/dashboard/cards">
+                  <Button variant="outline" className="w-full justify-start mb-2">
+                    <CreditCard className="w-4 h-4 mr-3" />
+                    My Cards
+                  </Button>
+                </a>
+                <a href="/dashboard/bills">
+                  <Button variant="outline" className="w-full justify-start mb-2">
+                    <Receipt className="w-4 h-4 mr-3" />
+                    Bill Payments
                   </Button>
                 </a>
                 <a href="/dashboard/history">
