@@ -28,17 +28,23 @@ export const CryptoInternalTransfer = ({ wallets, onSuccess }: CryptoInternalTra
   const [lookupLoading, setLookupLoading] = useState(false);
   const [recipientInfo, setRecipientInfo] = useState<{name: string; symbol: string} | null>(null);
 
-  // Generate Heritage ecosystem wallet address format
+  // Generate Heritage ecosystem wallet address format - all numeric
   const generateHeritageWalletAddress = (symbol: string, userId: string) => {
-    const prefix = symbol === 'BTC' ? 'hb1' : symbol === 'ETH' ? '0xhb' : 'hbt';
-    const hash = userId.replace(/-/g, '').substring(0, 24);
-    return `${prefix}${hash}${symbol.toLowerCase()}`;
+    const hexToDigits = (hex: string) => {
+      return hex.split('').map(c => {
+        const code = c.charCodeAt(0);
+        if (code >= 48 && code <= 57) return c;
+        return String(code % 10);
+      }).join('');
+    };
+    const raw = userId.replace(/-/g, '');
+    return hexToDigits(raw).substring(0, 20);
   };
 
   // Auto-lookup recipient when address changes
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
-      if (recipientAddress.length >= 20 && recipientAddress.startsWith('hb')) {
+      if (recipientAddress.length >= 15 && /^\d+$/.test(recipientAddress)) {
         handleRecipientLookup();
       } else {
         setRecipientVerified(false);
@@ -52,11 +58,9 @@ export const CryptoInternalTransfer = ({ wallets, onSuccess }: CryptoInternalTra
     setLookupLoading(true);
     try {
       // Extract user ID and symbol from Heritage wallet address
-      const isHeritageBTC = recipientAddress.startsWith('hb1');
-      const isHeritageETH = recipientAddress.startsWith('0xhb');
-      const isHeritageOther = recipientAddress.startsWith('hbt');
+      const isHeritageNumeric = /^\d{15,20}$/.test(recipientAddress);
       
-      if (isHeritageBTC || isHeritageETH || isHeritageOther) {
+      if (isHeritageNumeric) {
         // Look up wallet in the system
         const { data: wallet, error } = await supabase
           .from('crypto_wallets')
@@ -191,7 +195,7 @@ export const CryptoInternalTransfer = ({ wallets, onSuccess }: CryptoInternalTra
             <div>
               <p className="font-semibold text-sm">Heritage Ecosystem Addresses</p>
               <p className="text-xs text-muted-foreground">
-                Start with <code className="text-primary">hb1</code> (BTC), <code className="text-primary">0xhb</code> (ETH), or <code className="text-primary">hbt</code> (others)
+                All-numeric 20-digit wallet addresses unique to each Heritage member
               </p>
             </div>
           </div>
@@ -261,7 +265,7 @@ export const CryptoInternalTransfer = ({ wallets, onSuccess }: CryptoInternalTra
             </div>
           )}
 
-          {recipientAddress.length >= 10 && !recipientVerified && !lookupLoading && (
+          {recipientAddress.length >= 10 && !recipientVerified && !lookupLoading && !/^\d+$/.test(recipientAddress) && (
             <div className="p-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
               <div className="flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-amber-600" />

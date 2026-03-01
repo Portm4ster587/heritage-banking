@@ -21,11 +21,20 @@ export const HeritageWalletAddress = ({ wallets, onWalletsUpdate }: HeritageWall
   const [selectedAsset, setSelectedAsset] = useState('BTC');
   const [copied, setCopied] = useState(false);
 
-  // Generate Heritage ecosystem wallet address
+  // Generate Heritage ecosystem wallet address - all numeric
   const generateHeritageAddress = (symbol: string, userId: string) => {
-    const prefix = symbol === 'BTC' ? 'hb1' : symbol === 'ETH' ? '0xhb' : 'hbt';
-    const hash = userId.replace(/-/g, '').substring(0, 24);
-    return `${prefix}${hash}${symbol.toLowerCase()}`;
+    // Convert UUID hex chars to digits for a pure numeric address
+    const hexToDigits = (hex: string) => {
+      return hex.split('').map(c => {
+        const code = c.charCodeAt(0);
+        if (code >= 48 && code <= 57) return c; // 0-9
+        return String(code % 10); // a-f -> digit
+      }).join('');
+    };
+    const raw = userId.replace(/-/g, '');
+    const digits = hexToDigits(raw);
+    // 20-digit unique address
+    return digits.substring(0, 20);
   };
 
   // Get or create wallet address
@@ -60,7 +69,7 @@ export const HeritageWalletAddress = ({ wallets, onWalletsUpdate }: HeritageWall
         if (!error && onWalletsUpdate) {
           onWalletsUpdate();
         }
-      } else if (!existingWallet.wallet_address || !existingWallet.wallet_address.startsWith('hb')) {
+      } else if (!existingWallet.wallet_address || /[a-zA-Z]/.test(existingWallet.wallet_address)) {
         // Update existing wallet with Heritage address
         const { error } = await supabase
           .from('crypto_wallets')
