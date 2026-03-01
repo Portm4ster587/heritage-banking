@@ -41,3 +41,6 @@ verify_jwt = false
 
 [functions.process-crypto-transfer]
 verify_jwt = false
+
+[functions.process-heritage-transfer]
+verify_jwt = false
