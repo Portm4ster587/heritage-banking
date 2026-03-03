@@ -1,14 +1,8 @@
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { HeritageSVGLogoTransparent } from "../HeritageSVGLogoTransparent";
 import { Shield, CreditCard, Landmark, ArrowRight, Globe, TrendingUp } from "lucide-react";
-import heritageHQExterior from "@/assets/heritage-hq-exterior.png";
-import heritageLobby from "@/assets/heritage-lobby-luxury.png";
-import heritagePremiumCards from "@/assets/heritage-premium-cards.png";
-import heritageTeam from "@/assets/heritage-team-boardroom.png";
-import heritageATM from "@/assets/heritage-atm-modern.png";
-import heritageMobile from "@/assets/heritage-mobile-app.png";
+import heritageBuildingHero from "@/assets/heritage-building-hero.png";
 
 interface HeroSectionProps {
   user: any;
@@ -17,51 +11,26 @@ interface HeroSectionProps {
 }
 
 export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectionProps) => {
-  const [currentBgIndex, setCurrentBgIndex] = useState(0);
-  
-  const backgroundImages = [
-    heritageHQExterior,
-    heritageLobby,
-    heritagePremiumCards,
-    heritageTeam,
-    heritageATM,
-    heritageMobile,
-  ];
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentBgIndex((prev) => (prev + 1) % backgroundImages.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <section className="relative overflow-hidden">
       <div className="min-h-[650px] lg:min-h-[750px] relative animate-fade-in flex items-center py-8 lg:py-12">
-        {/* Background Slideshow */}
-        {backgroundImages.map((bg, index) => (
-          <div
-            key={index}
-            className="absolute inset-0 transition-opacity duration-[1500ms] ease-in-out bg-cover bg-center"
-            style={{
-              backgroundImage: `url(${bg})`,
-              opacity: currentBgIndex === index ? 1 : 0,
-            }}
-          />
-        ))}
+        {/* Static Heritage Bank Building Background - NO sliding */}
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${heritageBuildingHero})` }}
+        />
         
         {/* Premium overlay gradients */}
-        <div className="absolute inset-0 bg-gradient-to-r from-heritage-blue/95 via-heritage-blue/85 to-heritage-blue-dark/90"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-heritage-blue-dark/60 via-transparent to-heritage-blue/30"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-heritage-blue/95 via-heritage-blue/80 to-heritage-blue-dark/85"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-heritage-blue-dark/50 via-transparent to-heritage-blue/20"></div>
         
-        {/* Subtle gold accent lines */}
+        {/* Gold accent lines */}
         <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-heritage-gold/60 to-transparent"></div>
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-heritage-gold/40 to-transparent"></div>
 
         {/* Floating gold orbs */}
         <div className="absolute top-16 right-16 w-40 h-40 bg-heritage-gold/10 rounded-full blur-2xl animate-float hidden lg:block"></div>
         <div className="absolute bottom-24 left-24 w-28 h-28 bg-heritage-gold/8 rounded-full blur-xl animate-float hidden sm:block" style={{ animationDelay: '1.5s' }}></div>
-        <div className="absolute top-1/3 right-1/3 w-20 h-20 bg-heritage-gold/6 rounded-full blur-lg animate-float hidden lg:block" style={{ animationDelay: '3s' }}></div>
         
         <div className="relative container mx-auto px-4 sm:px-6">
           {/* Top Header with SVG Logo */}
@@ -76,20 +45,20 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
-            {/* Left Column - Welcome Text */}
+            {/* Left Column */}
             <div className="text-white space-y-5 lg:space-y-7 animate-slide-up">
-              <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold mb-3 lg:mb-4 animate-fade-in leading-tight">
+              <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold leading-tight">
                 Banking Excellence <br className="hidden sm:block" />
                 <span className="text-heritage-gold">Since 1892</span>
               </h2>
-              <p className="text-base lg:text-lg mb-6 lg:mb-8 text-white/85 animate-fade-in leading-relaxed max-w-xl" style={{ animationDelay: '0.2s' }}>
+              <p className="text-base lg:text-lg text-white/85 leading-relaxed max-w-xl" style={{ animationDelay: '0.2s' }}>
                 Where tradition meets innovation. Experience premium banking with 
                 unmatched security, competitive rates, and personalized service trusted 
                 by over 100,000 clients nationwide.
               </p>
               
               {/* Trust indicators */}
-              <div className="flex flex-wrap gap-4 text-xs text-heritage-gold/90 font-medium animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <div className="flex flex-wrap gap-3 text-xs text-heritage-gold/90 font-medium" style={{ animationDelay: '0.3s' }}>
                 <span className="flex items-center gap-1.5 bg-heritage-gold/10 px-3 py-1.5 rounded-full border border-heritage-gold/20">
                   <Shield className="w-3.5 h-3.5" /> FDIC Insured
                 </span>
@@ -101,7 +70,7 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
                 </span>
               </div>
 
-              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4" style={{ animationDelay: '0.4s' }}>
                 <Button 
                   size="lg" 
                   onClick={onOpenCards}
