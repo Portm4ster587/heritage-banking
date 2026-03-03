@@ -8,15 +8,18 @@ import { AnimatedHeritageLogo } from "../components/AnimatedHeritageLogo";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { GuestApplicationForm } from "../components/GuestApplicationForm";
 import { useAuth } from "@/hooks/useAuth";
-import { Sparkles, Shield, Zap, Users, Phone, Mail, MapPin, Landmark } from "lucide-react";
+import { Sparkles, Shield, Zap, Users, Phone, Mail, MapPin, Landmark, Building2, Smartphone, CreditCard, TrendingUp } from "lucide-react";
 import { CustomerChatWidget } from "../components/CustomerChatWidget";
 import { HeroSection } from "../components/homepage/HeroSection";
-import cardsShowcaseImage from "@/assets/cards-showcase.jpg";
-import heritageAtmImage from "@/assets/heritage-atm.jpg";
-import heritageAtmImage2 from "@/assets/heritage-atm-2.png";
-import bankInterior1 from "@/assets/bank-interior-1.jpg";
-import bankInterior2 from "@/assets/bank-interior-2.jpg";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
+
+// New Heritage branding images
+import heritageHQExterior from "@/assets/heritage-hq-exterior.png";
+import heritageLobby from "@/assets/heritage-lobby-luxury.png";
+import heritagePremiumCards from "@/assets/heritage-premium-cards.png";
+import heritageTeam from "@/assets/heritage-team-boardroom.png";
+import heritageATM from "@/assets/heritage-atm-modern.png";
+import heritageMobile from "@/assets/heritage-mobile-app.png";
 
 const Index = () => {
   const { user } = useAuth();
@@ -29,39 +32,11 @@ const Index = () => {
   // Auto-slide effect for the carousel
   useEffect(() => {
     if (!carouselApi) return;
-    
     const interval = setInterval(() => {
       carouselApi.scrollNext();
     }, 3500);
-
     return () => clearInterval(interval);
   }, [carouselApi]);
-  const features = [
-    {
-      title: 'Secure Banking',
-      description: 'Bank-level security with 256-bit encryption',
-      icon: Shield,
-      color: 'bg-blue-500'
-    },
-    {
-      title: 'Instant Transfers',
-      description: 'Real-time money transfers 24/7',
-      icon: Zap,
-      color: 'bg-green-500'
-    },
-    {
-      title: 'Premium Support',
-      description: '24/7 dedicated customer service',
-      icon: Users,
-      color: 'bg-purple-500'
-    },
-    {
-      title: 'Smart Rewards',
-      description: 'Earn points on every transaction',
-      icon: Sparkles,
-      color: 'bg-orange-500'
-    }
-  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -78,28 +53,25 @@ const Index = () => {
         {/* Quick Apply Section */}
         <section className="text-center animate-fade-in" style={{ animationDelay: '0.8s' }}>
           <div className="max-w-6xl mx-auto">
-            <h2 className="text-4xl font-bold text-heritage-blue dark:text-heritage-gold mb-6">Open Your Heritage Account</h2>
-            <p className="text-xl text-heritage-blue/80 dark:text-foreground/80 mb-12 font-medium">
+            <h2 className="text-4xl font-bold text-heritage-blue dark:text-heritage-gold mb-4">Open Your Heritage Account</h2>
+            <p className="text-lg text-muted-foreground mb-12 max-w-2xl mx-auto">
               Choose from our comprehensive range of banking products designed for your financial success.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Personal Checking */}
-              <Card className="banking-card hover-lift cursor-pointer group border-2 hover:border-heritage-gold transition-all duration-300 bg-gradient-to-br from-white to-gray-50 dark:from-card dark:to-card/90">
+              <Card className="group border hover:border-heritage-gold/50 transition-all duration-300 hover:shadow-lg hover:shadow-heritage-gold/5 bg-card">
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-heritage-blue rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                    <Shield className="w-8 h-8 text-heritage-gold" />
+                  <div className="w-14 h-14 bg-heritage-blue rounded-xl flex items-center justify-center mx-auto mb-4 shadow-md group-hover:scale-105 transition-transform">
+                    <Shield className="w-7 h-7 text-heritage-gold" />
                   </div>
                   <CardTitle className="text-lg text-heritage-blue dark:text-heritage-gold font-bold">Personal Checking</CardTitle>
-                  <CardDescription className="text-heritage-blue/70 dark:text-foreground/70 font-medium">No monthly fees</CardDescription>
+                  <CardDescription className="text-muted-foreground">No monthly fees</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                   <Button 
                     size="lg" 
-                    onClick={() => {
-                      setApplicationType('checking');
-                      setShowGuestApplication(true);
-                    }}
-                    className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-bold shadow-md"
+                    onClick={() => { setApplicationType('checking'); setShowGuestApplication(true); }}
+                    className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-bold shadow-sm"
                   >
                     Apply Now
                   </Button>
@@ -107,22 +79,19 @@ const Index = () => {
               </Card>
 
               {/* Personal Savings */}
-              <Card className="banking-card hover-lift cursor-pointer group border-2 hover:border-heritage-gold transition-all duration-300 bg-gradient-to-br from-white to-gray-50 dark:from-card dark:to-card/90">
+              <Card className="group border hover:border-heritage-gold/50 transition-all duration-300 hover:shadow-lg hover:shadow-heritage-gold/5 bg-card">
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-heritage-blue rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                    <Sparkles className="w-8 h-8 text-heritage-gold" />
+                  <div className="w-14 h-14 bg-heritage-blue rounded-xl flex items-center justify-center mx-auto mb-4 shadow-md group-hover:scale-105 transition-transform">
+                    <TrendingUp className="w-7 h-7 text-heritage-gold" />
                   </div>
                   <CardTitle className="text-lg text-heritage-blue dark:text-heritage-gold font-bold">Personal Savings</CardTitle>
-                  <CardDescription className="text-heritage-blue/70 dark:text-foreground/70 font-medium">High yield rates</CardDescription>
+                  <CardDescription className="text-muted-foreground">High yield rates</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                   <Button 
                     size="lg" 
-                    onClick={() => {
-                      setApplicationType('savings');
-                      setShowGuestApplication(true);
-                    }}
-                    className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-bold shadow-md"
+                    onClick={() => { setApplicationType('savings'); setShowGuestApplication(true); }}
+                    className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-bold shadow-sm"
                   >
                     Apply Now
                   </Button>
@@ -130,22 +99,19 @@ const Index = () => {
               </Card>
 
               {/* Business Checking */}
-              <Card className="banking-card hover-lift cursor-pointer group border-2 hover:border-heritage-gold transition-all duration-300 bg-gradient-to-br from-white to-gray-50 dark:from-card dark:to-card/90">
+              <Card className="group border hover:border-heritage-gold/50 transition-all duration-300 hover:shadow-lg hover:shadow-heritage-gold/5 bg-card">
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-heritage-blue rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                    <Users className="w-8 h-8 text-heritage-gold" />
+                  <div className="w-14 h-14 bg-heritage-blue rounded-xl flex items-center justify-center mx-auto mb-4 shadow-md group-hover:scale-105 transition-transform">
+                    <Building2 className="w-7 h-7 text-heritage-gold" />
                   </div>
                   <CardTitle className="text-lg text-heritage-blue dark:text-heritage-gold font-bold">Business Checking</CardTitle>
-                  <CardDescription className="text-heritage-blue/70 dark:text-foreground/70 font-medium">Designed for business</CardDescription>
+                  <CardDescription className="text-muted-foreground">Designed for business</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                   <Button 
                     size="lg" 
-                    onClick={() => {
-                      setApplicationType('business');
-                      setShowGuestApplication(true);
-                    }}
-                    className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-bold shadow-md"
+                    onClick={() => { setApplicationType('business'); setShowGuestApplication(true); }}
+                    className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-bold shadow-sm"
                   >
                     Apply Now
                   </Button>
@@ -153,22 +119,19 @@ const Index = () => {
               </Card>
 
               {/* Business Savings */}
-              <Card className="banking-card hover-lift cursor-pointer group border-2 hover:border-heritage-gold transition-all duration-300 bg-gradient-to-br from-white to-gray-50 dark:from-card dark:to-card/90">
+              <Card className="group border hover:border-heritage-gold/50 transition-all duration-300 hover:shadow-lg hover:shadow-heritage-gold/5 bg-card">
                 <CardHeader className="text-center">
-                  <div className="w-16 h-16 bg-heritage-blue rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                    <Zap className="w-8 h-8 text-heritage-gold" />
+                  <div className="w-14 h-14 bg-heritage-blue rounded-xl flex items-center justify-center mx-auto mb-4 shadow-md group-hover:scale-105 transition-transform">
+                    <Sparkles className="w-7 h-7 text-heritage-gold" />
                   </div>
                   <CardTitle className="text-lg text-heritage-blue dark:text-heritage-gold font-bold">Business Savings</CardTitle>
-                  <CardDescription className="text-heritage-blue/70 dark:text-foreground/70 font-medium">Grow your business</CardDescription>
+                  <CardDescription className="text-muted-foreground">Grow your business</CardDescription>
                 </CardHeader>
                 <CardContent className="text-center">
                   <Button 
                     size="lg" 
-                    onClick={() => {
-                      setApplicationType('savings');
-                      setShowGuestApplication(true);
-                    }}
-                    className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-bold shadow-md"
+                    onClick={() => { setApplicationType('savings'); setShowGuestApplication(true); }}
+                    className="w-full bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-bold shadow-sm"
                   >
                     Apply Now
                   </Button>
@@ -180,17 +143,14 @@ const Index = () => {
             <div className="mt-12">
               <h3 className="text-2xl font-bold text-heritage-blue dark:text-heritage-gold mb-6">Loan Products & Services</h3>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="banking-card hover-lift border-2 hover:border-heritage-gold transition-all bg-gradient-to-br from-white to-blue-50 dark:from-card dark:to-blue-950/20">
+                <Card className="group border hover:border-heritage-gold/50 transition-all duration-300 hover:shadow-lg bg-card">
                   <CardHeader className="text-center">
                     <CardTitle className="text-heritage-blue dark:text-heritage-gold font-bold">Mortgage Loans</CardTitle>
-                    <CardDescription className="text-heritage-blue/70 dark:text-foreground/70 font-medium">Home financing solutions</CardDescription>
+                    <CardDescription className="text-muted-foreground">Home financing solutions</CardDescription>
                   </CardHeader>
                   <CardContent className="text-center">
                     <Button 
-                      onClick={() => {
-                        setApplicationType('home_loan');
-                        setShowGuestApplication(true);
-                      }}
+                      onClick={() => { setApplicationType('home_loan'); setShowGuestApplication(true); }}
                       className="w-full bg-heritage-blue hover:bg-heritage-blue-dark text-white font-bold"
                     >
                       Learn More
@@ -198,10 +158,10 @@ const Index = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="banking-card hover-lift border-2 hover:border-heritage-gold transition-all bg-gradient-to-br from-white to-green-50 dark:from-card dark:to-green-950/20">
+                <Card className="group border hover:border-heritage-gold/50 transition-all duration-300 hover:shadow-lg bg-card">
                   <CardHeader className="text-center">
                     <CardTitle className="text-heritage-blue dark:text-heritage-gold font-bold">IRA Accounts</CardTitle>
-                    <CardDescription className="text-heritage-blue/70 dark:text-foreground/70 font-medium">Retirement planning</CardDescription>
+                    <CardDescription className="text-muted-foreground">Retirement planning</CardDescription>
                   </CardHeader>
                   <CardContent className="text-center">
                     <Button 
@@ -213,15 +173,15 @@ const Index = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="banking-card hover-lift border-2 hover:border-heritage-gold transition-all bg-gradient-to-br from-heritage-blue/5 to-heritage-gold/10">
+                <Card className="group border hover:border-heritage-gold/50 transition-all duration-300 hover:shadow-lg bg-card">
                   <CardHeader className="text-center">
                     <CardTitle className="text-heritage-blue dark:text-heritage-gold font-bold text-xl">Credit Cards</CardTitle>
-                    <CardDescription className="text-heritage-blue/80 dark:text-foreground/80 font-medium">Premium rewards cards</CardDescription>
+                    <CardDescription className="text-muted-foreground">Premium rewards cards</CardDescription>
                   </CardHeader>
                   <CardContent className="text-center">
                     <Button 
                       onClick={() => setShowCards(true)}
-                      className="w-full bg-gradient-to-r from-heritage-gold to-amber-500 text-heritage-blue hover:from-heritage-gold/90 hover:to-amber-500/90 font-bold text-lg py-6 shadow-lg hover:shadow-xl transition-all"
+                      className="w-full bg-gradient-to-r from-heritage-gold to-amber-500 text-heritage-blue hover:from-heritage-gold/90 hover:to-amber-500/90 font-bold text-lg py-6 shadow-md hover:shadow-lg transition-all"
                     >
                       ✨ Explore Premium Cards
                     </Button>
@@ -232,10 +192,11 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Banking Services Showcase - Image Carousel with Auto-slide */}
+        {/* Banking Services Showcase - Image Carousel */}
         <section className="py-16 bg-muted/30 rounded-3xl">
           <div className="max-w-6xl mx-auto px-6">
-            <h2 className="text-3xl font-bold text-center mb-12 text-heritage-blue dark:text-heritage-gold">Experience Heritage Banking</h2>
+            <h2 className="text-3xl font-bold text-center mb-4 text-heritage-blue dark:text-heritage-gold">Experience Heritage Banking</h2>
+            <p className="text-center text-muted-foreground mb-12 max-w-xl mx-auto">A legacy of trust, innovation, and premium financial services since 1892.</p>
             <Carousel 
               opts={{ loop: true, align: "start" }} 
               className="w-full"
@@ -243,77 +204,86 @@ const Index = () => {
             >
               <CarouselContent>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                  <div className="relative h-72 rounded-xl overflow-hidden shadow-xl">
+                  <div className="relative h-72 rounded-xl overflow-hidden shadow-xl group">
                     <img 
-                      src={bankInterior1} 
-                      alt="Heritage Bank Interior" 
-                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                      style={{ filter: 'contrast(1.2) saturate(1.4) brightness(1.35)' }}
+                      src={heritageHQExterior} 
+                      alt="Heritage Bank Headquarters" 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-heritage-blue/80 via-heritage-blue/20 to-transparent" />
                     <div className="absolute bottom-4 left-4 text-white">
-                      <p className="font-semibold">Premium Service</p>
-                      <p className="text-sm opacity-90">World-class banking experience</p>
+                      <p className="font-bold text-lg">Our Headquarters</p>
+                      <p className="text-sm text-white/80">New York Financial District</p>
                     </div>
                   </div>
                 </CarouselItem>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                  <div className="relative h-72 rounded-xl overflow-hidden shadow-xl">
+                  <div className="relative h-72 rounded-xl overflow-hidden shadow-xl group">
                     <img 
-                      src={bankInterior2} 
-                      alt="Heritage Bank Customer Service" 
-                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                      style={{ filter: 'contrast(1.2) saturate(1.4) brightness(1.35)' }}
+                      src={heritageLobby} 
+                      alt="Heritage Bank Luxury Lobby" 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-heritage-blue/80 via-heritage-blue/20 to-transparent" />
                     <div className="absolute bottom-4 left-4 text-white">
-                      <p className="font-semibold">Expert Team</p>
-                      <p className="text-sm opacity-90">Dedicated financial advisors</p>
+                      <p className="font-bold text-lg">Premium Service</p>
+                      <p className="text-sm text-white/80">World-class banking experience</p>
                     </div>
                   </div>
                 </CarouselItem>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                  <div className="relative h-72 rounded-xl overflow-hidden shadow-xl">
+                  <div className="relative h-72 rounded-xl overflow-hidden shadow-xl group">
                     <img 
-                      src={cardsShowcaseImage} 
-                      alt="Heritage Bank Cards" 
-                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                      style={{ filter: 'contrast(1.15) saturate(1.3) brightness(1.5)' }}
+                      src={heritagePremiumCards} 
+                      alt="Heritage Bank Premium Cards" 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-heritage-blue/80 via-heritage-blue/20 to-transparent" />
                     <div className="absolute bottom-4 left-4 text-white">
-                      <p className="font-semibold">Premium Cards</p>
-                      <p className="text-sm opacity-90">Exclusive rewards & benefits</p>
+                      <p className="font-bold text-lg">Premium Cards</p>
+                      <p className="text-sm text-white/80">Exclusive rewards & benefits</p>
                     </div>
                   </div>
                 </CarouselItem>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                  <div className="relative h-72 rounded-xl overflow-hidden shadow-xl">
+                  <div className="relative h-72 rounded-xl overflow-hidden shadow-xl group">
                     <img 
-                      src={heritageAtmImage} 
-                      alt="Heritage Bank ATM" 
-                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                      style={{ filter: 'contrast(1.15) saturate(1.3) brightness(1.5)' }}
+                      src={heritageTeam} 
+                      alt="Heritage Bank Advisory Team" 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-heritage-blue/80 via-heritage-blue/20 to-transparent" />
                     <div className="absolute bottom-4 left-4 text-white">
-                      <p className="font-semibold">ATM Network</p>
-                      <p className="text-sm opacity-90">Fee-free withdrawals worldwide</p>
+                      <p className="font-bold text-lg">Expert Advisors</p>
+                      <p className="text-sm text-white/80">Dedicated financial guidance</p>
                     </div>
                   </div>
                 </CarouselItem>
                 <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-                  <div className="relative h-72 rounded-xl overflow-hidden shadow-xl">
+                  <div className="relative h-72 rounded-xl overflow-hidden shadow-xl group">
                     <img 
-                      src={heritageAtmImage2} 
-                      alt="Heritage Bank ATM Night" 
-                      className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                      style={{ filter: 'contrast(1.15) saturate(1.3) brightness(1.5)' }}
+                      src={heritageATM} 
+                      alt="Heritage Bank Modern ATM" 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-heritage-blue/80 via-heritage-blue/20 to-transparent" />
                     <div className="absolute bottom-4 left-4 text-white">
-                      <p className="font-semibold">24/7 Access</p>
-                      <p className="text-sm opacity-90">Banking that never sleeps</p>
+                      <p className="font-bold text-lg">ATM Network</p>
+                      <p className="text-sm text-white/80">Fee-free withdrawals nationwide</p>
+                    </div>
+                  </div>
+                </CarouselItem>
+                <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                  <div className="relative h-72 rounded-xl overflow-hidden shadow-xl group">
+                    <img 
+                      src={heritageMobile} 
+                      alt="Heritage Bank Mobile App" 
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-heritage-blue/80 via-heritage-blue/20 to-transparent" />
+                    <div className="absolute bottom-4 left-4 text-white">
+                      <p className="font-bold text-lg">Mobile Banking</p>
+                      <p className="text-sm text-white/80">Bank anywhere, anytime</p>
                     </div>
                   </div>
                 </CarouselItem>
@@ -380,26 +350,14 @@ const Index = () => {
               <div className="space-y-3 text-sm">
                 <div>
                   <p className="font-semibold text-heritage-gold">Customer Service</p>
-                  <p className="text-white/90 flex items-center">
-                    <Phone className="w-3.5 h-3.5 mr-1.5" />
-                    1-800-HERITAGE
-                  </p>
-                  <p className="text-white/90 flex items-center">
-                    <Phone className="w-3.5 h-3.5 mr-1.5" />
-                    (800) 437-4824
-                  </p>
+                  <p className="text-white/90 flex items-center"><Phone className="w-3.5 h-3.5 mr-1.5" />1-800-HERITAGE</p>
+                  <p className="text-white/90 flex items-center"><Phone className="w-3.5 h-3.5 mr-1.5" />(800) 437-4824</p>
                   <p className="text-white/70 text-xs">Available 24/7</p>
                 </div>
                 <div>
                   <p className="font-semibold text-heritage-gold">Email</p>
-                  <p className="text-white/90 flex items-center">
-                    <Mail className="w-3.5 h-3.5 mr-1.5" />
-                    support@heritagebank.com
-                  </p>
-                  <p className="text-white/90 flex items-center">
-                    <Mail className="w-3.5 h-3.5 mr-1.5" />
-                    business@heritagebank.com
-                  </p>
+                  <p className="text-white/90 flex items-center"><Mail className="w-3.5 h-3.5 mr-1.5" />support@heritagebank.com</p>
+                  <p className="text-white/90 flex items-center"><Mail className="w-3.5 h-3.5 mr-1.5" />business@heritagebank.com</p>
                 </div>
                 <div>
                   <p className="font-semibold text-heritage-gold">Headquarters</p>
@@ -429,17 +387,19 @@ const Index = () => {
 
           {/* Call-to-Action Banner */}
           <div className="mt-12 bg-heritage-gold/10 border border-heritage-gold/30 rounded-xl p-6 text-center">
-            <h4 className="text-2xl font-bold text-heritage-gold mb-2">🌟 Ready to Experience Premium Banking?</h4>
-            <p className="text-white/90 mb-4">Join Heritage Bank today and discover why we're America's fastest-growing bank!</p>
+            <h4 className="text-2xl font-bold text-heritage-gold mb-2">Ready to Experience Premium Banking?</h4>
+            <p className="text-white/90 mb-4">Join Heritage Bank today and discover why we're America's most trusted bank!</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/auth">
                 <Button size="lg" className="bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-bold">
                   Open Account Now
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="border-heritage-gold text-heritage-gold hover:bg-heritage-gold hover:text-heritage-blue">
-                Contact Us
-              </Button>
+              <Link to="/contact">
+                <Button size="lg" variant="outline" className="border-heritage-gold text-heritage-gold hover:bg-heritage-gold hover:text-heritage-blue">
+                  Contact Us
+                </Button>
+              </Link>
             </div>
           </div>
 
