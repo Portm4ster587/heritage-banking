@@ -2,18 +2,13 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { HeritageSVGLogoTransparent } from "../HeritageSVGLogoTransparent";
-import { Shield, CreditCard, Landmark, ArrowRight } from "lucide-react";
-import bankingHeroImage from "@/assets/banking-hero.jpg";
-import cardsShowcaseImage from "@/assets/cards-showcase.jpg";
-import bankInterior1 from "@/assets/bank-interior-1.jpg";
-import bankInterior2 from "@/assets/bank-interior-2.jpg";
-import heritageAtmImage from "@/assets/heritage-atm.jpg";
-import heritageAtmImage2 from "@/assets/heritage-atm-2.png";
-import heritageHQHero from "@/assets/heritage-hq-hero.jpg";
-import premiumCardsShowcase from "@/assets/premium-cards-showcase.jpg";
-import heritageBankHero4k from "@/assets/heritage-bank-hero-4k.jpg";
- import bankInteriorLuxury from "@/assets/bank-interior-luxury.jpg";
- import digitalEcosystem from "@/assets/digital-ecosystem.jpg";
+import { Shield, CreditCard, Landmark, ArrowRight, Globe, TrendingUp } from "lucide-react";
+import heritageHQExterior from "@/assets/heritage-hq-exterior.png";
+import heritageLobby from "@/assets/heritage-lobby-luxury.png";
+import heritagePremiumCards from "@/assets/heritage-premium-cards.png";
+import heritageTeam from "@/assets/heritage-team-boardroom.png";
+import heritageATM from "@/assets/heritage-atm-modern.png";
+import heritageMobile from "@/assets/heritage-mobile-app.png";
 
 interface HeroSectionProps {
   user: any;
@@ -25,12 +20,12 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
   const [currentBgIndex, setCurrentBgIndex] = useState(0);
   
   const backgroundImages = [
-    heritageBankHero4k,
-    heritageHQHero,
-    premiumCardsShowcase,
-    bankingHeroImage,
-    bankInterior1,
-    bankInterior2
+    heritageHQExterior,
+    heritageLobby,
+    heritagePremiumCards,
+    heritageTeam,
+    heritageATM,
+    heritageMobile,
   ];
 
   useEffect(() => {
@@ -42,55 +37,75 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
 
   return (
     <section className="relative overflow-hidden">
-      <div className="min-h-[600px] lg:min-h-[700px] relative animate-fade-in flex items-center py-8 lg:py-12">
+      <div className="min-h-[650px] lg:min-h-[750px] relative animate-fade-in flex items-center py-8 lg:py-12">
         {/* Background Slideshow */}
         {backgroundImages.map((bg, index) => (
           <div
             key={index}
-            className="absolute inset-0 transition-opacity duration-1000 bg-cover bg-center"
+            className="absolute inset-0 transition-opacity duration-[1500ms] ease-in-out bg-cover bg-center"
             style={{
               backgroundImage: `url(${bg})`,
               opacity: currentBgIndex === index ? 1 : 0,
-              filter: 'contrast(1.15) saturate(1.3) brightness(1.5)',
             }}
           />
         ))}
         
-        <div className="absolute inset-0 bg-gradient-to-r from-heritage-blue/95 via-heritage-blue/90 to-heritage-blue-dark/95"></div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
+        {/* Premium overlay gradients */}
+        <div className="absolute inset-0 bg-gradient-to-r from-heritage-blue/95 via-heritage-blue/85 to-heritage-blue-dark/90"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-heritage-blue-dark/60 via-transparent to-heritage-blue/30"></div>
         
-        {/* Animated background elements */}
-        <div className="absolute top-10 right-10 w-32 h-32 bg-heritage-gold/20 rounded-full blur-xl animate-float hidden sm:block"></div>
-        <div className="absolute bottom-20 left-20 w-24 h-24 bg-heritage-gold/10 rounded-full blur-lg animate-float hidden sm:block" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-heritage-gold/15 rounded-full blur-md animate-float hidden lg:block" style={{ animationDelay: '2s' }}></div>
+        {/* Subtle gold accent lines */}
+        <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-heritage-gold/60 to-transparent"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-heritage-gold/40 to-transparent"></div>
+
+        {/* Floating gold orbs */}
+        <div className="absolute top-16 right-16 w-40 h-40 bg-heritage-gold/10 rounded-full blur-2xl animate-float hidden lg:block"></div>
+        <div className="absolute bottom-24 left-24 w-28 h-28 bg-heritage-gold/8 rounded-full blur-xl animate-float hidden sm:block" style={{ animationDelay: '1.5s' }}></div>
+        <div className="absolute top-1/3 right-1/3 w-20 h-20 bg-heritage-gold/6 rounded-full blur-lg animate-float hidden lg:block" style={{ animationDelay: '3s' }}></div>
         
         <div className="relative container mx-auto px-4 sm:px-6">
           {/* Top Header with SVG Logo */}
-          <div className="flex items-center space-x-3 sm:space-x-4 mb-6 lg:mb-8 animate-slide-up">
-            <HeritageSVGLogoTransparent size="lg" className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 drop-shadow-[0_0_20px_rgba(212,175,55,0.9)]" />
+          <div className="flex items-center space-x-3 sm:space-x-4 mb-8 lg:mb-10 animate-slide-up">
+            <HeritageSVGLogoTransparent size="lg" className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 drop-shadow-[0_0_25px_rgba(212,175,55,0.9)]" />
             <div>
-              <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold animate-fade-in text-heritage-gold tracking-wider">
+              <h1 className="text-3xl sm:text-4xl lg:text-6xl font-bold animate-fade-in text-heritage-gold tracking-[0.15em]">
                 HERITAGE
               </h1>
-              <p className="text-lg sm:text-xl lg:text-2xl text-heritage-gold/90 tracking-widest">BANK</p>
+              <p className="text-lg sm:text-xl lg:text-2xl text-heritage-gold/80 tracking-[0.3em] font-light">BANK</p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             {/* Left Column - Welcome Text */}
-            <div className="text-white space-y-4 lg:space-y-6 animate-slide-up">
+            <div className="text-white space-y-5 lg:space-y-7 animate-slide-up">
               <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold mb-3 lg:mb-4 animate-fade-in leading-tight">
-                Banking Excellence <br className="hidden sm:block" />Since 1892
+                Banking Excellence <br className="hidden sm:block" />
+                <span className="text-heritage-gold">Since 1892</span>
               </h2>
-              <p className="text-base lg:text-xl mb-6 lg:mb-8 text-white/90 animate-fade-in leading-relaxed max-w-xl" style={{ animationDelay: '0.2s' }}>
-                Experience premium banking with unmatched security, competitive rates, and personalized service. 
-                Join thousands of satisfied customers who trust Heritage Bank.
+              <p className="text-base lg:text-lg mb-6 lg:mb-8 text-white/85 animate-fade-in leading-relaxed max-w-xl" style={{ animationDelay: '0.2s' }}>
+                Where tradition meets innovation. Experience premium banking with 
+                unmatched security, competitive rates, and personalized service trusted 
+                by over 100,000 clients nationwide.
               </p>
+              
+              {/* Trust indicators */}
+              <div className="flex flex-wrap gap-4 text-xs text-heritage-gold/90 font-medium animate-fade-in" style={{ animationDelay: '0.3s' }}>
+                <span className="flex items-center gap-1.5 bg-heritage-gold/10 px-3 py-1.5 rounded-full border border-heritage-gold/20">
+                  <Shield className="w-3.5 h-3.5" /> FDIC Insured
+                </span>
+                <span className="flex items-center gap-1.5 bg-heritage-gold/10 px-3 py-1.5 rounded-full border border-heritage-gold/20">
+                  <Globe className="w-3.5 h-3.5" /> Nationwide
+                </span>
+                <span className="flex items-center gap-1.5 bg-heritage-gold/10 px-3 py-1.5 rounded-full border border-heritage-gold/20">
+                  <TrendingUp className="w-3.5 h-3.5" /> A+ Rated
+                </span>
+              </div>
+
               <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
                 <Button 
                   size="lg" 
                   onClick={onOpenCards}
-                  className="bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 px-6 lg:px-8 py-3 lg:py-4 font-semibold text-base lg:text-lg banking-button pulse-glow w-full sm:w-auto"
+                  className="bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 px-6 lg:px-8 py-3 lg:py-4 font-semibold text-base lg:text-lg banking-button pulse-glow w-full sm:w-auto shadow-lg shadow-heritage-gold/20"
                 >
                   Explore Our Cards
                 </Button>
@@ -121,28 +136,28 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
             
             {/* Right Column - Feature Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 animate-fade-in" style={{ animationDelay: '0.6s' }}>
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-heritage-gold/30 hover:bg-white/15 transition-all duration-300">
-                <div className="w-12 h-12 bg-heritage-gold/20 rounded-full flex items-center justify-center mb-4">
+              <div className="bg-white/8 backdrop-blur-md rounded-xl p-6 border border-heritage-gold/20 hover:bg-white/12 hover:border-heritage-gold/40 transition-all duration-300 group">
+                <div className="w-12 h-12 bg-gradient-to-br from-heritage-gold/30 to-heritage-gold/10 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Shield className="w-6 h-6 text-heritage-gold" />
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">Secure Banking</h3>
-                <p className="text-white/70 text-sm">256-bit encryption and 24/7 fraud monitoring</p>
+                <p className="text-white/60 text-sm">256-bit encryption and 24/7 fraud monitoring</p>
               </div>
               
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-heritage-gold/30 hover:bg-white/15 transition-all duration-300">
-                <div className="w-12 h-12 bg-heritage-gold/20 rounded-full flex items-center justify-center mb-4">
+              <div className="bg-white/8 backdrop-blur-md rounded-xl p-6 border border-heritage-gold/20 hover:bg-white/12 hover:border-heritage-gold/40 transition-all duration-300 group">
+                <div className="w-12 h-12 bg-gradient-to-br from-heritage-gold/30 to-heritage-gold/10 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <CreditCard className="w-6 h-6 text-heritage-gold" />
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">Premium Cards</h3>
-                <p className="text-white/70 text-sm">Exclusive rewards and worldwide acceptance</p>
+                <p className="text-white/60 text-sm">Exclusive rewards and worldwide acceptance</p>
               </div>
               
-              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-heritage-gold/30 hover:bg-white/15 transition-all duration-300 sm:col-span-2">
-                <div className="w-12 h-12 bg-heritage-gold/20 rounded-full flex items-center justify-center mb-4">
+              <div className="bg-white/8 backdrop-blur-md rounded-xl p-6 border border-heritage-gold/20 hover:bg-white/12 hover:border-heritage-gold/40 transition-all duration-300 sm:col-span-2 group">
+                <div className="w-12 h-12 bg-gradient-to-br from-heritage-gold/30 to-heritage-gold/10 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Landmark className="w-6 h-6 text-heritage-gold" />
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">Heritage Routing: 021000021</h3>
-                <p className="text-white/70 text-sm">Your trusted partner for all banking needs across the USA</p>
+                <p className="text-white/60 text-sm">Your trusted partner for all banking needs across the USA</p>
               </div>
             </div>
           </div>
