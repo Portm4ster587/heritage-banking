@@ -1233,6 +1233,56 @@ export type Database = {
           },
         ]
       }
+      tac_codes: {
+        Row: {
+          code: string
+          created_at: string
+          delivery_method: string | null
+          expires_at: string
+          generated_by: string | null
+          id: string
+          requested_by: string | null
+          status: string
+          user_id: string
+          verified_at: string | null
+          wire_transfer_id: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          delivery_method?: string | null
+          expires_at?: string
+          generated_by?: string | null
+          id?: string
+          requested_by?: string | null
+          status?: string
+          user_id: string
+          verified_at?: string | null
+          wire_transfer_id?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          delivery_method?: string | null
+          expires_at?: string
+          generated_by?: string | null
+          id?: string
+          requested_by?: string | null
+          status?: string
+          user_id?: string
+          verified_at?: string | null
+          wire_transfer_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tac_codes_wire_transfer_id_fkey"
+            columns: ["wire_transfer_id"]
+            isOneToOne: false
+            referencedRelation: "wire_transfers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       transfers: {
         Row: {
           amount: number

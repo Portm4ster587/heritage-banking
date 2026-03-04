@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
+import { WireTransferTACFlow } from './WireTransferTACFlow';
 import { 
   CheckCircle, 
   XCircle, 
@@ -20,7 +21,8 @@ import {
   Send,
   Globe,
   Building,
-  DollarSign
+  DollarSign,
+  KeyRound
 } from 'lucide-react';
 
 interface WireTransfer {
@@ -339,30 +341,30 @@ export const AdminWireTransfers = () => {
                 </div>
               )}
 
+              {/* TAC Verification Flow for pending transfers */}
               {selectedTransfer.status === 'pending' && (
-                <div className="space-y-2">
-                  <Textarea
-                    placeholder="Admin notes (required for rejection)"
-                    value={adminNote}
-                    onChange={(e) => setAdminNote(e.target.value)}
-                  />
-                </div>
+                <WireTransferTACFlow
+                  transfer={{
+                    id: selectedTransfer.id,
+                    user_id: selectedTransfer.user_id,
+                    recipient_name: selectedTransfer.recipient_name,
+                    amount: selectedTransfer.amount,
+                    from_account_id: selectedTransfer.from_account_id,
+                    fee_amount: selectedTransfer.fee_amount,
+                    status: selectedTransfer.status,
+                  }}
+                  onComplete={() => {
+                    fetchTransfers();
+                    setSelectedTransfer(null);
+                    setAdminNote('');
+                  }}
+                />
               )}
             </div>
           )}
 
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setSelectedTransfer(null)}>Close</Button>
-            {selectedTransfer?.status === 'pending' && (
-              <>
-                <Button variant="destructive" onClick={rejectTransfer} disabled={!adminNote || processing}>
-                  <XCircle className="w-4 h-4 mr-2" /> Reject
-                </Button>
-                <Button onClick={approveTransfer} disabled={processing}>
-                  <CheckCircle className="w-4 h-4 mr-2" /> Approve
-                </Button>
-              </>
-            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
