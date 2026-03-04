@@ -277,7 +277,7 @@ export default function ModernDashboard() {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Quick Actions with Gradient Background */}
+            {/* Quick Actions Grid */}
             <Card className="hightech-card overflow-hidden">
               <CardHeader className="bg-gradient-to-r from-primary/5 to-heritage-gold/5">
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -285,67 +285,32 @@ export default function ModernDashboard() {
                   Quick Actions
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2 pt-4">
-                <a href="/dashboard/transfers">
-                  <Button className="w-full justify-start banking-button text-white mb-2">
-                    <Send className="w-4 h-4 mr-3" />
-                    Send Money
-                  </Button>
-                </a>
-                <a href="/dashboard/topup">
-                  <Button variant="outline" className="w-full justify-start mb-2">
-                    <ArrowDownRight className="w-4 h-4 mr-3" />
-                    Deposit / Top Up
-                  </Button>
-                </a>
-                <a href="/dashboard/withdraw">
-                  <Button variant="outline" className="w-full justify-start mb-2">
-                    <ArrowUpRight className="w-4 h-4 mr-3" />
-                    Withdraw
-                  </Button>
-                </a>
-                <a href="/dashboard/crypto">
-                  <Button variant="outline" className="w-full justify-start mb-2">
-                    <TrendingUp className="w-4 h-4 mr-3" />
-                    Crypto Portfolio
-                  </Button>
-                </a>
-                <a href="/dashboard/cards">
-                  <Button variant="outline" className="w-full justify-start mb-2">
-                    <CreditCard className="w-4 h-4 mr-3" />
-                    My Cards
-                  </Button>
-                </a>
-                <a href="/dashboard/bills">
-                  <Button variant="outline" className="w-full justify-start mb-2">
-                    <Receipt className="w-4 h-4 mr-3" />
-                    Bill Payments
-                  </Button>
-                </a>
-                <a href="/dashboard/history">
-                  <Button variant="outline" className="w-full justify-start mb-2">
-                    <CreditCard className="w-4 h-4 mr-3" />
-                    Transaction History
-                  </Button>
-                </a>
-                <a href="/dashboard/profile">
-                  <Button variant="outline" className="w-full justify-start mb-2">
-                    <User className="w-4 h-4 mr-3" />
-                    My Profile
-                  </Button>
-                </a>
-                <a href="/dashboard/statements">
-                  <Button variant="outline" className="w-full justify-start mb-2">
-                    <FileText className="w-4 h-4 mr-3" />
-                    Statements & Documents
-                  </Button>
-                </a>
-                <a href="/dashboard/settings">
-                  <Button variant="outline" className="w-full justify-start">
-                    <Settings className="w-4 h-4 mr-3" />
-                    Account Settings
-                  </Button>
-                </a>
+              <CardContent className="pt-4">
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { href: '/dashboard/transfers', icon: Send, label: 'Send Money', primary: true },
+                    { href: '/dashboard/topup', icon: ArrowDownRight, label: 'Deposit' },
+                    { href: '/dashboard/withdraw', icon: ArrowUpRight, label: 'Withdraw' },
+                    { href: '/dashboard/crypto', icon: TrendingUp, label: 'Crypto' },
+                    { href: '/dashboard/cards', icon: CreditCard, label: 'Cards' },
+                    { href: '/dashboard/bills', icon: Receipt, label: 'Bills' },
+                    { href: '/dashboard/history', icon: CreditCard, label: 'History' },
+                    { href: '/dashboard/profile', icon: User, label: 'Profile' },
+                    { href: '/dashboard/statements', icon: FileText, label: 'Statements' },
+                    { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
+                  ].map((item) => (
+                    <a key={item.href} href={item.href}>
+                      <div className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 hover:shadow-md hover:scale-105 cursor-pointer ${
+                        item.primary 
+                          ? 'bg-primary text-primary-foreground border-primary shadow-sm' 
+                          : 'bg-card hover:bg-accent/50 border-border'
+                      }`}>
+                        <item.icon className="w-5 h-5 mb-1.5" />
+                        <span className="text-[11px] font-medium text-center leading-tight">{item.label}</span>
+                      </div>
+                    </a>
+                  ))}
+                </div>
               </CardContent>
             </Card>
 
