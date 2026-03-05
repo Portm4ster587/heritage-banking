@@ -34,6 +34,9 @@ export const BankIcon = ({ bankName, className = "w-8 h-8" }: { bankName: string
     if (bankName.includes('fifth third') || bankName.includes('53')) {
       return <Banknote className={`${className} text-blue-700`} />;
     }
+    if (bankName.includes('acfcu') || bankName.includes('american citizens') || bankName.includes("america's credit union")) {
+      return <Shield className={`${className} text-blue-800`} />;
+    }
     
     // Default bank icon
     return <Building2 className={`${className} text-primary`} />;
@@ -115,6 +118,13 @@ export const modernBanks = [
     code: '53', 
     icon: 'banknote',
     color: 'text-blue-700',
+    bgColor: 'bg-blue-50'
+  },
+  { 
+    name: "ACFCU (America's Credit Union)", 
+    code: 'ACFCU', 
+    icon: 'shield',
+    color: 'text-blue-800',
     bgColor: 'bg-blue-50'
   }
 ];
