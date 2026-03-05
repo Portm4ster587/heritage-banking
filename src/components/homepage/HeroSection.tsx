@@ -68,7 +68,7 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
               <Button 
                 size="lg" 
                 onClick={onOpenCards}
-                className="bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 px-6 lg:px-8 py-3 font-semibold text-base banking-button pulse-glow w-full sm:w-auto shadow-lg shadow-heritage-gold/30"
+                className="bg-heritage-gold text-[#0a1628] hover:bg-heritage-gold/90 px-6 lg:px-8 py-3 font-bold text-base banking-button pulse-glow w-full sm:w-auto shadow-lg shadow-heritage-gold/30"
               >
                 Explore Our Cards
               </Button>
@@ -76,8 +76,7 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
                 <Link to="/dashboard" className="w-full sm:w-auto">
                   <Button 
                     size="lg" 
-                    variant="outline" 
-                    className="border-2 border-heritage-gold text-white hover:bg-heritage-gold hover:text-heritage-blue px-6 lg:px-8 py-3 font-semibold text-base w-full flex items-center justify-center gap-2 backdrop-blur-sm"
+                    className="bg-white text-heritage-blue-dark hover:bg-white/90 border-2 border-heritage-gold px-6 lg:px-8 py-3 font-bold text-base w-full flex items-center justify-center gap-2 shadow-lg"
                   >
                     Go to Dashboard
                     <ArrowRight className="w-5 h-5" />
@@ -87,8 +86,7 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
                 <Link to="/auth" className="w-full sm:w-auto">
                   <Button 
                     size="lg" 
-                    variant="outline" 
-                    className="border-2 border-heritage-gold text-white hover:bg-heritage-gold hover:text-heritage-blue px-6 lg:px-8 py-3 font-semibold text-base w-full backdrop-blur-sm"
+                    className="bg-white text-heritage-blue-dark hover:bg-white/90 border-2 border-heritage-gold px-6 lg:px-8 py-3 font-bold text-base w-full shadow-lg"
                   >
                     Sign In
                   </Button>

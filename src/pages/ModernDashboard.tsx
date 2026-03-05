@@ -411,6 +411,26 @@ export default function ModernDashboard() {
       
       {/* Customer Support Chat Widget */}
       <CustomerChatWidget />
+      
+      {/* Mobile Bottom Navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-card border-t border-border z-40 safe-area-inset-bottom">
+        <div className="flex justify-around items-center py-1">
+          {[
+            { href: '/dashboard', icon: Landmark, label: 'Home' },
+            { href: '/dashboard/transfers', icon: Send, label: 'Transfer' },
+            { href: '/dashboard/topup', icon: ArrowDownRight, label: 'Deposit' },
+            { href: '/dashboard/crypto', icon: TrendingUp, label: 'Crypto' },
+            { href: '/dashboard/settings', icon: Settings, label: 'More' },
+          ].map((item) => (
+            <a key={item.href} href={item.href} className="flex flex-col items-center gap-0.5 px-2 py-1.5 text-muted-foreground hover:text-primary transition-colors">
+              <item.icon className="w-5 h-5" />
+              <span className="text-[10px] font-medium">{item.label}</span>
+            </a>
+          ))}
+        </div>
+      </nav>
+      {/* Bottom spacer for mobile nav */}
+      <div className="md:hidden h-16" />
     </div>
   );
 }

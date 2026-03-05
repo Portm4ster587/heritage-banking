@@ -1717,17 +1717,28 @@ export const FullAdminPanel = () => {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="flex gap-1">
-                          <Button size="sm" variant="ghost" onClick={() => setSelectedAccount(account)}>
+                        <div className="flex flex-wrap gap-1">
+                          <Button size="sm" variant="ghost" onClick={() => setSelectedAccount(account)} title="Edit">
                             <Edit className="w-4 h-4" />
                           </Button>
-                          {account.status === 'active' ? (
-                            <Button size="sm" variant="ghost" onClick={() => updateAccountStatus(account.id, 'frozen')}>
-                              <Ban className="w-4 h-4 text-red-500" />
-                            </Button>
-                          ) : (
-                            <Button size="sm" variant="ghost" onClick={() => updateAccountStatus(account.id, 'active')}>
+                          {account.status !== 'active' && (
+                            <Button size="sm" variant="ghost" onClick={() => updateAccountStatus(account.id, 'active')} title="Activate">
                               <Unlock className="w-4 h-4 text-green-500" />
+                            </Button>
+                          )}
+                          {account.status !== 'frozen' && (
+                            <Button size="sm" variant="ghost" onClick={() => updateAccountStatus(account.id, 'frozen')} title="Freeze">
+                              <Ban className="w-4 h-4 text-blue-500" />
+                            </Button>
+                          )}
+                          {account.status !== 'on_hold' && (
+                            <Button size="sm" variant="ghost" onClick={() => updateAccountStatus(account.id, 'on_hold')} title="Hold">
+                              <Clock className="w-4 h-4 text-orange-500" />
+                            </Button>
+                          )}
+                          {account.status !== 'suspended' && (
+                            <Button size="sm" variant="ghost" onClick={() => updateAccountStatus(account.id, 'suspended')} title="Suspend">
+                              <AlertTriangle className="w-4 h-4 text-red-500" />
                             </Button>
                           )}
                         </div>
