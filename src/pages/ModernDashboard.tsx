@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,7 +27,9 @@ import { AccountDetailsPanel } from '@/components/dashboard/AccountDetailsPanel'
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
 import { useNavigate } from 'react-router-dom';
 import { useComprehensiveNotifications } from '@/hooks/useComprehensiveNotifications';
+import { useTransactionRealTime } from '@/hooks/useTransactionRealTime';
 import { CustomerChatWidget } from '@/components/support/CustomerChatWidget';
+import { format } from 'date-fns';
 
 interface Account {
   id: string;
@@ -41,7 +43,7 @@ interface Account {
   updated_at: string | null;
 }
 
-interface Transaction {
+interface RecentTransaction {
   id: string;
   description: string;
   amount: number;
@@ -55,23 +57,27 @@ export default function ModernDashboard() {
   const { toast } = useToast();
   const navigate = useNavigate();
   
-  // Comprehensive real-time notifications with SMS, email, and push
   useComprehensiveNotifications();
   
   const [accounts, setAccounts] = useState<Account[]>([]);
-  const [transactions] = useState<Transaction[]>([
-    { id: '1', description: 'Direct Deposit - Salary', amount: 5420.00, date: '2024-01-15', type: 'credit', category: 'Income' },
-    { id: '2', description: 'Online Transfer', amount: -250.00, date: '2024-01-14', type: 'debit', category: 'Transfer' },
-    { id: '3', description: 'Grocery Store', amount: -87.45, date: '2024-01-13', type: 'debit', category: 'Shopping' },
-    { id: '4', description: 'Interest Payment', amount: 12.50, date: '2024-01-12', type: 'credit', category: 'Interest' },
-  ]);
+  const [recentTransactions, setRecentTransactions] = useState<RecentTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [userProfile, setUserProfile] = useState<any>(null);
 
+  const fetchAll = useCallback(() => {
+    if (user) {
+      fetchAccountData();
+      fetchRecentTransactions();
+    }
+  }, [user]);
+
+  useTransactionRealTime(fetchAll);
+
   useEffect(() => {
     if (user) {
       fetchAccountData();
+      fetchRecentTransactions();
       createDefaultAccountsIfNeeded();
       fetchUserProfile();
     }
@@ -79,17 +85,51 @@ export default function ModernDashboard() {
 
   const fetchUserProfile = async () => {
     if (!user) return;
-    
     try {
       const { data } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .maybeSingle();
-      
       setUserProfile(data);
     } catch (error) {
       console.error('Error fetching profile:', error);
+    }
+  };
+
+  const fetchRecentTransactions = async () => {
+    if (!user) return;
+    try {
+      const allTx: RecentTransaction[] = [];
+
+      const [transfers, deposits, withdrawals, wires] = await Promise.all([
+        supabase.from('transfers').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(10),
+        supabase.from('deposit_requests').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(10),
+        supabase.from('withdraw_requests').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(10),
+        supabase.from('wire_transfers').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(10),
+      ]);
+
+      transfers.data?.forEach(t => allTx.push({
+        id: t.id, description: t.description || `Transfer to ${t.recipient_name || 'account'}`,
+        amount: -t.amount, date: t.created_at || new Date().toISOString(), type: 'debit', category: 'Transfer'
+      }));
+      deposits.data?.forEach(d => allTx.push({
+        id: d.id, description: `${d.method} Deposit`, amount: d.amount,
+        date: d.created_at || new Date().toISOString(), type: 'credit', category: 'Deposit'
+      }));
+      withdrawals.data?.forEach(w => allTx.push({
+        id: w.id, description: `${w.method} Withdrawal`, amount: -w.amount,
+        date: w.created_at || new Date().toISOString(), type: 'debit', category: 'Withdrawal'
+      }));
+      wires.data?.forEach(w => allTx.push({
+        id: w.id, description: `Wire to ${w.recipient_name}`, amount: -w.amount,
+        date: w.created_at || new Date().toISOString(), type: 'debit', category: 'Wire'
+      }));
+
+      allTx.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      setRecentTransactions(allTx.slice(0, 8));
+    } catch (error) {
+      console.error('Error fetching recent transactions:', error);
     }
   };
 
@@ -327,7 +367,9 @@ export default function ModernDashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 pt-4">
-                {transactions.slice(0, 4).map((transaction, idx) => (
+                {recentTransactions.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center py-4">No recent activity</p>
+                ) : recentTransactions.slice(0, 6).map((transaction) => (
                   <div key={transaction.id} className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
@@ -340,25 +382,27 @@ export default function ModernDashboard() {
                         )}
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-slate-900">
+                        <p className="text-sm font-medium text-foreground">
                           {transaction.description}
                         </p>
-                        <p className="text-xs text-slate-500">
-                          {new Date(transaction.date).toLocaleDateString()}
+                        <p className="text-xs text-muted-foreground">
+                          {format(new Date(transaction.date), 'MMM dd, yyyy')}
                         </p>
                       </div>
                     </div>
                     <span className={`text-sm font-medium ${
-                      transaction.type === 'credit' ? 'text-green-600' : 'text-slate-900'
+                      transaction.type === 'credit' ? 'text-green-600' : 'text-foreground'
                     }`}>
-                      {transaction.type === 'credit' ? '+' : ''}${Math.abs(transaction.amount).toLocaleString()}
+                      {transaction.type === 'credit' ? '+' : '-'}${Math.abs(transaction.amount).toLocaleString()}
                     </span>
                   </div>
                 ))}
-                <Button variant="ghost" className="w-full text-blue-600 hover:text-blue-700">
-                  View All Activity
-                  <ChevronRight className="w-4 h-4 ml-2" />
-                </Button>
+                <a href="/dashboard/history">
+                  <Button variant="ghost" className="w-full text-primary hover:text-primary/80">
+                    View All Activity
+                    <ChevronRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </a>
               </CardContent>
             </Card>
           </div>
