@@ -77,21 +77,21 @@ export const AccountDetailsPanel = ({ account, balanceVisible }: AccountDetailsP
           onClick={() => setExpanded(!expanded)}
         >
           <div className="flex items-center space-x-4">
-            <div className="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center">
-              <IconComponent className="w-6 h-6 text-slate-600" />
+            <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
+              <IconComponent className="w-6 h-6 text-muted-foreground" />
             </div>
             <div>
-              <h3 className="font-semibold text-slate-900">
+              <h3 className="font-semibold text-foreground">
                 {getAccountDisplayName(account.account_type)}
               </h3>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-muted-foreground">
                 ••••{account.account_number.slice(-4)}
               </p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
             <div className="text-right">
-              <p className="text-lg font-semibold text-slate-900">
+              <p className="text-lg font-semibold text-foreground">
                 {balanceVisible ? `$${account.balance.toLocaleString()}` : '••••••'}
               </p>
               <Badge variant={account.status === 'active' ? 'default' : 'secondary'}>
@@ -99,18 +99,18 @@ export const AccountDetailsPanel = ({ account, balanceVisible }: AccountDetailsP
               </Badge>
             </div>
             {expanded ? (
-              <ChevronUp className="w-5 h-5 text-slate-400" />
+              <ChevronUp className="w-5 h-5 text-muted-foreground" />
             ) : (
-              <ChevronDown className="w-5 h-5 text-slate-400" />
+              <ChevronDown className="w-5 h-5 text-muted-foreground" />
             )}
           </div>
         </div>
 
         {/* Expanded Details */}
         {expanded && (
-          <div className="border-t border-slate-100 bg-slate-50 p-6 space-y-4">
+          <div className="border-t border-border bg-muted/30 p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h4 className="font-medium text-slate-700">Account Details</h4>
+              <h4 className="font-medium text-foreground">Account Details</h4>
               <Button
                 variant="ghost"
                 size="sm"
@@ -135,8 +135,8 @@ export const AccountDetailsPanel = ({ account, balanceVisible }: AccountDetailsP
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Account Number */}
-              <div className="bg-white rounded-lg p-4 border border-slate-200">
-                <p className="text-xs text-slate-500 mb-1">Account Number</p>
+              <div className="bg-card rounded-lg p-4 border border-border">
+                <p className="text-xs text-muted-foreground mb-1">Account Number</p>
                 <div className="flex items-center justify-between">
                   <p className="font-mono text-lg">
                     {showDetails ? account.account_number : '•••• •••• ' + account.account_number.slice(-4)}
@@ -159,8 +159,8 @@ export const AccountDetailsPanel = ({ account, balanceVisible }: AccountDetailsP
               </div>
 
               {/* Routing Number */}
-              <div className="bg-white rounded-lg p-4 border border-slate-200">
-                <p className="text-xs text-slate-500 mb-1">Routing Number</p>
+              <div className="bg-card rounded-lg p-4 border border-border">
+                <p className="text-xs text-muted-foreground mb-1">Routing Number</p>
                 <div className="flex items-center justify-between">
                   <p className="font-mono text-lg">
                     {showDetails ? account.routing_number : '•••••••••'}
@@ -184,11 +184,11 @@ export const AccountDetailsPanel = ({ account, balanceVisible }: AccountDetailsP
             </div>
 
             {/* Bank Info */}
-            <div className="bg-white rounded-lg p-4 border border-slate-200">
+            <div className="bg-card rounded-lg p-4 border border-border">
               <div className="flex items-center space-x-3">
-                <Building className="w-5 h-5 text-heritage-gold" />
+                <Building className="w-5 h-5 text-primary" />
                 <div>
-                  <p className="text-xs text-slate-500">Bank Name</p>
+                  <p className="text-xs text-muted-foreground">Bank Name</p>
                   <p className="font-semibold">Heritage Bank US</p>
                 </div>
               </div>

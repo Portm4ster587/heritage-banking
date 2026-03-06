@@ -209,7 +209,7 @@ export default function HistoryPage() {
   );
 
   return (
-    <main className="container mx-auto px-6 py-8">
+    <main className="container mx-auto px-4 sm:px-6 py-6 pb-24 md:pb-8">
       <BackButton to="/dashboard" label="Back to Dashboard" className="mb-4" />
       <div className="mb-6">
         <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-heritage-gold bg-clip-text text-transparent">
@@ -225,7 +225,7 @@ export default function HistoryPage() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 banking-tabs">
+        <TabsList className="grid w-full grid-cols-3 banking-tabs overflow-x-auto">
           <TabsTrigger value="transactions" className="flex items-center gap-2 transition-all duration-300">
             <History className="w-4 h-4" />
             All Transactions
@@ -242,24 +242,24 @@ export default function HistoryPage() {
 
         <TabsContent value="transactions" className="tab-content-animate">
           <Card className="hightech-card">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
+            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
                 <History className="w-5 h-5" />
                 Recent Transactions
                 <Badge variant="secondary" className="ml-2">{transactions.length}</Badge>
               </CardTitle>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={handleRefresh} disabled={refreshing}>
+              <div className="flex gap-2 w-full sm:w-auto">
+                <Button variant="outline" size="sm" className="flex-1 sm:flex-none" onClick={handleRefresh} disabled={refreshing}>
                   {refreshing ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-4 h-4 mr-1 animate-spin" />
                   ) : (
-                    <RefreshCw className="w-4 h-4 mr-2" />
+                    <RefreshCw className="w-4 h-4 mr-1" />
                   )}
-                  {refreshing ? 'Refreshing...' : 'Refresh'}
+                  <span className="hidden sm:inline">{refreshing ? 'Refreshing...' : 'Refresh'}</span>
                 </Button>
-                <Button variant="outline" size="sm" onClick={() => navigate('/dashboard/transaction-history')}>
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  Full History
+                <Button variant="outline" size="sm" className="flex-1 sm:flex-none" onClick={() => navigate('/dashboard/transaction-history')}>
+                  <ExternalLink className="w-4 h-4 mr-1" />
+                  <span className="hidden sm:inline">Full History</span>
                 </Button>
               </div>
             </CardHeader>
@@ -273,7 +273,36 @@ export default function HistoryPage() {
                   <p className="text-sm">Your transactions will appear here in real-time</p>
                 </div>
               ) : (
-                <Table>
+                <>
+                {/* Mobile-friendly list for small screens */}
+                <div className="block sm:hidden divide-y divide-border">
+                  {transactions.slice(0, 30).map((tx) => (
+                    <div key={tx.id} className="flex items-center justify-between py-3 px-1">
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${
+                          ['deposit', 'check'].includes(tx.type) ? 'bg-green-100' : 'bg-red-100'
+                        }`}>
+                          {getTypeIcon(tx.type)}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium truncate">{tx.description}</p>
+                          <p className="text-xs text-muted-foreground">
+                            {format(new Date(tx.created_at), 'MMM dd, h:mm a')}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right shrink-0 ml-2">
+                        <p className={`text-sm font-bold ${['deposit', 'check'].includes(tx.type) ? 'text-green-600' : 'text-red-600'}`}>
+                          {['deposit', 'check'].includes(tx.type) ? '+' : '-'}${tx.amount.toLocaleString()}
+                        </p>
+                        {getStatusBadge(tx.status)}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Desktop table */}
+                <Table className="hidden sm:table">
                   <TableHeader>
                     <TableRow>
                       <TableHead>Date</TableHead>
@@ -313,6 +342,7 @@ export default function HistoryPage() {
                     ))}
                   </TableBody>
                 </Table>
+                </>
               )}
             </CardContent>
           </Card>
