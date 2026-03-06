@@ -592,8 +592,8 @@ export default function TransactionHistory() {
                         <TableCell className="font-mono text-xs">
                           {transaction.reference?.toUpperCase()}
                         </TableCell>
-                        <TableCell className={`text-right font-semibold ${
-                          ['deposit', 'check'].includes(transaction.type) ? 'text-green-500' : 'text-foreground'
+                        <TableCell className={`text-right font-bold ${
+                          ['deposit', 'check'].includes(transaction.type) ? 'text-green-600' : 'text-red-600'
                         }`}>
                           {['deposit', 'check'].includes(transaction.type) ? '+' : '-'}
                           ${transaction.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}

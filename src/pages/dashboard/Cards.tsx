@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { BackButton } from "@/components/BackButton";
-import { CardDisplay } from "@/components/CardDisplay";
+import { HeritageCardHolder } from "@/components/dashboard/HeritageCardHolder";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -98,10 +97,10 @@ export default function Cards() {
   if (loading) return <HeritageLoadingScreen message="Loading your cards..." />;
 
   return (
-    <main className="container mx-auto px-6 py-8">
+    <main className="container mx-auto px-4 sm:px-6 py-6 pb-24 md:pb-8">
       <BackButton to="/dashboard" label="Back to Dashboard" className="mb-4" />
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-primary">My Cards</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-primary">My Cards</h1>
         <p className="text-muted-foreground">Manage your credit and debit cards</p>
       </div>
 
@@ -115,18 +114,24 @@ export default function Cards() {
         </Card>
       ) : (
         <div className="space-y-8">
-          {cards.map((card) => (
-            <div key={card.id} className="space-y-4">
-              <CardDisplay card={card} />
-              
-              <Card className="hightech-card">
-                <CardHeader>
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <CreditCard className="w-5 h-5 text-primary" />
-                    Card Controls — ****{card.last4}
+          {/* Compact card carousel */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {cards.map((card) => (
+              <HeritageCardHolder key={card.id} card={card} />
+            ))}
+          </div>
+
+          {/* Card Controls */}
+          <div className="space-y-6">
+            {cards.map((card) => (
+              <Card key={card.id} className="hightech-card">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <CreditCard className="w-4 h-4 text-primary" />
+                    Controls — ****{card.last4}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-6">
+                <CardContent className="space-y-4">
                   {/* Lock/Unlock */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -136,9 +141,9 @@ export default function Cards() {
                         <Unlock className="w-5 h-5 text-green-600" />
                       )}
                       <div>
-                        <p className="font-medium">Card Lock</p>
-                        <p className="text-sm text-muted-foreground">
-                          {card.is_locked ? "Card is currently locked" : "Card is active"}
+                        <p className="font-medium text-sm">Card Lock</p>
+                        <p className="text-xs text-muted-foreground">
+                          {card.is_locked ? "Locked" : "Active"}
                         </p>
                       </div>
                     </div>
@@ -153,13 +158,13 @@ export default function Cards() {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
                       <DollarSign className="w-4 h-4 text-primary" />
-                      <Label>Daily Spending Limit</Label>
+                      <Label className="text-sm">Daily Spending Limit</Label>
                     </div>
                     <div className="flex gap-2">
                       <Input
                         type="number"
                         defaultValue={card.spending_limit || 5000}
-                        className="max-w-[200px]"
+                        className="max-w-[160px] h-9"
                         id={`limit-${card.id}`}
                       />
                       <Button
@@ -175,44 +180,10 @@ export default function Cards() {
                       </Button>
                     </div>
                   </div>
-
-                  {/* Card Info */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t">
-                    <div>
-                      <p className="text-xs text-muted-foreground">Network</p>
-                      <p className="font-medium">{card.card_network}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Type</p>
-                      <p className="font-medium">{card.card_type}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Expires</p>
-                      <p className="font-medium">{card.expiry_date}</p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Status</p>
-                      <Badge variant={card.status === 'active' ? 'default' : 'secondary'}>
-                        {card.status}
-                      </Badge>
-                    </div>
-                    {card.credit_limit && (
-                      <>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Credit Limit</p>
-                          <p className="font-medium">${card.credit_limit.toLocaleString()}</p>
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">Available Credit</p>
-                          <p className="font-medium">${(card.available_credit || 0).toLocaleString()}</p>
-                        </div>
-                      </>
-                    )}
-                  </div>
                 </CardContent>
               </Card>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </main>

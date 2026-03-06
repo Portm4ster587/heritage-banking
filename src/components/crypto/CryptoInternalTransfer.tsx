@@ -106,7 +106,7 @@ export const CryptoInternalTransfer = ({ wallets, onSuccess }: CryptoInternalTra
     if (!recipientVerified) {
       toast({
         title: "Invalid Recipient",
-        description: "Please enter a valid Heritage ecosystem wallet address",
+        description: "Please enter a valid recipient wallet ID",
         variant: "destructive"
       });
       return;
@@ -180,26 +180,16 @@ export const CryptoInternalTransfer = ({ wallets, onSuccess }: CryptoInternalTra
             <Send className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <span>Heritage Ecosystem Transfer</span>
+            <span>Send Crypto</span>
             <Badge variant="outline" className="ml-2 text-xs">Instant</Badge>
           </div>
         </CardTitle>
         <p className="text-sm text-muted-foreground mt-1">
-          Transfer crypto instantly to other Heritage members using ecosystem wallet addresses
+          Send crypto instantly to other Heritage members
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="p-4 rounded-lg bg-gradient-to-r from-primary/5 to-secondary/5 border border-primary/20">
-          <div className="flex items-center gap-3 mb-2">
-            <HeritageSVGLogoTransparent size="sm" className="w-8 h-8" />
-            <div>
-              <p className="font-semibold text-sm">Heritage Ecosystem Addresses</p>
-              <p className="text-xs text-muted-foreground">
-                All-numeric 20-digit wallet addresses unique to each Heritage member
-              </p>
-            </div>
-          </div>
-        </div>
+        {/* Removed ecosystem address info box - seamless internal transfer */}
 
         <div className="space-y-2">
           <Label>Select Asset</Label>
@@ -226,10 +216,10 @@ export const CryptoInternalTransfer = ({ wallets, onSuccess }: CryptoInternalTra
         </div>
 
         <div className="space-y-2">
-          <Label>Recipient Wallet Address</Label>
+          <Label>Recipient Wallet ID</Label>
           <div className="relative">
             <Input
-              placeholder="Enter Heritage ecosystem wallet address"
+              placeholder="Enter recipient wallet ID"
               value={recipientAddress}
               onChange={(e) => setRecipientAddress(e.target.value)}
               className="h-12 pr-10 font-mono text-sm"
@@ -257,7 +247,7 @@ export const CryptoInternalTransfer = ({ wallets, onSuccess }: CryptoInternalTra
                     {recipientInfo.name}
                   </p>
                   <p className="text-sm text-green-600 dark:text-green-500">
-                    Heritage Member • {recipientInfo.symbol} Wallet
+                    Verified Member • {recipientInfo.symbol}
                     <Badge className="ml-2 bg-green-500/20 text-green-600 text-xs">Verified</Badge>
                   </p>
                 </div>
@@ -270,7 +260,7 @@ export const CryptoInternalTransfer = ({ wallets, onSuccess }: CryptoInternalTra
               <div className="flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 text-amber-600" />
                 <p className="text-sm text-amber-700 dark:text-amber-400">
-                  Invalid Heritage ecosystem address. Check the format and try again.
+                  Invalid wallet ID format. Please check and try again.
                 </p>
               </div>
             </div>

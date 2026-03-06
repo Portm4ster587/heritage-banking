@@ -390,8 +390,8 @@ export default function ModernDashboard() {
                         </p>
                       </div>
                     </div>
-                    <span className={`text-sm font-medium ${
-                      transaction.type === 'credit' ? 'text-green-600' : 'text-foreground'
+                    <span className={`text-sm font-bold ${
+                      transaction.type === 'credit' ? 'text-green-600' : 'text-red-600'
                     }`}>
                       {transaction.type === 'credit' ? '+' : '-'}${Math.abs(transaction.amount).toLocaleString()}
                     </span>
