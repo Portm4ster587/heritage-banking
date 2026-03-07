@@ -34,76 +34,18 @@ interface Transaction {
   address?: string;
 }
 
-const cryptoAssets: CryptoAsset[] = [
-  {
-    symbol: 'BTC',
-    name: 'Bitcoin',
-    balance: 0.0234,
-    usdValue: 1456.78,
-    price: 62250.50,
-    change24h: 2.34,
-    icon: '₿'
-  },
-  {
-    symbol: 'ETH',
-    name: 'Ethereum',
-    balance: 0.823,
-    usdValue: 2047.15,
-    price: 2487.90,
-    change24h: -1.23,
-    icon: 'Ξ'
-  },
-  {
-    symbol: 'USDT',
-    name: 'Tether',
-    balance: 5000.00,
-    usdValue: 5000.00,
-    price: 1.00,
-    change24h: 0.01,
-    icon: '₮'
-  },
-  {
-    symbol: 'LTC',
-    name: 'Litecoin',
-    balance: 12.45,
-    usdValue: 1122.30,
-    price: 90.15,
-    change24h: 4.12,
-    icon: 'Ł'
-  }
-];
+// Crypto icons/logos mapping
+const cryptoLogos: Record<string, { icon: string; color: string; bgColor: string }> = {
+  BTC: { icon: '₿', color: 'text-orange-500', bgColor: 'bg-orange-100 dark:bg-orange-900/30' },
+  ETH: { icon: 'Ξ', color: 'text-blue-500', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
+  USDT: { icon: '₮', color: 'text-green-500', bgColor: 'bg-green-100 dark:bg-green-900/30' },
+  BNB: { icon: '💎', color: 'text-yellow-500', bgColor: 'bg-yellow-100 dark:bg-yellow-900/30' },
+  USDC: { icon: '$', color: 'text-blue-400', bgColor: 'bg-blue-100 dark:bg-blue-900/30' },
+  SOL: { icon: '◎', color: 'text-purple-500', bgColor: 'bg-purple-100 dark:bg-purple-900/30' },
+  XRP: { icon: '✕', color: 'text-slate-600', bgColor: 'bg-slate-100 dark:bg-slate-900/30' },
+};
 
-const recentTransactions: Transaction[] = [
-  {
-    id: '1',
-    type: 'receive',
-    asset: 'BTC',
-    amount: 0.001,
-    usdValue: 62.25,
-    timestamp: '2024-01-15T10:30:00Z',
-    status: 'completed',
-    address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa'
-  },
-  {
-    id: '2',
-    type: 'send',
-    asset: 'ETH',
-    amount: 0.1,
-    usdValue: 248.79,
-    timestamp: '2024-01-14T15:45:00Z',
-    status: 'completed',
-    address: '0x742d35Cc6634C0532925a3b8D38AA632022C'
-  },
-  {
-    id: '3',
-    type: 'buy',
-    asset: 'USDT',
-    amount: 1000,
-    usdValue: 1000.00,
-    timestamp: '2024-01-13T09:15:00Z',
-    status: 'pending'
-  }
-];
+const recentTransactions: Transaction[] = [];
 
 export const CryptoWallet = () => {
   const [selectedAsset, setSelectedAsset] = useState<string>('BTC');
@@ -246,10 +188,13 @@ export const CryptoWallet = () => {
   );
 
   const displayAssets = [
-    { symbol: 'BTC', name: 'Bitcoin', icon: '₿' },
-    { symbol: 'ETH', name: 'Ethereum', icon: 'Ξ' },
-    { symbol: 'USDT', name: 'Tether', icon: '₮' },
-    { symbol: 'BNB', name: 'Binance Coin', icon: '💰' }
+    { symbol: 'BTC', name: 'Bitcoin' },
+    { symbol: 'ETH', name: 'Ethereum' },
+    { symbol: 'USDT', name: 'Tether' },
+    { symbol: 'USDC', name: 'USD Coin' },
+    { symbol: 'SOL', name: 'Solana' },
+    { symbol: 'XRP', name: 'Ripple' },
+    { symbol: 'BNB', name: 'Binance Coin' },
   ];
 
   return (
@@ -294,10 +239,11 @@ export const CryptoWallet = () => {
                 <p className="text-4xl font-bold text-primary">${totalPortfolioValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {displayAssets.map((asset) => {
                   const balance = getWalletBalance(asset.symbol);
                   const usdValue = getWalletUsdValue(asset.symbol);
+                  const logo = cryptoLogos[asset.symbol] || { icon: '●', color: 'text-primary', bgColor: 'bg-muted' };
                   return (
                     <Card 
                       key={asset.symbol} 
@@ -305,19 +251,18 @@ export const CryptoWallet = () => {
                       onClick={() => setSelectedAsset(asset.symbol)}
                     >
                       <CardContent className="p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-2xl">{asset.icon}</span>
-                            <div>
-                              <p className="font-bold">{asset.symbol}</p>
-                              <p className="text-xs text-muted-foreground">{asset.name}</p>
-                            </div>
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className={`w-10 h-10 rounded-full ${logo.bgColor} flex items-center justify-center`}>
+                            <span className={`text-xl font-bold ${logo.color}`}>{logo.icon}</span>
+                          </div>
+                          <div>
+                            <p className="font-bold text-sm">{asset.symbol}</p>
+                            <p className="text-[10px] text-muted-foreground">{asset.name}</p>
                           </div>
                         </div>
                         <div className="space-y-1">
-                          <p className="text-sm text-muted-foreground">Balance</p>
-                          <p className="font-bold">{balance.toFixed(4)} {asset.symbol}</p>
-                          <p className="text-sm text-secondary">${usdValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                          <p className="font-bold text-sm">{balance.toFixed(4)} {asset.symbol}</p>
+                          <p className="text-xs text-muted-foreground">${usdValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
                         </div>
                       </CardContent>
                     </Card>
