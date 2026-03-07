@@ -135,8 +135,8 @@ export const CryptoWallet = () => {
       return;
     }
 
-    const asset = cryptoAssets.find(a => a.symbol === selectedAsset);
-    if (!asset || parseFloat(sendAmount) > asset.balance) {
+    const walletBalance = getWalletBalance(selectedAsset);
+    if (parseFloat(sendAmount) > walletBalance) {
       toast({
         title: "Insufficient Balance",
         description: "You don't have enough balance for this transaction",
