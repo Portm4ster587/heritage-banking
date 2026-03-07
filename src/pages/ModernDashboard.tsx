@@ -89,7 +89,7 @@ export default function ModernDashboard() {
       const { data } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('user_id', user.id)
         .maybeSingle();
       setUserProfile(data);
     } catch (error) {
@@ -326,6 +326,7 @@ export default function ModernDashboard() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-4">
+                {/* Primary actions - always visible */}
                 <div className="grid grid-cols-3 gap-3">
                   {[
                     { href: '/dashboard/transfers', icon: Send, label: 'Send Money', primary: true },
@@ -334,10 +335,6 @@ export default function ModernDashboard() {
                     { href: '/dashboard/crypto', icon: TrendingUp, label: 'Crypto' },
                     { href: '/dashboard/cards', icon: CreditCard, label: 'Cards' },
                     { href: '/dashboard/bills', icon: Receipt, label: 'Bills' },
-                    { href: '/dashboard/history', icon: CreditCard, label: 'History' },
-                    { href: '/dashboard/profile', icon: User, label: 'Profile' },
-                    { href: '/dashboard/statements', icon: FileText, label: 'Statements' },
-                    { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
                   ].map((item) => (
                     <a key={item.href} href={item.href}>
                       <div className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 hover:shadow-md hover:scale-105 cursor-pointer ${
@@ -351,6 +348,31 @@ export default function ModernDashboard() {
                     </a>
                   ))}
                 </div>
+                
+                {/* More actions - collapsible */}
+                <details className="mt-3 group">
+                  <summary className="text-xs text-primary font-medium cursor-pointer text-center py-2 hover:underline list-none flex items-center justify-center gap-1">
+                    <ChevronRight className="w-3 h-3 group-open:rotate-90 transition-transform" />
+                    More Actions
+                  </summary>
+                  <div className="grid grid-cols-3 gap-3 mt-3 animate-fade-in">
+                    {[
+                      { href: '/dashboard/history', icon: CreditCard, label: 'History' },
+                      { href: '/dashboard/profile', icon: User, label: 'Profile' },
+                      { href: '/dashboard/statements', icon: FileText, label: 'Statements' },
+                      { href: '/dashboard/settings', icon: Settings, label: 'Settings' },
+                      { href: '/dashboard/notifications', icon: Receipt, label: 'Alerts' },
+                      { href: '/contact', icon: User, label: 'Support' },
+                    ].map((item) => (
+                      <a key={item.href} href={item.href}>
+                        <div className="flex flex-col items-center justify-center p-3 rounded-xl border bg-card hover:bg-accent/50 border-border transition-all duration-200 hover:shadow-md hover:scale-105 cursor-pointer">
+                          <item.icon className="w-5 h-5 mb-1.5" />
+                          <span className="text-[11px] font-medium text-center leading-tight">{item.label}</span>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </details>
               </CardContent>
             </Card>
 

@@ -257,14 +257,38 @@ export const BTCInstantDeposit = ({ onSuccess }: BTCInstantDepositProps) => {
 
         {/* Status Display */}
         {depositStatus !== 'idle' && (
-          <div className="p-4 bg-muted rounded-lg">
+          <div className="p-4 bg-muted rounded-lg space-y-3">
+            {/* Confirmation Progress Steps */}
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium">Confirmations</span>
+              <Badge variant={depositStatus === 'completed' ? 'default' : 'secondary'}>
+                {depositStatus === 'pending' ? '0/3' : depositStatus === 'confirming' ? '1/3' : '3/3'}
+              </Badge>
+            </div>
+            <div className="flex gap-1">
+              {[1, 2, 3].map((step) => (
+                <div
+                  key={step}
+                  className={`h-2 flex-1 rounded-full transition-all duration-500 ${
+                    (depositStatus === 'pending' && step <= 0)
+                      ? 'bg-muted-foreground/20'
+                      : (depositStatus === 'confirming' && step <= 1)
+                        ? 'bg-amber-500'
+                        : depositStatus === 'completed'
+                          ? 'bg-green-500'
+                          : 'bg-muted-foreground/20'
+                  }`}
+                />
+              ))}
+            </div>
+            
             <div className="flex items-center gap-3">
               {depositStatus === 'pending' && (
                 <>
-                  <Clock className="w-5 h-5 text-yellow-500 animate-pulse" />
+                  <Clock className="w-5 h-5 text-amber-500 animate-pulse" />
                   <div>
                     <p className="font-medium">Deposit Pending</p>
-                    <p className="text-sm text-muted-foreground">Waiting for blockchain confirmation...</p>
+                    <p className="text-sm text-muted-foreground">Waiting for blockchain confirmation (0/3)...</p>
                   </div>
                 </>
               )}
@@ -273,7 +297,7 @@ export const BTCInstantDeposit = ({ onSuccess }: BTCInstantDepositProps) => {
                   <RefreshCw className="w-5 h-5 text-blue-500 animate-spin" />
                   <div>
                     <p className="font-medium">Confirming Transaction</p>
-                    <p className="text-sm text-muted-foreground">Processing your deposit...</p>
+                    <p className="text-sm text-muted-foreground">Processing confirmation (1/3 pending)...</p>
                   </div>
                 </>
               )}
@@ -281,8 +305,8 @@ export const BTCInstantDeposit = ({ onSuccess }: BTCInstantDepositProps) => {
                 <>
                   <CheckCircle className="w-5 h-5 text-green-500" />
                   <div>
-                    <p className="font-medium text-green-600">Deposit Completed!</p>
-                    <p className="text-sm text-muted-foreground">Funds will be credited shortly</p>
+                    <p className="font-medium text-green-600">Deposit Confirmed!</p>
+                    <p className="text-sm text-muted-foreground">All 3 confirmations received. Funds credited.</p>
                   </div>
                 </>
               )}
