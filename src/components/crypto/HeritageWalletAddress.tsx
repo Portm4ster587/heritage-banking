@@ -118,7 +118,7 @@ export const HeritageWalletAddress = ({ wallets, onWalletsUpdate }: HeritageWall
           </div>
           <div>
             <span>Receive Crypto</span>
-            <Badge variant="outline" className="ml-2 text-xs">Heritage Ecosystem</Badge>
+            <Badge variant="outline" className="ml-2 text-xs">Instant</Badge>
           </div>
         </CardTitle>
       </CardHeader>

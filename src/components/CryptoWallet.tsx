@@ -337,16 +337,13 @@ export const CryptoWallet = () => {
         </Card>
       )}
 
-      {/* Heritage Ecosystem Transfers */}
-      <div className="space-y-4">
+      {/* Internal Crypto Transfers */}
+      <div className="space-y-2">
         <div className="flex items-center gap-2">
           <ArrowRightLeft className="h-5 w-5 text-primary" />
-          <h3 className="text-xl font-bold">Heritage Ecosystem</h3>
-          <Badge className="bg-primary/10 text-primary">Instant Transfers</Badge>
+          <h3 className="text-xl font-bold">Send & Receive</h3>
+          <Badge className="bg-primary/10 text-primary">Instant</Badge>
         </div>
-        <p className="text-sm text-muted-foreground">
-          Send and receive crypto instantly between Heritage Bank members using ecosystem wallet addresses.
-        </p>
       </div>
 
       <Tabs defaultValue="send" className="space-y-6">
