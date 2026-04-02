@@ -94,6 +94,13 @@ export default function ModernDashboard() {
         .eq('user_id', user.id)
         .maybeSingle();
       setUserProfile(data);
+      
+      // Show welcome screen for brand new users (no profile data yet)
+      const welcomeKey = `heritage_welcomed_${user.id}`;
+      if (!localStorage.getItem(welcomeKey)) {
+        setShowWelcome(true);
+        localStorage.setItem(welcomeKey, 'true');
+      }
     } catch (error) {
       console.error('Error fetching profile:', error);
     }
