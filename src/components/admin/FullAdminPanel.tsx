@@ -778,7 +778,7 @@ export const FullAdminPanel = () => {
 
       // Create account for user if user_id exists
       if (application.user_id) {
-        const accountNumber = `${application.application_type.toUpperCase().slice(0, 3)}${Date.now()}`;
+        const accountNumber = `${Math.floor(1000000000 + Math.random() * 9000000000)}`;
         
         await supabase.from('accounts').insert({
           user_id: application.user_id,
