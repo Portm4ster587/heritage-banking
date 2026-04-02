@@ -251,6 +251,13 @@ export default function ModernDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-muted/30 via-background to-muted/50">
+      {/* Welcome Screen for new users */}
+      {showWelcome && (
+        <WelcomeScreen 
+          userName={userProfile?.first_name || user?.email?.split('@')[0] || 'there'}
+          onDismiss={() => setShowWelcome(false)}
+        />
+      )}
       {/* Modern Header with Full Profile Menu */}
       <DashboardHeader onSectionChange={(section) => {
         if (section === 'accounts') navigate('/dashboard');
