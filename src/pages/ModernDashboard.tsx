@@ -65,6 +65,7 @@ export default function ModernDashboard() {
   const [loading, setLoading] = useState(true);
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [showWelcome, setShowWelcome] = useState(false);
 
   const fetchAll = useCallback(() => {
     if (user) {
