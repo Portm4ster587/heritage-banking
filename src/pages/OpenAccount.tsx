@@ -178,12 +178,17 @@ export default function OpenAccount() {
 
       if (error) throw error;
 
+      setSubmittedData({
+        name: data.firstName,
+        appNumber: applicationData.application_number || 'Pending',
+        email: data.email
+      });
+      setSubmitted(true);
+
       toast({
         title: "Application Submitted!",
         description: "Your application has been submitted successfully. We'll review it within 24-48 hours.",
       });
-
-      navigate('/dashboard');
     } catch (error) {
       console.error('Application error:', error);
       toast({
