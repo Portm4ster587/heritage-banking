@@ -90,6 +90,8 @@ type AccountFormData = z.infer<typeof accountSchema>;
 export default function OpenAccount() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submittedData, setSubmittedData] = useState<{ name?: string; appNumber?: string; email?: string }>({});
   const { toast } = useToast();
   const navigate = useNavigate();
 
