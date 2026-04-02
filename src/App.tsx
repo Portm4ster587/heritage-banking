@@ -222,6 +222,10 @@ const App = () => (
               }
             />
             <Route 
+              path="/dashboard/transaction-history" 
+              element={<Navigate to="/dashboard/transactions" replace />}
+            />
+            <Route 
               path="/dashboard/profile" 
               element={
                 <ProtectedRoute>

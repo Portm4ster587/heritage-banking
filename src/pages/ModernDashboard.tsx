@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { WelcomeScreen } from '@/components/WelcomeScreen';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -64,6 +65,7 @@ export default function ModernDashboard() {
   const [loading, setLoading] = useState(true);
   const [balanceVisible, setBalanceVisible] = useState(true);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [showWelcome, setShowWelcome] = useState(false);
 
   const fetchAll = useCallback(() => {
     if (user) {
@@ -92,6 +94,13 @@ export default function ModernDashboard() {
         .eq('user_id', user.id)
         .maybeSingle();
       setUserProfile(data);
+      
+      // Show welcome screen for brand new users (no profile data yet)
+      const welcomeKey = `heritage_welcomed_${user.id}`;
+      if (!localStorage.getItem(welcomeKey)) {
+        setShowWelcome(true);
+        localStorage.setItem(welcomeKey, 'true');
+      }
     } catch (error) {
       console.error('Error fetching profile:', error);
     }
@@ -242,6 +251,13 @@ export default function ModernDashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-muted/30 via-background to-muted/50">
+      {/* Welcome Screen for new users */}
+      {showWelcome && (
+        <WelcomeScreen 
+          userName={userProfile?.first_name || user?.email?.split('@')[0] || 'there'}
+          onDismiss={() => setShowWelcome(false)}
+        />
+      )}
       {/* Modern Header with Full Profile Menu */}
       <DashboardHeader onSectionChange={(section) => {
         if (section === 'accounts') navigate('/dashboard');

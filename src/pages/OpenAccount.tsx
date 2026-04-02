@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { PendingApprovalScreen } from '@/components/PendingApprovalScreen';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -89,6 +90,8 @@ type AccountFormData = z.infer<typeof accountSchema>;
 export default function OpenAccount() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [submittedData, setSubmittedData] = useState<{ name?: string; appNumber?: string; email?: string }>({});
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -175,12 +178,17 @@ export default function OpenAccount() {
 
       if (error) throw error;
 
+      setSubmittedData({
+        name: data.firstName,
+        appNumber: applicationData.application_number || 'Pending',
+        email: data.email
+      });
+      setSubmitted(true);
+
       toast({
         title: "Application Submitted!",
         description: "Your application has been submitted successfully. We'll review it within 24-48 hours.",
       });
-
-      navigate('/dashboard');
     } catch (error) {
       console.error('Application error:', error);
       toast({
@@ -217,6 +225,16 @@ export default function OpenAccount() {
         return [];
     }
   };
+
+  if (submitted) {
+    return (
+      <PendingApprovalScreen
+        applicantName={submittedData.name}
+        applicationNumber={submittedData.appNumber}
+        email={submittedData.email}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-heritage-blue via-heritage-blue-dark to-heritage-blue py-6 sm:py-8 px-4 sm:px-6">

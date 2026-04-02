@@ -257,7 +257,7 @@ export default function HistoryPage() {
                   )}
                   <span className="hidden sm:inline">{refreshing ? 'Refreshing...' : 'Refresh'}</span>
                 </Button>
-                <Button variant="outline" size="sm" className="flex-1 sm:flex-none" onClick={() => navigate('/dashboard/transaction-history')}>
+                <Button variant="outline" size="sm" className="flex-1 sm:flex-none" onClick={() => navigate('/dashboard/transactions')}>
                   <ExternalLink className="w-4 h-4 mr-1" />
                   <span className="hidden sm:inline">Full History</span>
                 </Button>

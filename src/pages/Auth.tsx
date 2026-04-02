@@ -132,9 +132,9 @@ const Auth = () => {
 
       if (data.user) {
         toast({
-          title: "Account Created Successfully!",
-          description: "You can now sign in with your credentials. Note: Email confirmation may be required depending on settings.",
-          duration: 5000
+          title: "Account Created Successfully! 🎉",
+          description: "Welcome to Heritage Bank! You can now sign in. For full banking features, complete your account application.",
+          duration: 6000
         });
         setUsernameOrEmail('');
         setPassword('');
