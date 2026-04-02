@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { Resend } from "npm:resend@2.0.0";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
@@ -86,7 +87,6 @@ const getEmailTemplate = (type: string, data: EmailRequest['data']) => {
         ${amountBox('Transfer Details', data)}
         <p style="color: #6b7280; font-size: 13px;">If you did not authorize this transaction, please contact us immediately at <strong>1-800-HERITAGE</strong>.</p>
       `);
-
     case 'deposit':
       return contentWrap(`
         <h2 style="color: #1e3a5f; margin: 0 0 16px; font-family: Georgia, serif;">💰 Deposit ${data.status || 'Received'}</h2>
@@ -95,7 +95,6 @@ const getEmailTemplate = (type: string, data: EmailRequest['data']) => {
         ${amountBox('Deposit Details', data)}
         ${data.message ? `<p style="color: #6b7280; font-size: 13px;">${data.message}</p>` : ''}
       `);
-
     case 'withdrawal':
       return contentWrap(`
         <h2 style="color: #1e3a5f; margin: 0 0 16px; font-family: Georgia, serif;">📤 Withdrawal ${data.status || 'Processed'}</h2>
@@ -103,7 +102,6 @@ const getEmailTemplate = (type: string, data: EmailRequest['data']) => {
         <p style="color: #4b5563;">Your withdrawal request has been ${data.status}.</p>
         ${amountBox('Withdrawal Details', data)}
       `);
-
     case 'wire':
       return contentWrap(`
         <h2 style="color: #1e3a5f; margin: 0 0 16px; font-family: Georgia, serif;">🌐 Wire Transfer ${data.status === 'completed' ? 'Completed' : 'Update'}</h2>
@@ -112,7 +110,6 @@ const getEmailTemplate = (type: string, data: EmailRequest['data']) => {
         ${amountBox('Wire Transfer Details', data)}
         <p style="color: #6b7280; font-size: 13px;">Wire transfers are typically processed within 24 hours.</p>
       `);
-
     case 'ach':
       return contentWrap(`
         <h2 style="color: #1e3a5f; margin: 0 0 16px; font-family: Georgia, serif;">🏦 ACH Transfer ${data.status === 'completed' ? 'Completed' : 'Update'}</h2>
@@ -120,7 +117,6 @@ const getEmailTemplate = (type: string, data: EmailRequest['data']) => {
         <p style="color: #4b5563;">Your ACH transfer has been ${data.status}.</p>
         ${amountBox('ACH Details', data)}
       `);
-
     case 'balance':
       return contentWrap(`
         <h2 style="color: #1e3a5f; margin: 0 0 16px; font-family: Georgia, serif;">💵 Account Balance Update</h2>
@@ -128,7 +124,6 @@ const getEmailTemplate = (type: string, data: EmailRequest['data']) => {
         <p style="color: #4b5563;">Your account balance has been updated.</p>
         ${amountBox('Balance Update', data)}
       `);
-
     case 'alert':
       return contentWrap(`
         <h2 style="color: #dc2626; margin: 0 0 16px; font-family: Georgia, serif;">⚠️ Security Alert</h2>
@@ -138,7 +133,6 @@ const getEmailTemplate = (type: string, data: EmailRequest['data']) => {
           <p style="color: #991b1b; margin: 0; font-size: 14px;">If you did not initiate this activity, contact us immediately at <strong>1-800-HERITAGE</strong>.</p>
         </div>
       `);
-
     case 'welcome':
       return contentWrap(`
         <h2 style="color: #1e3a5f; margin: 0 0 16px; font-family: Georgia, serif;">Welcome to Heritage, ${data.userName}!</h2>
@@ -153,7 +147,6 @@ const getEmailTemplate = (type: string, data: EmailRequest['data']) => {
           </ul>
         </div>
       `);
-
     case 'verification':
       return contentWrap(`
         <h2 style="color: #1e3a5f; margin: 0 0 16px; font-family: Georgia, serif;">🔐 Verification ${data.status}</h2>
@@ -162,7 +155,6 @@ const getEmailTemplate = (type: string, data: EmailRequest['data']) => {
         ${data.status === 'verified' ? '<p style="color: #22c55e; font-weight: 600;">You now have full access to all Heritage Bank features.</p>' : ''}
         ${data.message ? `<p style="color: #6b7280; font-size: 13px;">${data.message}</p>` : ''}
       `);
-
     default:
       return contentWrap(`
         <p style="color: #4b5563;">${data.message || 'You have a new notification from Heritage Bank.'}</p>
@@ -176,6 +168,26 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Validate JWT authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { "Content-Type": "application/json", ...corsHeaders }
+      });
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const anonClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+    const { data: { user }, error: authError } = await anonClient.auth.getUser();
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { "Content-Type": "application/json", ...corsHeaders }
+      });
+    }
+
     const { to, subject, type, data }: EmailRequest = await req.json();
 
     if (!to || !subject) {
@@ -206,7 +218,7 @@ const handler = async (req: Request): Promise<Response> => {
   } catch (error: any) {
     console.error("Error sending email:", error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: 'An error occurred processing your request' }),
       {
         status: 500,
         headers: { "Content-Type": "application/json", ...corsHeaders },
