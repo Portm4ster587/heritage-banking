@@ -226,6 +226,16 @@ export default function OpenAccount() {
     }
   };
 
+  if (submitted) {
+    return (
+      <PendingApprovalScreen
+        applicantName={submittedData.name}
+        applicationNumber={submittedData.appNumber}
+        email={submittedData.email}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-heritage-blue via-heritage-blue-dark to-heritage-blue py-6 sm:py-8 px-4 sm:px-6">
       <div className="max-w-4xl mx-auto">
