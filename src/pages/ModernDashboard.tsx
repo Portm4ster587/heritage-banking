@@ -460,10 +460,10 @@ export default function ModernDashboard() {
             { href: '/dashboard/crypto', icon: TrendingUp, label: 'Crypto' },
             { href: '/dashboard/settings', icon: Settings, label: 'More' },
           ].map((item) => (
-            <a key={item.href} href={item.href} className="flex flex-col items-center gap-0.5 px-2 py-1.5 text-muted-foreground hover:text-primary transition-colors">
+            <Link key={item.href} to={item.href} className="flex flex-col items-center gap-0.5 px-2 py-1.5 text-muted-foreground hover:text-primary transition-colors">
               <item.icon className="w-5 h-5" />
               <span className="text-[10px] font-medium">{item.label}</span>
-            </a>
+            </Link>
           ))}
         </div>
       </nav>
