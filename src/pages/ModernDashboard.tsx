@@ -352,7 +352,7 @@ export default function ModernDashboard() {
                     { href: '/dashboard/cards', icon: CreditCard, label: 'Cards' },
                     { href: '/dashboard/bills', icon: Receipt, label: 'Bills' },
                   ].map((item) => (
-                    <a key={item.href} href={item.href}>
+                    <Link key={item.href} to={item.href}>
                       <div className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 hover:shadow-md hover:scale-105 cursor-pointer ${
                         item.primary 
                           ? 'bg-primary text-primary-foreground border-primary shadow-sm' 
@@ -361,7 +361,7 @@ export default function ModernDashboard() {
                         <item.icon className="w-5 h-5 mb-1.5" />
                         <span className="text-[11px] font-medium text-center leading-tight">{item.label}</span>
                       </div>
-                    </a>
+                    </Link>
                   ))}
                 </div>
                 
