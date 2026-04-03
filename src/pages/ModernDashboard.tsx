@@ -313,12 +313,12 @@ export default function ModernDashboard() {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <h2 className="text-lg font-semibold">Your Accounts</h2>
-                <a href="/">
+              <Link to="/open-account">
                   <Button className="banking-button text-white">
                     <Plus className="w-4 h-4 mr-2" />
                     Open Account
                   </Button>
-                </a>
+                </Link>
               </div>
 
               {accounts.map((account) => (
