@@ -435,12 +435,12 @@ export default function ModernDashboard() {
                     </span>
                   </div>
                 ))}
-                <a href="/dashboard/history">
+                <Link to="/dashboard/transactions">
                   <Button variant="ghost" className="w-full text-primary hover:text-primary/80">
                     View All Activity
                     <ChevronRight className="w-4 h-4 ml-2" />
                   </Button>
-                </a>
+                </Link>
               </CardContent>
             </Card>
           </div>
