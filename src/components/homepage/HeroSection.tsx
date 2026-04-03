@@ -68,7 +68,7 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
               <Button 
                 size="lg" 
                 onClick={onOpenCards}
-                className="bg-heritage-gold text-[#0a1628] hover:bg-heritage-gold/90 px-6 lg:px-8 py-3 font-bold text-base banking-button pulse-glow w-full sm:w-auto shadow-lg shadow-heritage-gold/30"
+                className="bg-gradient-to-r from-heritage-gold via-amber-400 to-heritage-gold text-[#0a1628] hover:from-amber-400 hover:via-heritage-gold hover:to-amber-400 px-6 lg:px-8 py-4 font-extrabold text-base tracking-wide banking-button w-full sm:w-auto shadow-[0_4px_20px_rgba(212,175,55,0.5)] border-2 border-heritage-gold/60 hover:shadow-[0_6px_30px_rgba(212,175,55,0.7)] transition-all duration-300"
               >
                 Explore Our Cards
               </Button>
@@ -76,7 +76,7 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
                 <Link to="/dashboard" className="w-full sm:w-auto">
                   <Button 
                     size="lg" 
-                    className="bg-white text-heritage-blue-dark hover:bg-white/90 border-2 border-heritage-gold px-6 lg:px-8 py-3 font-bold text-base w-full flex items-center justify-center gap-2 shadow-lg"
+                    className="bg-white text-[#0a1628] hover:bg-white/95 border-2 border-heritage-gold px-6 lg:px-8 py-4 font-extrabold text-base w-full flex items-center justify-center gap-2 shadow-[0_4px_20px_rgba(255,255,255,0.3)] hover:shadow-[0_6px_30px_rgba(255,255,255,0.5)] transition-all duration-300"
                   >
                     Go to Dashboard
                     <ArrowRight className="w-5 h-5" />
@@ -86,7 +86,7 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
                 <Link to="/auth" className="w-full sm:w-auto">
                   <Button 
                     size="lg" 
-                    className="bg-white text-heritage-blue-dark hover:bg-white/90 border-2 border-heritage-gold px-6 lg:px-8 py-3 font-bold text-base w-full shadow-lg"
+                    className="bg-white text-[#0a1628] hover:bg-white/95 border-2 border-heritage-gold px-6 lg:px-8 py-4 font-extrabold text-base w-full shadow-[0_4px_20px_rgba(255,255,255,0.3)] hover:shadow-[0_6px_30px_rgba(255,255,255,0.5)] transition-all duration-300"
                   >
                     Sign In
                   </Button>
