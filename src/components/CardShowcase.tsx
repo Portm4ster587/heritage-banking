@@ -1,20 +1,21 @@
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { 
   CreditCard, 
   Star, 
-  Zap, 
-  Shield, 
   Gem, 
-  Plane,
-  ShoppingBag,
+  Building,
+  Zap,
   Car,
   Home,
-  Building
+  Check,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
+import { HeritageSVGLogoTransparent } from '@/components/HeritageSVGLogoTransparent';
 
 interface CardShowcaseProps {
   onApply: (cardType: string) => void;
@@ -30,15 +31,16 @@ const cardTypes = [
     annualFee: '$0',
     rewards: '1.5% cash back on all purchases',
     icon: CreditCard,
-    color: 'bg-gradient-to-br from-slate-600 to-slate-800',
-    textColor: 'text-white',
+    gradient: 'from-[hsl(220,60%,22%)] via-[hsl(220,55%,30%)] to-[hsl(225,50%,38%)]',
+    chipColor: 'from-[hsl(45,80%,55%)] to-[hsl(45,70%,45%)]',
+    network: 'VISA',
+    badge: null,
     benefits: [
       'No annual fee',
       '1.5% cash back on all purchases',
       '0% intro APR for 12 months',
       'No foreign transaction fees'
     ],
-    image: '/lovable-uploads/a360d89a-0a5b-49b1-9d15-bf838080ff78.png'
   },
   {
     id: 'heritage_preferred',
@@ -49,16 +51,17 @@ const cardTypes = [
     annualFee: '$95',
     rewards: 'Up to 3x points on select categories',
     icon: Star,
-    color: 'bg-gradient-to-br from-blue-600 to-blue-800',
-    textColor: 'text-white',
+    gradient: 'from-[hsl(220,70%,18%)] via-[hsl(230,65%,26%)] to-[hsl(240,60%,35%)]',
+    chipColor: 'from-[hsl(45,90%,60%)] to-[hsl(40,85%,48%)]',
+    network: 'VISA',
+    badge: 'Popular',
     benefits: [
       '3x points on dining & travel',
-      '2x points on gas & groceries', 
+      '2x points on gas & groceries',
       '1x points on all other purchases',
       'Welcome bonus: 60,000 points',
       'Travel insurance included'
     ],
-    image: '/lovable-uploads/a360d89a-0a5b-49b1-9d15-bf838080ff78.png'
   },
   {
     id: 'heritage_elite',
@@ -69,8 +72,10 @@ const cardTypes = [
     annualFee: '$450',
     rewards: 'Up to 5x points + exclusive perks',
     icon: Gem,
-    color: 'bg-gradient-to-br from-purple-600 to-purple-900',
-    textColor: 'text-white',
+    gradient: 'from-[hsl(45,80%,40%)] via-[hsl(40,75%,35%)] to-[hsl(35,70%,28%)]',
+    chipColor: 'from-[hsl(0,0%,90%)] to-[hsl(0,0%,75%)]',
+    network: 'MC',
+    badge: 'Exclusive',
     benefits: [
       '5x points on travel booked through portal',
       '3x points on dining worldwide',
@@ -79,7 +84,6 @@ const cardTypes = [
       'Concierge service 24/7',
       'Global Entry/TSA PreCheck credit'
     ],
-    image: '/lovable-uploads/a360d89a-0a5b-49b1-9d15-bf838080ff78.png'
   },
   {
     id: 'heritage_business',
@@ -90,8 +94,10 @@ const cardTypes = [
     annualFee: '$0',
     rewards: '2x points on business purchases',
     icon: Building,
-    color: 'bg-gradient-to-br from-green-600 to-green-800',
-    textColor: 'text-white',
+    gradient: 'from-[hsl(220,50%,15%)] via-[hsl(210,45%,22%)] to-[hsl(200,40%,30%)]',
+    chipColor: 'from-[hsl(45,85%,55%)] to-[hsl(45,75%,42%)]',
+    network: 'VISA',
+    badge: null,
     benefits: [
       'No annual fee first year',
       '2x points on business purchases',
@@ -99,7 +105,6 @@ const cardTypes = [
       'Expense management tools',
       'Business credit building'
     ],
-    image: '/lovable-uploads/a360d89a-0a5b-49b1-9d15-bf838080ff78.png'
   }
 ];
 
@@ -111,7 +116,6 @@ const loanProducts = [
     rate: '6.99% - 24.99% APR',
     amount: 'Up to $50,000',
     icon: Zap,
-    color: 'bg-gradient-to-br from-orange-500 to-orange-700'
   },
   {
     id: 'auto_loan',
@@ -120,7 +124,6 @@ const loanProducts = [
     rate: '3.49% - 18.99% APR',
     amount: 'Up to $100,000',
     icon: Car,
-    color: 'bg-gradient-to-br from-red-500 to-red-700'
   },
   {
     id: 'home_loan',
@@ -129,99 +132,151 @@ const loanProducts = [
     rate: '6.25% - 8.50% APR',
     amount: 'Up to $2,000,000',
     icon: Home,
-    color: 'bg-gradient-to-br from-teal-500 to-teal-700'
   }
 ];
 
 export const CardShowcase = ({ onApply }: CardShowcaseProps) => {
-  const [selectedCard, setSelectedCard] = useState<string | null>(null);
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-12">
       {/* Credit Cards Section */}
-      <section className="space-y-6">
+      <section className="space-y-8">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-primary mb-4">Heritage Credit Cards</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold text-primary mb-3">Heritage Credit Cards</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
             Choose from our premium selection of credit cards, each designed to reward your lifestyle
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {cardTypes.map((card) => {
-            const IconComponent = card.icon;
+            const isExpanded = expandedCard === card.id;
             return (
-              <Card 
-                key={card.id}
-                className={cn(
-                  "relative overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group",
-                  selectedCard === card.id && "ring-2 ring-primary"
-                )}
-                onClick={() => setSelectedCard(selectedCard === card.id ? null : card.id)}
-              >
-                {/* Card Visual */}
-                <div 
+              <div key={card.id} className="space-y-4">
+                {/* Physical Card Design */}
+                <div
                   className={cn(
-                    "h-32 relative flex items-center justify-center",
-                    card.color
+                    "relative aspect-[1.586/1] rounded-2xl overflow-hidden shadow-xl cursor-pointer",
+                    "bg-gradient-to-br",
+                    card.gradient,
+                    "hover:shadow-2xl hover:scale-[1.02] transition-all duration-300"
                   )}
+                  onClick={() => setExpandedCard(isExpanded ? null : card.id)}
                 >
-                  <div className="absolute inset-0 bg-black/20"></div>
-                  <div className="relative flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-heritage-gold rounded flex items-center justify-center">
-                      <span className="text-heritage-blue font-bold text-sm">H</span>
+                  {/* Background pattern */}
+                  <div className="absolute inset-0 opacity-[0.06]">
+                    <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full border-[20px] border-white/40" />
+                    <div className="absolute -bottom-12 -left-12 w-56 h-56 rounded-full border-[20px] border-white/30" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full border-[12px] border-white/20" />
+                  </div>
+
+                  {/* Holographic stripe */}
+                  <div className="absolute top-0 right-0 w-1/3 h-full bg-gradient-to-b from-white/[0.04] via-white/[0.08] to-white/[0.02]" />
+
+                  <div className="relative h-full p-5 sm:p-6 flex flex-col justify-between text-white">
+                    {/* Top: Logo + Badge + Network */}
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center gap-2">
+                        <HeritageSVGLogoTransparent size="sm" className="w-8 h-8" />
+                        <div>
+                          <span className="text-[10px] font-semibold tracking-[0.2em] uppercase opacity-90 block">Heritage Bank</span>
+                          <span className="text-[9px] tracking-wider opacity-60">{card.type}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        {card.badge && (
+                          <Badge className="bg-[hsl(var(--heritage-gold))]/20 text-[hsl(45,95%,70%)] border-[hsl(45,95%,55%)]/30 text-[9px] px-2 py-0.5">
+                            {card.badge}
+                          </Badge>
+                        )}
+                        <span className="text-xl font-bold italic tracking-wider opacity-90">{card.network}</span>
+                      </div>
                     </div>
-                    <div className={cn("text-right", card.textColor)}>
-                      <div className="text-sm font-medium">{card.name}</div>
-                      <div className="text-xs opacity-90">{card.type}</div>
+
+                    {/* Chip */}
+                    <div className="flex items-center gap-4">
+                      <div className={cn(
+                        "w-11 h-8 rounded-md bg-gradient-to-br border border-white/20",
+                        card.chipColor
+                      )}>
+                        <div className="w-full h-full grid grid-cols-3 grid-rows-3 gap-px p-0.5 opacity-30">
+                          {Array.from({ length: 9 }).map((_, i) => (
+                            <div key={i} className="bg-white/40 rounded-[1px]" />
+                          ))}
+                        </div>
+                      </div>
+                      <div className="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center">
+                        <div className="w-3 h-3 rounded-full border border-white/30" />
+                      </div>
+                    </div>
+
+                    {/* Card Number */}
+                    <p className="font-mono text-lg sm:text-xl tracking-[0.2em] opacity-90">
+                      •••• •••• •••• ••••
+                    </p>
+
+                    {/* Bottom: Name + Expiry */}
+                    <div className="flex items-end justify-between">
+                      <div>
+                        <p className="text-[9px] uppercase opacity-50 tracking-wider">Card Holder</p>
+                        <p className="text-sm font-medium tracking-wider uppercase">{card.name}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-[9px] uppercase opacity-50 tracking-wider">Valid Thru</p>
+                        <p className="font-mono text-sm opacity-80">••/••</p>
+                      </div>
                     </div>
                   </div>
-                  <IconComponent className={cn("absolute top-3 right-3 w-6 h-6", card.textColor)} />
-                  
-                  {/* Chip */}
-                  <div className="absolute bottom-3 left-3 w-6 h-4 bg-heritage-gold/80 rounded-sm"></div>
                 </div>
 
-                <CardContent className="p-4">
-                  <div className="space-y-3">
-                    <div>
-                      <h3 className="font-semibold text-lg">{card.name}</h3>
-                      <p className="text-sm text-muted-foreground">{card.description}</p>
+                {/* Card Info Panel */}
+                <Card className="border-border/50">
+                  <CardContent className="p-4 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-bold text-lg text-foreground">{card.name}</h3>
+                        <p className="text-sm text-muted-foreground">{card.description}</p>
+                      </div>
+                      <button
+                        onClick={() => setExpandedCard(isExpanded ? null : card.id)}
+                        className="text-muted-foreground hover:text-primary transition-colors"
+                      >
+                        {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                      </button>
                     </div>
-                    
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
+
+                    <div className="flex flex-wrap gap-4 text-sm">
+                      <div>
                         <span className="text-muted-foreground">APR</span>
-                        <span className="font-medium">{card.apr}</span>
+                        <p className="font-semibold text-foreground">{card.apr}</p>
                       </div>
-                      <div className="flex justify-between text-sm">
+                      <div>
                         <span className="text-muted-foreground">Annual Fee</span>
-                        <span className="font-medium">{card.annualFee}</span>
+                        <p className="font-semibold text-foreground">{card.annualFee}</p>
+                      </div>
+                      <div>
+                        <span className="text-muted-foreground">Rewards</span>
+                        <p className="font-semibold text-primary text-xs">{card.rewards}</p>
                       </div>
                     </div>
 
-                    <div className="space-y-2">
-                      <p className="text-sm font-medium text-primary">{card.rewards}</p>
-                    </div>
-
-                    {selectedCard === card.id && (
-                      <div className="space-y-3 animate-fade-in">
-                        <div className="border-t pt-3">
-                          <h4 className="font-medium text-sm mb-2">Key Benefits:</h4>
-                          <ul className="space-y-1">
-                            {card.benefits.map((benefit, index) => (
-                              <li key={index} className="text-xs text-muted-foreground flex items-start gap-1">
-                                <span className="text-primary mt-0.5">•</span>
-                                {benefit}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
+                    {isExpanded && (
+                      <div className="space-y-3 animate-fade-in border-t border-border pt-3">
+                        <h4 className="font-semibold text-sm text-foreground">Key Benefits</h4>
+                        <ul className="space-y-2">
+                          {card.benefits.map((benefit, index) => (
+                            <li key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+                              <Check className="w-4 h-4 text-[hsl(var(--success))] mt-0.5 shrink-0" />
+                              {benefit}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     )}
 
                     <Button 
-                      className="w-full"
+                      className="w-full bg-gradient-to-r from-primary to-[hsl(var(--primary-dark))] hover:opacity-90 text-primary-foreground font-semibold"
                       onClick={(e) => {
                         e.stopPropagation();
                         onApply('credit_card');
@@ -229,9 +284,9 @@ export const CardShowcase = ({ onApply }: CardShowcaseProps) => {
                     >
                       Apply Now
                     </Button>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </div>
             );
           })}
         </div>
@@ -240,8 +295,8 @@ export const CardShowcase = ({ onApply }: CardShowcaseProps) => {
       {/* Loan Products Section */}
       <section className="space-y-6">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-primary mb-4">Loan Products</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold text-primary mb-3">Loan Products</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
             Competitive rates and flexible terms for all your financing needs
           </p>
         </div>
@@ -252,31 +307,26 @@ export const CardShowcase = ({ onApply }: CardShowcaseProps) => {
             return (
               <Card 
                 key={loan.id}
-                className="hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                className="hover:shadow-lg transition-all duration-300 border-border/50 group"
               >
-                <CardHeader>
-                  <div className={cn(
-                    "w-12 h-12 rounded-lg flex items-center justify-center mb-2",
-                    loan.color
-                  )}>
-                    <IconComponent className="w-6 h-6 text-white" />
+                <CardContent className="p-6 space-y-4">
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-[hsl(var(--primary-dark))] flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <IconComponent className="w-6 h-6 text-primary-foreground" />
                   </div>
-                  <CardTitle className="text-xl">{loan.name}</CardTitle>
-                  <CardDescription>{loan.description}</CardDescription>
-                </CardHeader>
-                
-                <CardContent className="space-y-4">
+                  <div>
+                    <h3 className="font-bold text-lg text-foreground">{loan.name}</h3>
+                    <p className="text-sm text-muted-foreground">{loan.description}</p>
+                  </div>
                   <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Rate</span>
-                      <span className="font-medium">{loan.rate}</span>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Rate</span>
+                      <span className="font-semibold text-foreground">{loan.rate}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-sm text-muted-foreground">Amount</span>
-                      <span className="font-medium">{loan.amount}</span>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Amount</span>
+                      <span className="font-semibold text-foreground">{loan.amount}</span>
                     </div>
                   </div>
-                  
                   <Button 
                     className="w-full"
                     variant="outline"
