@@ -26,7 +26,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { AccountDetailsPanel } from '@/components/dashboard/AccountDetailsPanel';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useComprehensiveNotifications } from '@/hooks/useComprehensiveNotifications';
 import { useTransactionRealTime } from '@/hooks/useTransactionRealTime';
 import { CustomerChatWidget } from '@/components/support/CustomerChatWidget';
@@ -313,12 +313,12 @@ export default function ModernDashboard() {
             <div className="space-y-4">
               <div className="flex justify-between items-center">
                 <h2 className="text-lg font-semibold">Your Accounts</h2>
-                <a href="/">
+              <Link to="/open-account">
                   <Button className="banking-button text-white">
                     <Plus className="w-4 h-4 mr-2" />
                     Open Account
                   </Button>
-                </a>
+                </Link>
               </div>
 
               {accounts.map((account) => (
@@ -352,7 +352,7 @@ export default function ModernDashboard() {
                     { href: '/dashboard/cards', icon: CreditCard, label: 'Cards' },
                     { href: '/dashboard/bills', icon: Receipt, label: 'Bills' },
                   ].map((item) => (
-                    <a key={item.href} href={item.href}>
+                    <Link key={item.href} to={item.href}>
                       <div className={`flex flex-col items-center justify-center p-3 rounded-xl border transition-all duration-200 hover:shadow-md hover:scale-105 cursor-pointer ${
                         item.primary 
                           ? 'bg-primary text-primary-foreground border-primary shadow-sm' 
@@ -361,7 +361,7 @@ export default function ModernDashboard() {
                         <item.icon className="w-5 h-5 mb-1.5" />
                         <span className="text-[11px] font-medium text-center leading-tight">{item.label}</span>
                       </div>
-                    </a>
+                    </Link>
                   ))}
                 </div>
                 
@@ -380,12 +380,12 @@ export default function ModernDashboard() {
                       { href: '/dashboard/notifications', icon: Receipt, label: 'Alerts' },
                       { href: '/contact', icon: User, label: 'Support' },
                     ].map((item) => (
-                      <a key={item.href} href={item.href}>
+                      <Link key={item.href} to={item.href}>
                         <div className="flex flex-col items-center justify-center p-3 rounded-xl border bg-card hover:bg-accent/50 border-border transition-all duration-200 hover:shadow-md hover:scale-105 cursor-pointer">
                           <item.icon className="w-5 h-5 mb-1.5" />
                           <span className="text-[11px] font-medium text-center leading-tight">{item.label}</span>
                         </div>
-                      </a>
+                      </Link>
                     ))}
                   </div>
                 </details>
@@ -435,12 +435,12 @@ export default function ModernDashboard() {
                     </span>
                   </div>
                 ))}
-                <a href="/dashboard/history">
+                <Link to="/dashboard/transactions">
                   <Button variant="ghost" className="w-full text-primary hover:text-primary/80">
                     View All Activity
                     <ChevronRight className="w-4 h-4 ml-2" />
                   </Button>
-                </a>
+                </Link>
               </CardContent>
             </Card>
           </div>
@@ -460,10 +460,10 @@ export default function ModernDashboard() {
             { href: '/dashboard/crypto', icon: TrendingUp, label: 'Crypto' },
             { href: '/dashboard/settings', icon: Settings, label: 'More' },
           ].map((item) => (
-            <a key={item.href} href={item.href} className="flex flex-col items-center gap-0.5 px-2 py-1.5 text-muted-foreground hover:text-primary transition-colors">
+            <Link key={item.href} to={item.href} className="flex flex-col items-center gap-0.5 px-2 py-1.5 text-muted-foreground hover:text-primary transition-colors">
               <item.icon className="w-5 h-5" />
               <span className="text-[10px] font-medium">{item.label}</span>
-            </a>
+            </Link>
           ))}
         </div>
       </nav>
