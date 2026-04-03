@@ -26,7 +26,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { AccountDetailsPanel } from '@/components/dashboard/AccountDetailsPanel';
 import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useComprehensiveNotifications } from '@/hooks/useComprehensiveNotifications';
 import { useTransactionRealTime } from '@/hooks/useTransactionRealTime';
 import { CustomerChatWidget } from '@/components/support/CustomerChatWidget';
