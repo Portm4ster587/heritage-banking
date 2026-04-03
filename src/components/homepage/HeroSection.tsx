@@ -86,7 +86,7 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
                 <Link to="/auth" className="w-full sm:w-auto">
                   <Button 
                     size="lg" 
-                    className="bg-white text-[#0a1628] hover:bg-white/95 border-2 border-heritage-gold px-6 lg:px-8 py-4 font-extrabold text-base w-full shadow-[0_4px_20px_rgba(255,255,255,0.3)] hover:shadow-[0_6px_30px_rgba(255,255,255,0.5)] transition-all duration-300"
+                    className="bg-gradient-to-r from-white via-white to-gray-100 text-[#0a1628] hover:from-gray-100 hover:via-white hover:to-white border-2 border-heritage-gold px-6 lg:px-8 py-4 font-extrabold text-base w-full shadow-[0_4px_20px_rgba(255,255,255,0.4)] hover:shadow-[0_6px_30px_rgba(255,255,255,0.6)] transition-all duration-300"
                   >
                     Sign In
                   </Button>
