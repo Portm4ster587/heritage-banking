@@ -366,5 +366,12 @@ export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps)
         </Button>
       </CardContent>
     </Card>
+
+    <WireTransferProgress
+      isVisible={showProgress}
+      onComplete={handleProgressComplete}
+      transferType={transferType}
+    />
+    </>
   );
 };
