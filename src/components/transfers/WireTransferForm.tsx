@@ -7,11 +7,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Badge } from '@/components/ui/badge';
-import { Send, Globe, Building2, AlertTriangle } from 'lucide-react';
+import { Send, Globe, Building2, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useSmsNotification } from '@/hooks/useSmsNotification';
+import { WireTransferProgress } from '@/components/WireTransferProgress';
 
 interface Account {
   id: string;
@@ -58,7 +59,7 @@ export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps)
   const [verificationMethod, setVerificationMethod] = useState<'phone' | 'email'>('phone');
   const [verificationContact, setVerificationContact] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-
+  const [showProgress, setShowProgress] = useState(false);
   const domesticFee = 25;
   const internationalFee = 45;
   const fee = transferType === 'domestic' ? domesticFee : internationalFee;
@@ -99,6 +100,10 @@ export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps)
     }
 
     setIsProcessing(true);
+    setShowProgress(true);
+  };
+
+  const handleProgressComplete = async () => {
     try {
       const { error } = await supabase.from('wire_transfers').insert({
         user_id: user?.id,
@@ -163,9 +168,11 @@ export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps)
       setRecipientAddress('');
       setPurpose('');
       
+      setShowProgress(false);
       onSuccess?.();
     } catch (error) {
       console.error('Wire transfer error:', error);
+      setShowProgress(false);
       toast({ title: "Error", description: "Failed to submit wire transfer", variant: "destructive" });
     } finally {
       setIsProcessing(false);
@@ -173,6 +180,7 @@ export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps)
   };
 
   return (
+    <>
     <Card className="banking-card">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
@@ -280,7 +288,8 @@ export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps)
           {/* Pro Code Verification Section */}
           <div className="border-t pt-4 mt-4">
             <h4 className="font-medium mb-4 text-primary flex items-center gap-2">
-              🔐 Security Verification (Required)
+              <ShieldCheck className="w-5 h-5" />
+              Security Verification (Required)
             </h4>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -358,5 +367,12 @@ export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps)
         </Button>
       </CardContent>
     </Card>
+
+    <WireTransferProgress
+      isVisible={showProgress}
+      onComplete={handleProgressComplete}
+      transferType={transferType}
+    />
+    </>
   );
 };

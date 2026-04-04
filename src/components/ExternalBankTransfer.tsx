@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useAccountLookup } from '@/hooks/useAccountLookup';
 import { useSmsNotification } from '@/hooks/useSmsNotification';
+import { ExternalTransferProgress } from '@/components/ExternalTransferProgress';
 
 interface ExternalAccount {
   id: string;
@@ -55,7 +56,8 @@ export const ExternalBankTransfer = ({
   const { lookupAccount, loading: lookupLoading, result: lookupResult, clearResult } = useAccountLookup();
   const { sendTransactionAlert } = useSmsNotification();
   const [userPhone, setUserPhone] = useState<string | null>(null);
-
+  const [showProgress, setShowProgress] = useState(false);
+  const [pendingTransfer, setPendingTransfer] = useState<{src: SourceAccount; ext: ExternalAccount | undefined; amt: number} | null>(null);
   // Fetch user phone for SMS alerts
   useEffect(() => {
     const fetchPhone = async () => {
@@ -128,6 +130,14 @@ export const ExternalBankTransfer = ({
 
     const ext = externalAccounts.find((e) => e.id === selectedExternalAccount);
 
+    setPendingTransfer({ src, ext, amt });
+    setShowProgress(true);
+  };
+
+  const handleProgressComplete = async () => {
+    if (!pendingTransfer) return;
+    const { src, ext, amt } = pendingTransfer;
+
     try {
       // Record transfer
       const { error: transferError } = await supabase.from('transfers').insert([
@@ -182,9 +192,13 @@ export const ExternalBankTransfer = ({
       setTransferAmount('');
       setSelectedExternalAccount('');
       setSourceAccount('');
+      setShowProgress(false);
+      setPendingTransfer(null);
       onSuccess?.();
     } catch (err) {
       console.error('External transfer error:', err);
+      setShowProgress(false);
+      setPendingTransfer(null);
       toast({ title: 'Transfer Failed', description: 'Could not initiate external transfer', variant: 'destructive' });
     }
   };
@@ -423,6 +437,11 @@ export const ExternalBankTransfer = ({
           </Card>
         </div>
       )}
+
+      <ExternalTransferProgress
+        isVisible={showProgress}
+        onComplete={handleProgressComplete}
+      />
     </div>
   );
 };
