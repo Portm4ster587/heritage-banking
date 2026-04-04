@@ -130,6 +130,14 @@ export const ExternalBankTransfer = ({
 
     const ext = externalAccounts.find((e) => e.id === selectedExternalAccount);
 
+    setPendingTransfer({ src, ext, amt });
+    setShowProgress(true);
+  };
+
+  const handleProgressComplete = async () => {
+    if (!pendingTransfer) return;
+    const { src, ext, amt } = pendingTransfer;
+
     try {
       // Record transfer
       const { error: transferError } = await supabase.from('transfers').insert([
