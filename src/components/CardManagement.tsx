@@ -26,7 +26,6 @@ interface CardData {
   expiry_date: string;
   status: string;
   card_number?: string;
-  cvv?: string;
   credit_limit?: number;
   available_credit?: number;
   spending_limit?: number;
