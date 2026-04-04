@@ -280,7 +280,8 @@ export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps)
           {/* Pro Code Verification Section */}
           <div className="border-t pt-4 mt-4">
             <h4 className="font-medium mb-4 text-primary flex items-center gap-2">
-              🔐 Security Verification (Required)
+              <ShieldCheck className="w-5 h-5" />
+              Security Verification (Required)
             </h4>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
