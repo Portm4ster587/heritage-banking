@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useAccountLookup } from '@/hooks/useAccountLookup';
 import { useSmsNotification } from '@/hooks/useSmsNotification';
+import { ExternalTransferProgress } from '@/components/ExternalTransferProgress';
 
 interface ExternalAccount {
   id: string;
