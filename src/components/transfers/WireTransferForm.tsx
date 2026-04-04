@@ -100,6 +100,10 @@ export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps)
     }
 
     setIsProcessing(true);
+    setShowProgress(true);
+  };
+
+  const handleProgressComplete = async () => {
     try {
       const { error } = await supabase.from('wire_transfers').insert({
         user_id: user?.id,
