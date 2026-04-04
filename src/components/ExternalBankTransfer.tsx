@@ -56,7 +56,8 @@ export const ExternalBankTransfer = ({
   const { lookupAccount, loading: lookupLoading, result: lookupResult, clearResult } = useAccountLookup();
   const { sendTransactionAlert } = useSmsNotification();
   const [userPhone, setUserPhone] = useState<string | null>(null);
-
+  const [showProgress, setShowProgress] = useState(false);
+  const [pendingTransfer, setPendingTransfer] = useState<{src: SourceAccount; ext: ExternalAccount | undefined; amt: number} | null>(null);
   // Fetch user phone for SMS alerts
   useEffect(() => {
     const fetchPhone = async () => {
