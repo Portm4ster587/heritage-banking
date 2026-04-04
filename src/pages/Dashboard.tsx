@@ -263,9 +263,22 @@ export default function Dashboard() {
         </div>
 
         {activeSection === 'accounts' && (
-          <div className="space-y-8">
+          <div className="space-y-6">
+            {/* Account Summary - Hero Card */}
             <DashboardAccountSummary />
+
+            {/* Quick Actions - Chase-style circular grid */}
+            <div className="bg-card rounded-xl border border-border p-5">
+              <QuickActionsGrid onSectionChange={handleSectionChange} />
+            </div>
+
+            {/* Recent Transactions Feed */}
+            <RecentTransactions />
+
+            {/* Spending Chart */}
             <SpendingChart />
+
+            {/* Account Details */}
             <AccountOverviewSection
               accounts={accounts}
               balanceVisible={balanceVisible}
