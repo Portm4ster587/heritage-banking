@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useSmsNotification } from '@/hooks/useSmsNotification';
+import { WireTransferProgress } from '@/components/WireTransferProgress';
 
 interface Account {
   id: string;
