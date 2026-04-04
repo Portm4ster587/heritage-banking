@@ -9,6 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 import { AccountOverviewSection } from '@/components/dashboard/AccountOverviewSection';
 import { DashboardAccountSummary } from '@/components/dashboard/DashboardAccountSummary';
 import { SpendingChart } from '@/components/dashboard/SpendingChart';
+import { QuickActionsGrid } from '@/components/dashboard/QuickActionsGrid';
+import { RecentTransactions } from '@/components/dashboard/RecentTransactions';
 import { BankingHeader } from '@/components/BankingHeader';
 import { ApplicationForm } from '@/components/ApplicationForm';
 import { AdminPanel } from '@/components/AdminPanel';
