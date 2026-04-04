@@ -140,9 +140,9 @@ export const GuestApplicationForm = ({ applicationType, onSuccess }: GuestApplic
           <CardTitle className="text-2xl">{config.title}</CardTitle>
           <CardDescription className="text-lg">{config.description}</CardDescription>
           <div className="bg-accent/10 border border-accent/20 rounded-lg p-3 mt-4">
-            <p className="text-sm text-accent-foreground">
-              🚀 <strong>Quick Application:</strong> No account registration required! 
-              Apply now and we'll contact you within 24 hours.
+            <p className="text-sm text-accent-foreground flex items-center gap-2">
+              <Zap className="w-4 h-4 text-primary shrink-0" />
+              <span><strong>Quick Application:</strong> No account registration required! Apply now and we'll contact you within 24 hours.</span>
             </p>
           </div>
         </CardHeader>
