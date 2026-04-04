@@ -192,9 +192,13 @@ export const ExternalBankTransfer = ({
       setTransferAmount('');
       setSelectedExternalAccount('');
       setSourceAccount('');
+      setShowProgress(false);
+      setPendingTransfer(null);
       onSuccess?.();
     } catch (err) {
       console.error('External transfer error:', err);
+      setShowProgress(false);
+      setPendingTransfer(null);
       toast({ title: 'Transfer Failed', description: 'Could not initiate external transfer', variant: 'destructive' });
     }
   };
