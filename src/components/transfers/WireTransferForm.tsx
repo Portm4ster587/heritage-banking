@@ -168,9 +168,11 @@ export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps)
       setRecipientAddress('');
       setPurpose('');
       
+      setShowProgress(false);
       onSuccess?.();
     } catch (error) {
       console.error('Wire transfer error:', error);
+      setShowProgress(false);
       toast({ title: "Error", description: "Failed to submit wire transfer", variant: "destructive" });
     } finally {
       setIsProcessing(false);
