@@ -437,6 +437,11 @@ export const ExternalBankTransfer = ({
           </Card>
         </div>
       )}
+
+      <ExternalTransferProgress
+        isVisible={showProgress}
+        onComplete={handleProgressComplete}
+      />
     </div>
   );
 };
