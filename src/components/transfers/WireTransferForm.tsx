@@ -59,7 +59,7 @@ export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps)
   const [verificationMethod, setVerificationMethod] = useState<'phone' | 'email'>('phone');
   const [verificationContact, setVerificationContact] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-
+  const [showProgress, setShowProgress] = useState(false);
   const domesticFee = 25;
   const internationalFee = 45;
   const fee = transferType === 'domestic' ? domesticFee : internationalFee;
