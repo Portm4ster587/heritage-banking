@@ -11,7 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { User, CreditCard, FileText, Home, Car, Building } from 'lucide-react';
+import { User, CreditCard, FileText, Home, Car, Building, Zap } from 'lucide-react';
 
 const guestApplicationSchema = z.object({
   // Personal Information
