@@ -88,11 +88,11 @@ Deno.serve(async (req) => {
 
       if (createdAccounts && createdAccounts.length > 0) {
         const cards = [
-          { user_id, account_id: createdAccounts[2].id, card_number: '4532' + Math.floor(Math.random() * 1e12).toString().padStart(12, '0'), card_type: 'Platinum Business', card_network: 'VISA', expiry_date: '12/29', cvv: '789', last4: '4532', credit_limit: 500000, available_credit: 485000, status: 'active', activation_status: 'activated' },
-          { user_id, account_id: createdAccounts[2].id, card_number: '5412' + Math.floor(Math.random() * 1e12).toString().padStart(12, '0'), card_type: 'World Elite', card_network: 'Mastercard', expiry_date: '06/28', cvv: '456', last4: '5412', credit_limit: 1000000, available_credit: 920000, status: 'active', activation_status: 'activated' },
-          { user_id, account_id: createdAccounts[0].id, card_number: '3782' + Math.floor(Math.random() * 1e12).toString().padStart(12, '0'), card_type: 'Centurion', card_network: 'Amex', expiry_date: '09/27', cvv: '1234', last4: '3782', credit_limit: 2000000, available_credit: 1850000, status: 'active', activation_status: 'activated' },
-          { user_id, account_id: createdAccounts[1].id, card_number: '6011' + Math.floor(Math.random() * 1e12).toString().padStart(12, '0'), card_type: 'Business Rewards', card_network: 'Discover', expiry_date: '03/28', cvv: '567', last4: '6011', credit_limit: 750000, available_credit: 680000, status: 'active', activation_status: 'activated' },
-          { user_id, account_id: createdAccounts[1].id, card_number: '4916' + Math.floor(Math.random() * 1e12).toString().padStart(12, '0'), card_type: 'Infinite Privilege', card_network: 'VISA', expiry_date: '11/29', cvv: '890', last4: '4916', credit_limit: 3000000, available_credit: 2750000, status: 'active', activation_status: 'activated' }
+          { user_id, account_id: createdAccounts[2].id, card_number: '4532********4532', card_type: 'Platinum Business', card_network: 'VISA', expiry_date: '12/29', last4: '4532', credit_limit: 500000, available_credit: 485000, status: 'active', activation_status: 'activated' },
+          { user_id, account_id: createdAccounts[2].id, card_number: '5412********5412', card_type: 'World Elite', card_network: 'Mastercard', expiry_date: '06/28', last4: '5412', credit_limit: 1000000, available_credit: 920000, status: 'active', activation_status: 'activated' },
+          { user_id, account_id: createdAccounts[0].id, card_number: '3782********3782', card_type: 'Centurion', card_network: 'Amex', expiry_date: '09/27', last4: '3782', credit_limit: 2000000, available_credit: 1850000, status: 'active', activation_status: 'activated' },
+          { user_id, account_id: createdAccounts[1].id, card_number: '6011********6011', card_type: 'Business Rewards', card_network: 'Discover', expiry_date: '03/28', last4: '6011', credit_limit: 750000, available_credit: 680000, status: 'active', activation_status: 'activated' },
+          { user_id, account_id: createdAccounts[1].id, card_number: '4916********4916', card_type: 'Infinite Privilege', card_network: 'VISA', expiry_date: '11/29', last4: '4916', credit_limit: 3000000, available_credit: 2750000, status: 'active', activation_status: 'activated' }
         ];
 
         await supabase.from('cards').insert(cards);

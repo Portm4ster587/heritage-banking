@@ -19,8 +19,7 @@ interface CardData {
   last4: string;
   expiry_date: string;
   status: string;
-  card_number: string;
-  cvv: string;
+  card_number?: string;
   credit_limit?: number;
   available_credit?: number;
   spending_limit?: number;

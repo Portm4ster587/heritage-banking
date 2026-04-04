@@ -14,19 +14,17 @@ export const AutoCardGeneration = ({ userId, accountId, accountType }: AutoCardG
   useEffect(() => {
     const generateCard = async () => {
       try {
-        // Check if account already has a card
         const { data: existingCards } = await supabase
           .from('cards')
           .select('id')
           .eq('account_id', accountId);
 
         if (existingCards && existingCards.length > 0) {
-          return; // Card already exists
+          return;
         }
 
-        // Generate card details
-        const cardNumber = generateCardNumber(accountType);
-        const cvv = Math.random().toString().slice(2, 5).padStart(3, '0');
+        const last4 = Math.random().toString().slice(2, 6).padStart(4, '0');
+        const cardNumber = getCardPrefix(accountType) + '********' + last4;
         const expiryDate = new Date();
         expiryDate.setFullYear(expiryDate.getFullYear() + 4);
         const expiryText = `${String(expiryDate.getMonth() + 1).padStart(2, '0')}/${String(expiryDate.getFullYear()).slice(-2)}`;
@@ -40,8 +38,7 @@ export const AutoCardGeneration = ({ userId, accountId, accountType }: AutoCardG
             user_id: userId,
             card_type: cardType,
             card_number: cardNumber,
-            cvv: cvv,
-            last4: cardNumber.slice(-4),
+            last4: last4,
             card_network: network,
             expiry_date: expiryText,
             activation_status: 'inactive',
@@ -65,32 +62,27 @@ export const AutoCardGeneration = ({ userId, accountId, accountType }: AutoCardG
     }
   }, [userId, accountId, accountType, toast]);
 
-  return null; // This component doesn't render anything
+  return null;
 };
 
-const generateCardNumber = (accountType: string): string => {
-  // Generate realistic card numbers based on account type
-  const prefixes = {
-    'personal_checking': '4532', // Visa
-    'personal_savings': '4716',  // Visa
-    'business_checking': '5412', // Mastercard
-    'business_savings': '5134',  // Mastercard
-    'credit': '4000',            // Visa
+const getCardPrefix = (accountType: string): string => {
+  const prefixes: Record<string, string> = {
+    'personal_checking': '4532',
+    'personal_savings': '4716',
+    'business_checking': '5412',
+    'business_savings': '5134',
+    'credit': '4000',
   };
-
-  const prefix = prefixes[accountType as keyof typeof prefixes] || '4532';
-  const remaining = Math.random().toString().slice(2, 14).padStart(12, '0');
-  return prefix + remaining;
+  return prefixes[accountType] || '4532';
 };
 
 const getCardType = (accountType: string): string => {
-  const cardTypes = {
+  const cardTypes: Record<string, string> = {
     'personal_checking': 'debit',
     'personal_savings': 'debit',
     'business_checking': 'business-debit',
     'business_savings': 'business-debit',
     'credit': 'credit',
   };
-
-  return cardTypes[accountType as keyof typeof cardTypes] || 'debit';
+  return cardTypes[accountType] || 'debit';
 };

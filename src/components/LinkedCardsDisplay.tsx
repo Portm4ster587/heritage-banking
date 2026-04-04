@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CreditCard, Eye, EyeOff } from 'lucide-react';
+import { CreditCard } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -10,7 +10,6 @@ interface CardData {
   card_type: string;
   card_network: string;
   last4: string;
-  card_number: string;
   expiry_date: string;
   status: string;
   credit_limit?: number;
@@ -21,13 +20,11 @@ export const LinkedCardsDisplay = () => {
   const { user } = useAuth();
   const [cards, setCards] = useState<CardData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [showNumbers, setShowNumbers] = useState(false);
 
   useEffect(() => {
     if (user) {
       fetchCards();
 
-      // Real-time subscription for card updates
       const channel = supabase
         .channel('linked-cards-realtime')
         .on(
@@ -47,7 +44,7 @@ export const LinkedCardsDisplay = () => {
     try {
       const { data, error } = await supabase
         .from('cards')
-        .select('*')
+        .select('id, card_type, card_network, last4, expiry_date, status, credit_limit, available_credit')
         .eq('user_id', user?.id)
         .eq('status', 'active')
         .limit(5);
@@ -71,13 +68,6 @@ export const LinkedCardsDisplay = () => {
     }
   };
 
-  const formatCardNumber = (cardNumber: string) => {
-    if (!showNumbers) {
-      return `•••• •••• •••• ${cardNumber.slice(-4)}`;
-    }
-    return cardNumber.replace(/(.{4})/g, '$1 ').trim();
-  };
-
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -99,13 +89,6 @@ export const LinkedCardsDisplay = () => {
           <CreditCard className="w-5 h-5 text-primary" />
           Linked Cards
         </h3>
-        <button
-          onClick={() => setShowNumbers(!showNumbers)}
-          className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors"
-        >
-          {showNumbers ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-          {showNumbers ? 'Hide' : 'Show'} Numbers
-        </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -114,13 +97,11 @@ export const LinkedCardsDisplay = () => {
             key={card.id}
             className={`relative h-40 rounded-xl overflow-hidden bg-gradient-to-br ${getCardBrandColor(card.card_network)} p-5 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}
           >
-            {/* Card Pattern */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-white/30 -translate-y-1/2 translate-x-1/2" />
               <div className="absolute bottom-0 left-0 w-24 h-24 rounded-full bg-white/20 translate-y-1/2 -translate-x-1/2" />
             </div>
 
-            {/* Card Content */}
             <div className="relative h-full flex flex-col justify-between">
               <div className="flex items-start justify-between">
                 <div>
@@ -134,11 +115,10 @@ export const LinkedCardsDisplay = () => {
 
               <div>
                 <p className="font-mono text-lg tracking-wider mb-1">
-                  {formatCardNumber(card.card_number)}
+                  •••• •••• •••• {card.last4}
                 </p>
                 <div className="flex items-center justify-between text-xs opacity-80">
                   <span>Exp: {card.expiry_date}</span>
-                  <span>Last 5: {card.card_number.slice(-5)}</span>
                 </div>
               </div>
 
