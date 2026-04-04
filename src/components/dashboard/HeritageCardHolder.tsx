@@ -9,8 +9,6 @@ interface HeritageCardHolderProps {
     id: string;
     card_type: string;
     card_network: string;
-    card_number: string;
-    cvv: string;
     last4: string;
     expiry_date: string;
     status: string;
@@ -42,22 +40,17 @@ export const HeritageCardHolder = ({ card }: HeritageCardHolderProps) => {
     }
   };
 
-  const maskedNumber = showDetails
-    ? card.card_number.replace(/(.{4})/g, '$1 ').trim()
-    : `•••• •••• •••• ${card.last4}`;
+  const maskedNumber = `•••• •••• •••• ${card.last4}`;
 
   return (
     <div className="w-full max-w-sm">
-      {/* Card */}
       <div className={`relative aspect-[1.586/1] rounded-2xl bg-gradient-to-br ${getCardGradient(card.card_network)} p-5 text-white shadow-lg overflow-hidden select-none`}>
-        {/* Pattern overlay */}
         <div className="absolute inset-0 opacity-[0.07]">
           <div className="absolute -top-8 -right-8 w-40 h-40 rounded-full border-[16px] border-white/40" />
           <div className="absolute -bottom-10 -left-10 w-48 h-48 rounded-full border-[16px] border-white/30" />
         </div>
 
         <div className="relative h-full flex flex-col justify-between">
-          {/* Top row: Heritage logo + network */}
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
               <HeritageSVGLogoTransparent size="sm" className="w-7 h-7" />
@@ -66,21 +59,14 @@ export const HeritageCardHolder = ({ card }: HeritageCardHolderProps) => {
             <span className="text-lg font-bold italic tracking-wide">{getNetworkLogo(card.card_network)}</span>
           </div>
 
-          {/* Chip */}
           <div className="w-10 h-7 rounded-md bg-gradient-to-br from-yellow-300/80 to-yellow-500/60 border border-yellow-200/30" />
 
-          {/* Card number */}
           <p className="font-mono text-base tracking-[0.18em] mt-1">{maskedNumber}</p>
 
-          {/* Bottom row */}
           <div className="flex items-end justify-between">
             <div>
               <p className="text-[9px] uppercase opacity-60 tracking-wider">Valid Thru</p>
               <p className="font-mono text-sm">{showDetails ? card.expiry_date : '••/••'}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-[9px] uppercase opacity-60 tracking-wider">CVV</p>
-              <p className="font-mono text-sm">{showDetails ? card.cvv : '•••'}</p>
             </div>
             {card.is_locked && (
               <Badge className="bg-red-500/80 text-white border-none text-[10px]">
@@ -91,7 +77,6 @@ export const HeritageCardHolder = ({ card }: HeritageCardHolderProps) => {
         </div>
       </div>
 
-      {/* Controls strip */}
       <div className="flex items-center justify-between mt-3 px-1">
         <div className="flex items-center gap-2">
           <Badge variant={card.status === 'active' ? 'default' : 'secondary'} className="text-[10px]">
@@ -110,7 +95,6 @@ export const HeritageCardHolder = ({ card }: HeritageCardHolderProps) => {
         </Button>
       </div>
 
-      {/* Credit info */}
       {card.credit_limit && card.credit_limit > 0 && (
         <div className="mt-2 px-1">
           <div className="flex justify-between text-xs text-muted-foreground mb-1">

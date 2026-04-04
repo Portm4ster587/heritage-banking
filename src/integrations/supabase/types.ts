@@ -558,7 +558,6 @@ export type Database = {
           card_type: string
           created_at: string | null
           credit_limit: number | null
-          cvv: string
           expiry_date: string
           id: string
           is_locked: boolean | null
@@ -577,7 +576,6 @@ export type Database = {
           card_type: string
           created_at?: string | null
           credit_limit?: number | null
-          cvv: string
           expiry_date: string
           id?: string
           is_locked?: boolean | null
@@ -596,7 +594,6 @@ export type Database = {
           card_type?: string
           created_at?: string | null
           credit_limit?: number | null
-          cvv?: string
           expiry_date?: string
           id?: string
           is_locked?: boolean | null
@@ -1649,6 +1646,26 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      process_crypto_transfer: {
+        Args: {
+          p_amount: number
+          p_asset_symbol: string
+          p_recipient_wallet_address: string
+          p_sender_id: string
+          p_sender_wallet_id: string
+        }
+        Returns: Json
+      }
+      process_heritage_transfer: {
+        Args: {
+          p_amount: number
+          p_from_account_id: string
+          p_memo?: string
+          p_recipient_account_number: string
+          p_sender_id: string
+        }
+        Returns: Json
       }
       setup_invest_group_overseas_account: { Args: never; Returns: undefined }
       setup_premium_user_accounts: { Args: never; Returns: undefined }

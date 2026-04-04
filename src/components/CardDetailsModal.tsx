@@ -14,8 +14,6 @@ interface CardDetailsModalProps {
   onOpenChange: (open: boolean) => void;
   card: {
     id: string;
-    card_number: string;
-    cvv: string;
     expiry_date: string;
     card_type: string;
     card_network: string;
@@ -28,8 +26,6 @@ export const CardDetailsModal = ({ open, onOpenChange, card }: CardDetailsModalP
   const [showPassword, setShowPassword] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
-  const [showCardNumber, setShowCardNumber] = useState(false);
-  const [showCVV, setShowCVV] = useState(false);
   const { user } = useAuth();
   const { toast } = useToast();
 
@@ -68,14 +64,8 @@ export const CardDetailsModal = ({ open, onOpenChange, card }: CardDetailsModalP
   const handleClose = () => {
     setPassword('');
     setIsVerified(false);
-    setShowCardNumber(false);
-    setShowCVV(false);
     setShowPassword(false);
     onOpenChange(false);
-  };
-
-  const formatCardNumber = (number: string) => {
-    return number.match(/.{1,4}/g)?.join(' ') || number;
   };
 
   return (
@@ -89,7 +79,7 @@ export const CardDetailsModal = ({ open, onOpenChange, card }: CardDetailsModalP
           <DialogDescription>
             {!isVerified 
               ? "Enter your password to view sensitive card information"
-              : "Your complete card details are shown below"}
+              : "Your card details are shown below"}
           </DialogDescription>
         </DialogHeader>
 
@@ -157,18 +147,12 @@ export const CardDetailsModal = ({ open, onOpenChange, card }: CardDetailsModalP
 
               <div className="relative">
                 <p className="text-white text-lg font-mono tracking-wider mb-2">
-                  {showCardNumber ? formatCardNumber(card.card_number) : `•••• •••• •••• ${card.last4}`}
+                  •••• •••• •••• {card.last4}
                 </p>
                 <div className="flex justify-between items-end">
                   <div>
                     <p className="text-white/60 text-xs">Valid Thru</p>
                     <p className="text-white font-mono text-sm">{card.expiry_date}</p>
-                  </div>
-                  <div>
-                    <p className="text-white/60 text-xs">CVV</p>
-                    <p className="text-white font-mono text-sm">
-                      {showCVV ? card.cvv : '•••'}
-                    </p>
                   </div>
                 </div>
               </div>
@@ -177,19 +161,9 @@ export const CardDetailsModal = ({ open, onOpenChange, card }: CardDetailsModalP
             {/* Card Details */}
             <div className="space-y-4">
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label>Card Number</Label>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowCardNumber(!showCardNumber)}
-                    className="h-8"
-                  >
-                    {showCardNumber ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                  </Button>
-                </div>
+                <Label>Card Number</Label>
                 <Input
-                  value={showCardNumber ? formatCardNumber(card.card_number) : `•••• •••• •••• ${card.last4}`}
+                  value={`•••• •••• •••• ${card.last4}`}
                   readOnly
                   className="font-mono"
                 />
@@ -201,35 +175,16 @@ export const CardDetailsModal = ({ open, onOpenChange, card }: CardDetailsModalP
                   <Input value={card.expiry_date} readOnly className="font-mono" />
                 </div>
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label>CVV</Label>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowCVV(!showCVV)}
-                      className="h-6"
-                    >
-                      {showCVV ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                    </Button>
-                  </div>
-                  <Input
-                    value={showCVV ? card.cvv : '•••'}
-                    readOnly
-                    className="font-mono"
-                  />
+                  <Label>Card Network</Label>
+                  <Input value={card.card_network.toUpperCase()} readOnly className="capitalize" />
                 </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Card Network</Label>
-                <Input value={card.card_network.toUpperCase()} readOnly className="capitalize" />
               </div>
             </div>
 
             <div className="flex items-start gap-2 p-3 rounded-lg bg-muted text-sm">
               <Shield className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
               <p className="text-muted-foreground">
-                Keep your card details secure. Never share your CVV or full card number with anyone.
+                For security, full card numbers and CVVs are not stored or displayed. Contact support if you need card details.
               </p>
             </div>
 
