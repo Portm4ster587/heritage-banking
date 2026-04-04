@@ -9,6 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 import { AccountOverviewSection } from '@/components/dashboard/AccountOverviewSection';
 import { DashboardAccountSummary } from '@/components/dashboard/DashboardAccountSummary';
 import { SpendingChart } from '@/components/dashboard/SpendingChart';
+import { QuickActionsGrid } from '@/components/dashboard/QuickActionsGrid';
+import { RecentTransactions } from '@/components/dashboard/RecentTransactions';
 import { BankingHeader } from '@/components/BankingHeader';
 import { ApplicationForm } from '@/components/ApplicationForm';
 import { AdminPanel } from '@/components/AdminPanel';
@@ -249,21 +251,34 @@ export default function Dashboard() {
         onSectionChange={handleSectionChange}
       />
 
-      <div className="container mx-auto px-4 py-8 pb-20 md:pb-8">
-        {/* Welcome Message */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">
-            Welcome back, {userProfile?.first_name && userProfile?.last_name ? 
-              `${userProfile.first_name} ${userProfile.last_name}` : 
-              (user?.email === 'r.alcarezswo@gmail.com' ? 'Raul Alcarez' : user?.email?.split('@')[0] || 'User')}
-          </h1>
-          <p className="text-muted-foreground">Manage your accounts and banking services</p>
+      <div className="container mx-auto px-4 py-6 pb-24 md:pb-8 max-w-5xl">
+        {/* Welcome Message - Compact like Chase */}
+        <div className="mb-5 flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-semibold text-foreground">
+              Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'}, {userProfile?.first_name || user?.email?.split('@')[0] || 'there'}
+            </h1>
+            <p className="text-sm text-muted-foreground">Here's your financial overview</p>
+          </div>
         </div>
 
         {activeSection === 'accounts' && (
-          <div className="space-y-8">
+          <div className="space-y-6">
+            {/* Account Summary - Hero Card */}
             <DashboardAccountSummary />
+
+            {/* Quick Actions - Chase-style circular grid */}
+            <div className="bg-card rounded-xl border border-border p-5">
+              <QuickActionsGrid onSectionChange={handleSectionChange} />
+            </div>
+
+            {/* Recent Transactions Feed */}
+            <RecentTransactions />
+
+            {/* Spending Chart */}
             <SpendingChart />
+
+            {/* Account Details */}
             <AccountOverviewSection
               accounts={accounts}
               balanceVisible={balanceVisible}
