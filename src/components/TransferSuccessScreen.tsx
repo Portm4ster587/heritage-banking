@@ -92,15 +92,15 @@ Heritage Bank - Secure Banking
 
   const shareViaWhatsApp = () => {
     const text = encodeURIComponent(`
-🏦 Heritage Bank Transfer Receipt
+Heritage Bank Transfer Receipt
 
-💰 Amount: $${amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-🔖 Transaction ID: ${generatedTxId}
+Amount: $${amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+Transaction ID: ${generatedTxId}
 
 From: ${fromAccount} (****${getLastFour(fromAccountNumber)})
 To: ${recipientName || toAccount} (****${getLastFour(toAccountNumber)})
 
-📅 Date: ${new Date().toLocaleDateString()}
+Date: ${new Date().toLocaleDateString()}
     `);
     window.open(`https://wa.me/?text=${text}`);
     setShowSharing(false);
