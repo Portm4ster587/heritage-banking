@@ -180,6 +180,7 @@ export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps)
   };
 
   return (
+    <>
     <Card className="banking-card">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
