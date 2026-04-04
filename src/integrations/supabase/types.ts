@@ -1622,6 +1622,20 @@ export type Database = {
     }
     Functions: {
       generate_application_number: { Args: never; Returns: string }
+      get_admin_user_summary: {
+        Args: never
+        Returns: {
+          account_count: number
+          created_at: string
+          first_name: string
+          is_admin: boolean
+          last_name: string
+          phone: string
+          total_balance: number
+          user_id: string
+          username: string
+        }[]
+      }
       get_user_by_username: {
         Args: { _username: string }
         Returns: {
