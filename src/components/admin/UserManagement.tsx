@@ -53,6 +53,7 @@ export const UserManagement = () => {
   const [actionDialog, setActionDialog] = useState<'adjust' | 'view' | null>(null);
   const [adjustAmount, setAdjustAmount] = useState('');
   const [adjustNote, setAdjustNote] = useState('');
+  const [detailUserId, setDetailUserId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
