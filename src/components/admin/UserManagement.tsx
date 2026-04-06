@@ -11,6 +11,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search, Users, DollarSign, RefreshCw, Mail, Phone, MapPin } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { AdminUserDetailPanel } from './AdminUserDetailPanel';
 
 interface UserProfile {
   id: string;
