@@ -213,6 +213,16 @@ export const UserManagement = () => {
     return 'Unknown User';
   };
 
+  // If a detail user is selected, show the detail panel
+  if (detailUserId) {
+    return (
+      <AdminUserDetailPanel
+        userId={detailUserId}
+        onBack={() => { setDetailUserId(null); fetchUsersWithAccounts(); }}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6">
       <Card className="border-0 shadow-lg bg-gradient-to-br from-card to-card/80">
