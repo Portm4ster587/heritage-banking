@@ -396,10 +396,7 @@ export const UserManagement = () => {
                             size="sm" 
                             variant="outline"
                             className="flex-1"
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setActionDialog('view');
-                            }}
+                            onClick={() => setDetailUserId(user.profile.user_id)}
                           >
                             View Details
                           </Button>
