@@ -66,6 +66,17 @@ serve(async (req) => {
       if (profile) {
         const fullName = `${profile.first_name || ''} ${profile.last_name || ''}`.trim();
         
+        // Prevent self-lookup (don't reveal own name as recipient)
+        if (internalAccount.user_id === user.id) {
+          return new Response(
+            JSON.stringify({
+              found: false,
+              message: 'Cannot transfer to your own account. Use internal transfer instead.'
+            }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        
         console.log(`Found Heritage account for: ${fullName}`);
         
         return new Response(

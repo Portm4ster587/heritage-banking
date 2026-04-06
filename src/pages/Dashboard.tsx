@@ -89,7 +89,7 @@ export default function Dashboard() {
       const { data } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', user.id)
+        .eq('user_id', user.id)
         .maybeSingle();
       
       setUserProfile(data);
@@ -116,23 +116,24 @@ export default function Dashboard() {
           // Just fetch them
           await fetchAccountData();
         } else {
-          // Create standard accounts for regular users
+          // Create standard accounts for regular users with 10-digit numeric format
+          const genAccNum = () => Math.floor(1000000000 + Math.random() * 9000000000).toString();
           const { error } = await supabase
             .from('accounts')
             .insert([
               {
                 user_id: user.id,
-                account_number: `CHK${Date.now()}`,
+                account_number: genAccNum(),
                 account_type: 'personal_checking',
-                routing_number: '123456789',
+                routing_number: '021000021',
                 balance: 2500.00,
                 status: 'active'
               },
               {
                 user_id: user.id,
-                account_number: `SAV${Date.now()}`,
+                account_number: genAccNum(),
                 account_type: 'personal_savings',
-                routing_number: '123456789',
+                routing_number: '021000021',
                 balance: 15000.00,
                 status: 'active'
               }

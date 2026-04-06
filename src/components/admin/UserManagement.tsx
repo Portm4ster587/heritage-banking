@@ -11,6 +11,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Search, Users, DollarSign, RefreshCw, Mail, Phone, MapPin } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { AdminUserDetailPanel } from './AdminUserDetailPanel';
 
 interface UserProfile {
   id: string;
@@ -52,6 +53,7 @@ export const UserManagement = () => {
   const [actionDialog, setActionDialog] = useState<'adjust' | 'view' | null>(null);
   const [adjustAmount, setAdjustAmount] = useState('');
   const [adjustNote, setAdjustNote] = useState('');
+  const [detailUserId, setDetailUserId] = useState<string | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -211,6 +213,16 @@ export const UserManagement = () => {
     return 'Unknown User';
   };
 
+  // If a detail user is selected, show the detail panel
+  if (detailUserId) {
+    return (
+      <AdminUserDetailPanel
+        userId={detailUserId}
+        onBack={() => { setDetailUserId(null); fetchUsersWithAccounts(); }}
+      />
+    );
+  }
+
   return (
     <div className="space-y-6">
       <Card className="border-0 shadow-lg bg-gradient-to-br from-card to-card/80">
@@ -311,10 +323,7 @@ export const UserManagement = () => {
                               <Button 
                                 size="sm" 
                                 variant="ghost"
-                                onClick={() => {
-                                  setSelectedUser(user);
-                                  setActionDialog('view');
-                                }}
+                                onClick={() => setDetailUserId(user.profile.user_id)}
                               >
                                 View
                               </Button>
@@ -387,10 +396,7 @@ export const UserManagement = () => {
                             size="sm" 
                             variant="outline"
                             className="flex-1"
-                            onClick={() => {
-                              setSelectedUser(user);
-                              setActionDialog('view');
-                            }}
+                            onClick={() => setDetailUserId(user.profile.user_id)}
                           >
                             View Details
                           </Button>
