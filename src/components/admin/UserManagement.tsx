@@ -323,10 +323,7 @@ export const UserManagement = () => {
                               <Button 
                                 size="sm" 
                                 variant="ghost"
-                                onClick={() => {
-                                  setSelectedUser(user);
-                                  setActionDialog('view');
-                                }}
+                                onClick={() => setDetailUserId(user.profile.user_id)}
                               >
                                 View
                               </Button>
