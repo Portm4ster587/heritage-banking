@@ -678,6 +678,69 @@ export type Database = {
           },
         ]
       }
+      cross_bank_transfers: {
+        Row: {
+          admin_notes: string | null
+          amount: number
+          approved_at: string | null
+          approved_by: string | null
+          completed_at: string | null
+          created_at: string
+          direction: string
+          external_reference: string | null
+          from_account_id: string | null
+          from_account_number: string | null
+          id: string
+          memo: string | null
+          partner_bank: string
+          recipient_account_number: string
+          recipient_name: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          amount: number
+          approved_at?: string | null
+          approved_by?: string | null
+          completed_at?: string | null
+          created_at?: string
+          direction: string
+          external_reference?: string | null
+          from_account_id?: string | null
+          from_account_number?: string | null
+          id?: string
+          memo?: string | null
+          partner_bank?: string
+          recipient_account_number: string
+          recipient_name?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          admin_notes?: string | null
+          amount?: number
+          approved_at?: string | null
+          approved_by?: string | null
+          completed_at?: string | null
+          created_at?: string
+          direction?: string
+          external_reference?: string | null
+          from_account_id?: string | null
+          from_account_number?: string | null
+          id?: string
+          memo?: string | null
+          partner_bank?: string
+          recipient_account_number?: string
+          recipient_name?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       crypto_assets: {
         Row: {
           current_price: number
