@@ -8,6 +8,7 @@ import { Bell } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { AccountOverviewSection } from '@/components/dashboard/AccountOverviewSection';
 import { DashboardAccountSummary } from '@/components/dashboard/DashboardAccountSummary';
+import { ModernAccountHero } from '@/components/dashboard/ModernAccountHero';
 import { SpendingChart } from '@/components/dashboard/SpendingChart';
 import { QuickActionsGrid } from '@/components/dashboard/QuickActionsGrid';
 import { RecentTransactions } from '@/components/dashboard/RecentTransactions';
@@ -265,8 +266,8 @@ export default function Dashboard() {
 
         {activeSection === 'accounts' && (
           <div className="space-y-6">
-            {/* Account Summary - Hero Card */}
-            <DashboardAccountSummary />
+            {/* Modern Hero — Citi/USAA-inspired compact balance card */}
+            <ModernAccountHero />
 
             {/* Quick Actions - Chase-style circular grid */}
             <div className="bg-card rounded-xl border border-border p-5">
