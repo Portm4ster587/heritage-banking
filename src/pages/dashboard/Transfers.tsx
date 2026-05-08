@@ -5,9 +5,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { InternalTransferForm } from "@/components/transfers/InternalTransferForm";
 import { ExternalBankTransfer } from "@/components/ExternalBankTransfer";
 import { WireTransferForm } from "@/components/transfers/WireTransferForm";
+import { CrossBankTransferForm } from "@/components/transfers/CrossBankTransferForm";
 import { HeritageLoadingScreen } from "@/components/HeritageLoadingScreen";
 import { BackButton } from "@/components/BackButton";
-import { ArrowRightLeft, Building2, Globe } from "lucide-react";
+import { ArrowRightLeft, Building2, Globe, Network } from "lucide-react";
 
 export default function Transfers() {
   const { user } = useAuth();
