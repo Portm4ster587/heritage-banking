@@ -5,9 +5,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { InternalTransferForm } from "@/components/transfers/InternalTransferForm";
 import { ExternalBankTransfer } from "@/components/ExternalBankTransfer";
 import { WireTransferForm } from "@/components/transfers/WireTransferForm";
+import { CrossBankTransferForm } from "@/components/transfers/CrossBankTransferForm";
 import { HeritageLoadingScreen } from "@/components/HeritageLoadingScreen";
 import { BackButton } from "@/components/BackButton";
-import { ArrowRightLeft, Building2, Globe } from "lucide-react";
+import { ArrowRightLeft, Building2, Globe, Network } from "lucide-react";
 
 export default function Transfers() {
   const { user } = useAuth();
@@ -50,29 +51,37 @@ export default function Transfers() {
       </div>
       
       <Tabs defaultValue="internal" className="space-y-6">
-        <TabsList className="grid w-full max-w-lg grid-cols-3">
+        <TabsList className="grid w-full max-w-2xl grid-cols-4">
           <TabsTrigger value="internal" className="flex items-center gap-2">
             <ArrowRightLeft className="w-4 h-4" />
             <span className="hidden sm:inline">Heritage</span>
           </TabsTrigger>
           <TabsTrigger value="external" className="flex items-center gap-2">
             <Building2 className="w-4 h-4" />
-            <span className="hidden sm:inline">ACH/External</span>
+            <span className="hidden sm:inline">ACH</span>
+          </TabsTrigger>
+          <TabsTrigger value="cross" className="flex items-center gap-2">
+            <Network className="w-4 h-4" />
+            <span className="hidden sm:inline">Cross-Bank</span>
           </TabsTrigger>
           <TabsTrigger value="wire" className="flex items-center gap-2">
             <Globe className="w-4 h-4" />
             <span className="hidden sm:inline">Wire</span>
           </TabsTrigger>
         </TabsList>
-        
+
         <TabsContent value="internal">
           <InternalTransferForm accounts={accounts} onSuccess={fetchAccounts} />
         </TabsContent>
-        
+
         <TabsContent value="external">
           <ExternalBankTransfer accounts={accounts} onSuccess={fetchAccounts} />
         </TabsContent>
-        
+
+        <TabsContent value="cross">
+          <CrossBankTransferForm accounts={accounts} onSuccess={fetchAccounts} />
+        </TabsContent>
+
         <TabsContent value="wire">
           <WireTransferForm accounts={accounts} onSuccess={fetchAccounts} />
         </TabsContent>
