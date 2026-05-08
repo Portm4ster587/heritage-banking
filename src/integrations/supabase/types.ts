@@ -221,6 +221,7 @@ export type Database = {
           account_type: string
           balance: number | null
           created_at: string | null
+          held_amount: number
           id: string
           routing_number: string
           status: string | null
@@ -232,6 +233,7 @@ export type Database = {
           account_type: string
           balance?: number | null
           created_at?: string | null
+          held_amount?: number
           id?: string
           routing_number: string
           status?: string | null
@@ -243,6 +245,7 @@ export type Database = {
           account_type?: string
           balance?: number | null
           created_at?: string | null
+          held_amount?: number
           id?: string
           routing_number?: string
           status?: string | null
@@ -680,61 +683,73 @@ export type Database = {
       }
       cross_bank_transfers: {
         Row: {
+          acfcu_approved_at: string | null
           admin_notes: string | null
           amount: number
           approved_at: string | null
           approved_by: string | null
           completed_at: string | null
           created_at: string
+          declined_reason: string | null
           direction: string
           external_reference: string | null
           from_account_id: string | null
           from_account_number: string | null
+          heritage_approved_at: string | null
           id: string
           memo: string | null
           partner_bank: string
           recipient_account_number: string
           recipient_name: string | null
+          requires_dual_approval: boolean
           status: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          acfcu_approved_at?: string | null
           admin_notes?: string | null
           amount: number
           approved_at?: string | null
           approved_by?: string | null
           completed_at?: string | null
           created_at?: string
+          declined_reason?: string | null
           direction: string
           external_reference?: string | null
           from_account_id?: string | null
           from_account_number?: string | null
+          heritage_approved_at?: string | null
           id?: string
           memo?: string | null
           partner_bank?: string
           recipient_account_number: string
           recipient_name?: string | null
+          requires_dual_approval?: boolean
           status?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          acfcu_approved_at?: string | null
           admin_notes?: string | null
           amount?: number
           approved_at?: string | null
           approved_by?: string | null
           completed_at?: string | null
           created_at?: string
+          declined_reason?: string | null
           direction?: string
           external_reference?: string | null
           from_account_id?: string | null
           from_account_number?: string | null
+          heritage_approved_at?: string | null
           id?: string
           memo?: string | null
           partner_bank?: string
           recipient_account_number?: string
           recipient_name?: string | null
+          requires_dual_approval?: boolean
           status?: string
           updated_at?: string
           user_id?: string
@@ -1681,6 +1696,14 @@ export type Database = {
       }
     }
     Functions: {
+      complete_cross_bank_transfer_if_ready: {
+        Args: { p_transfer_id: string }
+        Returns: Json
+      }
+      decline_cross_bank_transfer: {
+        Args: { p_reason: string; p_transfer_id: string }
+        Returns: Json
+      }
       generate_application_number: { Args: never; Returns: string }
       get_admin_user_summary: {
         Args: never
@@ -1709,6 +1732,18 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      process_cross_bank_transfer: {
+        Args: {
+          p_amount: number
+          p_from_account_id: string
+          p_memo?: string
+          p_partner_bank?: string
+          p_recipient_account_number: string
+          p_recipient_name: string
+          p_sender_id: string
+        }
+        Returns: Json
       }
       process_crypto_transfer: {
         Args: {
