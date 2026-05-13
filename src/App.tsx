@@ -244,6 +244,9 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route path="/dashboard/recurring" element={<ProtectedRoute><Recurring /></ProtectedRoute>} />
+            <Route path="/dashboard/investments" element={<ProtectedRoute><Investments /></ProtectedRoute>} />
+            <Route path="/dashboard/budgeting" element={<ProtectedRoute><Budgeting /></ProtectedRoute>} />
 
             {/* Public Routes */}
             <Route path="/about" element={<About />} />
