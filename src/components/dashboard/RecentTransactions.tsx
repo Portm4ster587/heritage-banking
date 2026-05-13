@@ -38,11 +38,12 @@ export const RecentTransactions = () => {
     try {
       const all: Transaction[] = [];
 
-      const [transfers, deposits, withdrawals, wires] = await Promise.all([
+      const [transfers, deposits, withdrawals, wires, crossBank] = await Promise.all([
         supabase.from('transfers').select('id,amount,status,description,created_at,transfer_type,recipient_name').eq('user_id', user.id).order('created_at', { ascending: false }).limit(5),
         supabase.from('deposit_requests').select('id,amount,status,method,created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(3),
         supabase.from('withdraw_requests').select('id,amount,status,method,destination,created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(3),
         supabase.from('wire_transfers').select('id,amount,status,recipient_name,recipient_bank,created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(3),
+        supabase.from('cross_bank_transfers').select('id,amount,status,recipient_name,partner_bank,created_at,direction').eq('user_id', user.id).order('created_at', { ascending: false }).limit(5),
       ]);
 
       transfers.data?.forEach(t => all.push({
@@ -71,6 +72,14 @@ export const RecentTransactions = () => {
         description: `Wire to ${w.recipient_name}`,
         created_at: w.created_at || new Date().toISOString(),
         type: 'debit', category: 'wire'
+      }));
+
+      crossBank.data?.forEach(c => all.push({
+        id: c.id, amount: c.amount, status: c.status || 'pending',
+        description: `${(c.partner_bank || 'ACFCU').toUpperCase()} transfer to ${c.recipient_name || 'recipient'}`,
+        created_at: c.created_at || new Date().toISOString(),
+        type: c.direction === 'incoming' ? 'credit' : 'debit',
+        category: 'cross_bank'
       }));
 
       all.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
