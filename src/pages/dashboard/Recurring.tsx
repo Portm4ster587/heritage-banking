@@ -90,7 +90,7 @@ export default function Recurring() {
   };
 
   return (
-    <DashboardLayout>
+    <main className="container mx-auto px-4 py-6"><BackButton to="/dashboard" label="Back" className="mb-4" />
       <div className="max-w-4xl mx-auto p-4 space-y-6">
         <div className="flex items-center justify-between">
           <div>
@@ -212,6 +212,6 @@ export default function Recurring() {
           </CardContent>
         </Card>
       </div>
-    </DashboardLayout>
+    </main>
   );
 }
