@@ -11,7 +11,11 @@ import {
   Landmark,
   QrCode,
   Smartphone,
-  MoreHorizontal
+  MoreHorizontal,
+  Repeat,
+  Briefcase,
+  PieChart,
+  Network
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -29,6 +33,10 @@ const primaryActions = [
 ];
 
 const moreActions = [
+  { id: 'cross-bank', label: 'Cross-Bank', icon: Network, route: '/dashboard/transfers' },
+  { id: 'recurring', label: 'Recurring', icon: Repeat, route: '/dashboard/recurring' },
+  { id: 'investments', label: 'Invest', icon: Briefcase, route: '/dashboard/investments' },
+  { id: 'budgeting', label: 'Budget', icon: PieChart, route: '/dashboard/budgeting' },
   { id: 'external-transfer', label: 'Wire', icon: Globe, route: '/dashboard/transfers' },
   { id: 'statements', label: 'Statements', icon: FileText, route: '/dashboard/statements' },
   { id: 'wallet-qr', label: 'QR Pay', icon: QrCode, route: '/dashboard/crypto' },

@@ -10,7 +10,8 @@ import {
   Landmark, 
   FileText, 
   ChevronRight,
-  Loader2
+  Loader2,
+  Network
 } from 'lucide-react';
 
 interface Transaction {
@@ -38,11 +39,12 @@ export const RecentTransactions = () => {
     try {
       const all: Transaction[] = [];
 
-      const [transfers, deposits, withdrawals, wires] = await Promise.all([
+      const [transfers, deposits, withdrawals, wires, crossBank] = await Promise.all([
         supabase.from('transfers').select('id,amount,status,description,created_at,transfer_type,recipient_name').eq('user_id', user.id).order('created_at', { ascending: false }).limit(5),
         supabase.from('deposit_requests').select('id,amount,status,method,created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(3),
         supabase.from('withdraw_requests').select('id,amount,status,method,destination,created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(3),
         supabase.from('wire_transfers').select('id,amount,status,recipient_name,recipient_bank,created_at').eq('user_id', user.id).order('created_at', { ascending: false }).limit(3),
+        supabase.from('cross_bank_transfers').select('id,amount,status,recipient_name,partner_bank,created_at,direction').eq('user_id', user.id).order('created_at', { ascending: false }).limit(5),
       ]);
 
       transfers.data?.forEach(t => all.push({
@@ -73,6 +75,14 @@ export const RecentTransactions = () => {
         type: 'debit', category: 'wire'
       }));
 
+      crossBank.data?.forEach(c => all.push({
+        id: c.id, amount: c.amount, status: c.status || 'pending',
+        description: `${(c.partner_bank || 'ACFCU').toUpperCase()} transfer to ${c.recipient_name || 'recipient'}`,
+        created_at: c.created_at || new Date().toISOString(),
+        type: c.direction === 'incoming' ? 'credit' : 'debit',
+        category: 'cross_bank'
+      }));
+
       all.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
       setTransactions(all.slice(0, 8));
     } catch (err) {
@@ -88,17 +98,17 @@ export const RecentTransactions = () => {
       case 'deposit': return <ArrowDownLeft className="w-4 h-4" />;
       case 'withdrawal': return <ArrowUpRight className="w-4 h-4" />;
       case 'wire': return <Landmark className="w-4 h-4" />;
+      case 'cross_bank': return <Network className="w-4 h-4" />;
       default: return <FileText className="w-4 h-4" />;
     }
   };
 
-  const getIconBg = (category: string, type: string) => {
-    if (type === 'credit') return 'bg-emerald-500/10 text-emerald-600';
-    switch (category) {
-      case 'wire': return 'bg-violet-500/10 text-violet-600';
-      case 'withdrawal': return 'bg-rose-500/10 text-rose-600';
-      default: return 'bg-primary/10 text-primary';
-    }
+  const getIconBg = (category: string, type: string, status: string) => {
+    if (status === 'pending' || status === 'pending_approval') return 'bg-amber-500/15 text-amber-600';
+    if (type === 'credit' && status === 'completed') return 'bg-emerald-500/15 text-emerald-600';
+    if (type === 'debit' && status === 'completed') return 'bg-rose-500/15 text-rose-600';
+    if (status === 'declined' || status === 'rejected') return 'bg-rose-500/15 text-rose-600';
+    return 'bg-primary/10 text-primary';
   };
 
   const formatDate = (dateStr: string) => {
@@ -112,9 +122,16 @@ export const RecentTransactions = () => {
     switch (status) {
       case 'completed': return 'bg-emerald-500';
       case 'pending': case 'pending_approval': return 'bg-amber-500';
-      case 'rejected': return 'bg-rose-500';
+      case 'declined': case 'rejected': return 'bg-rose-500';
       default: return 'bg-muted-foreground';
     }
+  };
+
+  const getAmountColor = (type: string, status: string) => {
+    if (status === 'pending' || status === 'pending_approval') return 'text-amber-600';
+    if (status === 'declined' || status === 'rejected') return 'text-rose-600 line-through';
+    if (type === 'credit') return 'text-emerald-600';
+    return 'text-rose-600';
   };
 
   if (loading) {
@@ -151,7 +168,7 @@ export const RecentTransactions = () => {
               onClick={() => navigate('/dashboard/history')}
             >
               {/* Icon */}
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${getIconBg(txn.category, txn.type)}`}>
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${getIconBg(txn.category, txn.type, txn.status)}`}>
                 {getCategoryIcon(txn.category)}
               </div>
 
@@ -167,7 +184,7 @@ export const RecentTransactions = () => {
 
               {/* Amount */}
               <div className="text-right flex-shrink-0">
-                <p className={`text-sm font-semibold ${txn.type === 'credit' ? 'text-emerald-600' : 'text-foreground'}`}>
+                <p className={`text-sm font-semibold ${getAmountColor(txn.type, txn.status)}`}>
                   {txn.type === 'credit' ? '+' : '-'}${txn.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </p>
               </div>

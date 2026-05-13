@@ -23,6 +23,9 @@ import TransactionHistory from "./pages/dashboard/TransactionHistory";
 import Withdraw from "./pages/dashboard/Withdraw";
 import Profile from "./pages/dashboard/Profile";
 import Statements from "./pages/dashboard/Statements";
+import Recurring from "./pages/dashboard/Recurring";
+import Investments from "./pages/dashboard/Investments";
+import Budgeting from "./pages/dashboard/Budgeting";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import OpenAccount from "./pages/OpenAccount";
@@ -241,6 +244,9 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
+            <Route path="/dashboard/recurring" element={<ProtectedRoute><Recurring /></ProtectedRoute>} />
+            <Route path="/dashboard/investments" element={<ProtectedRoute><Investments /></ProtectedRoute>} />
+            <Route path="/dashboard/budgeting" element={<ProtectedRoute><Budgeting /></ProtectedRoute>} />
 
             {/* Public Routes */}
             <Route path="/about" element={<About />} />
