@@ -58,6 +58,7 @@ import { AdminBalanceEditor } from './AdminBalanceEditor';
 import { UserActivityLogs } from './UserActivityLogs';
 import { SystemSettings } from './SystemSettings';
 import { AdminSupportInbox } from './AdminSupportInbox';
+import { AdminCrossBankApprovals } from './AdminCrossBankApprovals';
 
 interface UserAccount {
   id: string;
