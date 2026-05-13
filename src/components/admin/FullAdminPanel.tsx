@@ -49,7 +49,8 @@ import {
   FileCheck,
   Globe,
   Bitcoin,
-  MessageCircle
+  MessageCircle,
+  Network
 } from 'lucide-react';
 import { AdminCryptoWallets } from './AdminCryptoWallets';
 import { AdminWireTransfers } from './AdminWireTransfers';
