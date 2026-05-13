@@ -10,7 +10,8 @@ import {
   Landmark, 
   FileText, 
   ChevronRight,
-  Loader2
+  Loader2,
+  Network
 } from 'lucide-react';
 
 interface Transaction {
