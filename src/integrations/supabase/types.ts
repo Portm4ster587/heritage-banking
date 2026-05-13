@@ -1234,6 +1234,72 @@ export type Database = {
         }
         Relationships: []
       }
+      scheduled_transfers: {
+        Row: {
+          amount: number
+          category: string | null
+          created_at: string
+          end_date: string | null
+          frequency: string
+          from_account_id: string
+          id: string
+          last_run_at: string | null
+          last_run_status: string | null
+          memo: string | null
+          next_run_at: string
+          partner_bank: string | null
+          recipient_account_number: string | null
+          recipient_name: string | null
+          run_count: number
+          status: string
+          transfer_kind: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          category?: string | null
+          created_at?: string
+          end_date?: string | null
+          frequency: string
+          from_account_id: string
+          id?: string
+          last_run_at?: string | null
+          last_run_status?: string | null
+          memo?: string | null
+          next_run_at: string
+          partner_bank?: string | null
+          recipient_account_number?: string | null
+          recipient_name?: string | null
+          run_count?: number
+          status?: string
+          transfer_kind: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          category?: string | null
+          created_at?: string
+          end_date?: string | null
+          frequency?: string
+          from_account_id?: string
+          id?: string
+          last_run_at?: string | null
+          last_run_status?: string | null
+          memo?: string | null
+          next_run_at?: string
+          partner_bank?: string | null
+          recipient_account_number?: string | null
+          recipient_name?: string | null
+          run_count?: number
+          status?: string
+          transfer_kind?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       support_conversations: {
         Row: {
           assigned_admin_id: string | null
@@ -1362,6 +1428,7 @@ export type Database = {
         Row: {
           amount: number
           approved_by_admin_id: string | null
+          category: string | null
           completed_at: string | null
           created_at: string | null
           description: string | null
@@ -1377,6 +1444,7 @@ export type Database = {
         Insert: {
           amount: number
           approved_by_admin_id?: string | null
+          category?: string | null
           completed_at?: string | null
           created_at?: string | null
           description?: string | null
@@ -1392,6 +1460,7 @@ export type Database = {
         Update: {
           amount?: number
           approved_by_admin_id?: string | null
+          category?: string | null
           completed_at?: string | null
           created_at?: string | null
           description?: string | null
@@ -1696,6 +1765,14 @@ export type Database = {
       }
     }
     Functions: {
+      admin_approve_cross_bank_transfer: {
+        Args: { p_admin_id: string; p_transfer_id: string }
+        Returns: Json
+      }
+      admin_decline_cross_bank_transfer: {
+        Args: { p_admin_id: string; p_reason: string; p_transfer_id: string }
+        Returns: Json
+      }
       complete_cross_bank_transfer_if_ready: {
         Args: { p_transfer_id: string }
         Returns: Json
