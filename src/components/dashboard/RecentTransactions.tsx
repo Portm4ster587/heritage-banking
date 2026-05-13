@@ -168,7 +168,7 @@ export const RecentTransactions = () => {
               onClick={() => navigate('/dashboard/history')}
             >
               {/* Icon */}
-              <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${getIconBg(txn.category, txn.type)}`}>
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${getIconBg(txn.category, txn.type, txn.status)}`}>
                 {getCategoryIcon(txn.category)}
               </div>
 
@@ -184,7 +184,7 @@ export const RecentTransactions = () => {
 
               {/* Amount */}
               <div className="text-right flex-shrink-0">
-                <p className={`text-sm font-semibold ${txn.type === 'credit' ? 'text-emerald-600' : 'text-foreground'}`}>
+                <p className={`text-sm font-semibold ${getAmountColor(txn.type, txn.status)}`}>
                   {txn.type === 'credit' ? '+' : '-'}${txn.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </p>
               </div>
