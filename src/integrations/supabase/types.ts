@@ -225,6 +225,10 @@ export type Database = {
           id: string
           routing_number: string
           status: string | null
+          status_changed_at: string | null
+          status_changed_by: string | null
+          status_reason: string | null
+          support_contact: string | null
           updated_at: string | null
           user_id: string
         }
@@ -237,6 +241,10 @@ export type Database = {
           id?: string
           routing_number: string
           status?: string | null
+          status_changed_at?: string | null
+          status_changed_by?: string | null
+          status_reason?: string | null
+          support_contact?: string | null
           updated_at?: string | null
           user_id: string
         }
@@ -249,6 +257,10 @@ export type Database = {
           id?: string
           routing_number?: string
           status?: string | null
+          status_changed_at?: string | null
+          status_changed_by?: string | null
+          status_reason?: string | null
+          support_contact?: string | null
           updated_at?: string | null
           user_id?: string
         }

@@ -12,6 +12,7 @@ import { ModernAccountHero } from '@/components/dashboard/ModernAccountHero';
 import { SpendingChart } from '@/components/dashboard/SpendingChart';
 import { QuickActionsGrid } from '@/components/dashboard/QuickActionsGrid';
 import { RecentTransactions } from '@/components/dashboard/RecentTransactions';
+import { AccountStatusBanner } from '@/components/dashboard/AccountStatusBanner';
 import { BankingHeader } from '@/components/BankingHeader';
 import { ApplicationForm } from '@/components/ApplicationForm';
 import { AdminPanel } from '@/components/AdminPanel';
@@ -266,6 +267,7 @@ export default function Dashboard() {
 
         {activeSection === 'accounts' && (
           <div className="space-y-6">
+            <AccountStatusBanner />
             {/* Modern Hero — Citi/USAA-inspired compact balance card */}
             <ModernAccountHero />
 
