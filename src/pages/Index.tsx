@@ -126,7 +126,7 @@ const Index = () => {
         {/* Banking Services Showcase Carousel – unique images, no duplicates */}
         <section className="py-16 bg-muted/30 rounded-3xl">
           <div className="max-w-6xl mx-auto px-6">
-            <h2 className="text-3xl font-bold text-center mb-4 text-heritage-blue dark:text-heritage-gold">Experience Heritage Banking</h2>
+            <h2 className="text-3xl font-bold text-center mb-4 text-heritage-blue dark:text-heritage-gold">Experience First Heritage Bank of America</h2>
             <p className="text-center text-muted-foreground mb-12 max-w-xl mx-auto">A legacy of trust, innovation, and premium financial services since 1892.</p>
             <Carousel opts={{ loop: true, align: "start" }} className="w-full" setApi={setCarouselApi}>
               <CarouselContent>

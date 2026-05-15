@@ -121,7 +121,7 @@ export default function EnhancedAuthFlow() {
         setAuthSuccess(true);
         toast({
           title: "Account Created Successfully!",
-          description: "Welcome to Heritage Banking. Please verify your email.",
+          description: "Welcome to First Heritage Bank of America. Please verify your email.",
           duration: 3000
         });
         
