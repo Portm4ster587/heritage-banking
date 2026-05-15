@@ -239,7 +239,7 @@ export const TransferReceiptPDF = ({ transferDetails, onClose }: TransferReceipt
           <div class="header">
             <div class="logo-container">
               <div class="logo">HB</div>
-              <span class="bank-name">HERITAGE BANK</span>
+              <span class="bank-name">FIRST HERITAGE BANK OF AMERICA</span>
             </div>
             <div class="receipt-title">Transfer Receipt</div>
             <div class="success-badge">✓ ${status === 'completed' ? 'Transfer Successful' : status.toUpperCase()}</div>

@@ -163,7 +163,7 @@ const Index = () => {
               <div className="flex items-center space-x-3 mb-4">
                 <AnimatedHeritageLogo size="sm" />
                 <div>
-                  <h3 className="text-xl font-bold text-heritage-gold">HERITAGE BANK</h3>
+                  <h3 className="text-xl font-bold text-heritage-gold">FIRST HERITAGE BANK OF AMERICA</h3>
                   <p className="text-xs text-heritage-gold/80">Excellence Since 1892</p>
                 </div>
               </div>
