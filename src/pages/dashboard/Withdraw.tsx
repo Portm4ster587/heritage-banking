@@ -10,7 +10,7 @@ export default function Withdraw() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    document.title = 'Heritage Bank - Withdraw Funds';
+    document.title = 'First Heritage Bank of America - Withdraw Funds';
     if (user) fetchAccounts();
   }, [user]);
 

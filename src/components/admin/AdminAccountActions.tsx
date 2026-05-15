@@ -54,7 +54,7 @@ export const AdminAccountActions = ({ account, userPhone, userEmail, onRefresh }
         await supabase.functions.invoke('send-sms-notification', {
           body: {
             to: userPhone,
-            message: `Heritage Bank: Your account ending in ${account.account_number.slice(-4)} has been ${label.toLowerCase()}. Contact support if you did not request this.`,
+            message: `First Heritage Bank of America: Your account ending in ${account.account_number.slice(-4)} has been ${label.toLowerCase()}. Contact support if you did not request this.`,
             type: 'security'
           }
         });

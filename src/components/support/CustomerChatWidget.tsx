@@ -280,7 +280,7 @@ export const CustomerChatWidget = () => {
                       <div className="text-center py-8">
                         <MessageCircle className="h-12 w-12 mx-auto text-muted-foreground/40 mb-3" />
                         <p className="text-sm text-muted-foreground">
-                          Welcome to Heritage Bank Support!<br />
+                          Welcome to First Heritage Bank of America Support!<br />
                           How can we help you today?
                         </p>
                       </div>

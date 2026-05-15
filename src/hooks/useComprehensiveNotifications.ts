@@ -76,7 +76,7 @@ export const useComprehensiveNotifications = () => {
             if (s === 'completed' || s === 'rejected') {
               playSound();
               toast({ title: s === 'completed' ? '🌐 Wire Transfer Approved!' : '❌ Wire Transfer Rejected', description: `$${amt?.toLocaleString()} to ${name}`, duration: 10000, variant: s === 'rejected' ? 'destructive' : 'default' });
-              sendSms(`Heritage Bank: Wire transfer of $${amt?.toLocaleString()} to ${name} ${s}. Ref: ${p.new.reference_number || p.new.id.slice(0,8)}`);
+              sendSms(`First Heritage Bank of America: Wire transfer of $${amt?.toLocaleString()} to ${name} ${s}. Ref: ${p.new.reference_number || p.new.id.slice(0,8)}`);
               sendEmail(`Wire Transfer ${s === 'completed' ? 'Completed' : 'Rejected'}`, 'wire', { amount: amt, recipientName: name, status: s, transactionId: p.new.reference_number });
             }
           }).subscribe()
@@ -91,7 +91,7 @@ export const useComprehensiveNotifications = () => {
             if (s === 'completed' || s === 'rejected') {
               playSound();
               toast({ title: s === 'completed' ? '✅ ACH Transfer Completed!' : '❌ ACH Transfer Rejected', description: `$${amt?.toLocaleString()}`, duration: 8000, variant: s === 'rejected' ? 'destructive' : 'default' });
-              sendSms(`Heritage Bank: ACH transfer of $${amt?.toLocaleString()} ${s}.`);
+              sendSms(`First Heritage Bank of America: ACH transfer of $${amt?.toLocaleString()} ${s}.`);
               sendEmail(`ACH Transfer ${s}`, 'ach', { amount: amt, status: s, transactionId: p.new.reference_number });
             }
           }).subscribe()
@@ -106,7 +106,7 @@ export const useComprehensiveNotifications = () => {
             if (s === 'completed' || s === 'rejected') {
               playSound();
               toast({ title: s === 'completed' ? '💰 Deposit Approved!' : '❌ Deposit Rejected', description: `$${amt?.toLocaleString()}`, duration: 10000, variant: s === 'rejected' ? 'destructive' : 'default' });
-              sendSms(`Heritage Bank: Your deposit of $${amt?.toLocaleString()} has been ${s}.`);
+              sendSms(`First Heritage Bank of America: Your deposit of $${amt?.toLocaleString()} has been ${s}.`);
               sendEmail(`Deposit ${s}`, 'deposit', { amount: amt, status: s, transactionId: p.new.reference_number });
             }
           }).subscribe()
@@ -139,7 +139,7 @@ export const useComprehensiveNotifications = () => {
           (p) => {
             playSound();
             toast({ title: '💳 New Card Issued!', description: `${p.new.card_type} ending in ${p.new.last4}`, duration: 10000 });
-            sendSms(`Heritage Bank: Your new ${p.new.card_type} card ending in ${p.new.last4} has been issued.`);
+            sendSms(`First Heritage Bank of America: Your new ${p.new.card_type} card ending in ${p.new.last4} has been issued.`);
             sendEmail('New Card Issued', 'alert', { message: `Your ${p.new.card_type} card ending in ${p.new.last4} is ready.` });
           }).subscribe()
     );
@@ -153,7 +153,7 @@ export const useComprehensiveNotifications = () => {
             if (s === 'completed' || s === 'rejected') {
               playSound();
               toast({ title: s === 'completed' ? '✅ Withdrawal Processed!' : '❌ Withdrawal Rejected', description: `$${amt?.toLocaleString()}`, duration: 8000, variant: s === 'rejected' ? 'destructive' : 'default' });
-              sendSms(`Heritage Bank: Your withdrawal of $${amt?.toLocaleString()} has been ${s}.`);
+              sendSms(`First Heritage Bank of America: Your withdrawal of $${amt?.toLocaleString()} has been ${s}.`);
               sendEmail(`Withdrawal ${s}`, 'withdrawal', { amount: amt, status: s });
             }
           }).subscribe()
@@ -168,7 +168,7 @@ export const useComprehensiveNotifications = () => {
             if (s === 'completed' || s === 'rejected') {
               playSound();
               toast({ title: s === 'completed' ? '✅ Check Deposit Approved!' : '❌ Check Deposit Rejected', description: `$${amt?.toLocaleString()}`, duration: 8000, variant: s === 'rejected' ? 'destructive' : 'default' });
-              sendSms(`Heritage Bank: Your check deposit of $${amt?.toLocaleString()} has been ${s}.`);
+              sendSms(`First Heritage Bank of America: Your check deposit of $${amt?.toLocaleString()} has been ${s}.`);
               sendEmail(`Check Deposit ${s}`, 'deposit', { amount: amt, status: s });
             }
           }).subscribe()
@@ -182,7 +182,7 @@ export const useComprehensiveNotifications = () => {
             const { data: conv } = await supabase.from('support_conversations').select('user_id').eq('id', p.new.conversation_id).single();
             if (conv?.user_id === user.id && p.new.sender_type === 'admin') {
               playSound();
-              toast({ title: '💬 New Support Message', description: 'You have a new message from Heritage Bank support.', duration: 8000 });
+              toast({ title: '💬 New Support Message', description: 'You have a new message from First Heritage Bank of America support.', duration: 8000 });
             }
           }).subscribe()
     );

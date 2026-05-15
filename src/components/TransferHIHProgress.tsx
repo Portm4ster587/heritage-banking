@@ -21,7 +21,7 @@ export const TransferHIHProgress = ({ isVisible, onComplete, title = 'Processing
     'Validating transfer details',
     'Verifying account balances',
     'Securing transaction',
-    'Processing with Heritage Bank',
+    'Processing with First Heritage Bank of America',
     'Updating account records',
     'Finalizing transfer'
   ];
@@ -178,7 +178,7 @@ export const TransferHIHProgress = ({ isVisible, onComplete, title = 'Processing
 
           <div className="space-y-4">
             <h3 className="text-2xl font-bold text-heritage-blue">{title}</h3>
-            <p className="text-sm text-muted-foreground">Heritage Bank Secure Transfer</p>
+            <p className="text-sm text-muted-foreground">First Heritage Bank of America Secure Transfer</p>
 
             {/* Circular Progress */}
             <div className="relative w-28 h-28 mx-auto">

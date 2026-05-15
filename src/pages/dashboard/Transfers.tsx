@@ -16,7 +16,7 @@ export default function Transfers() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    document.title = "Heritage Bank - Transfers";
+    document.title = "First Heritage Bank of America - Transfers";
     if (user) {
       fetchAccounts();
     }

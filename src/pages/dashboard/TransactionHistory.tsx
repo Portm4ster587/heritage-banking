@@ -63,7 +63,7 @@ export default function TransactionHistory() {
   useTransactionRealTime(fetchCallback);
 
   useEffect(() => {
-    document.title = "Heritage Bank - Transaction History";
+    document.title = "First Heritage Bank of America - Transaction History";
     fetchCallback();
   }, [fetchCallback]);
 
@@ -282,7 +282,7 @@ export default function TransactionHistory() {
     const printContent = `
       <html>
         <head>
-          <title>Heritage Bank - Transaction History</title>
+          <title>First Heritage Bank of America - Transaction History</title>
           <style>
             body { font-family: Arial, sans-serif; padding: 20px; }
             h1 { color: #1e3a5f; }
@@ -294,7 +294,7 @@ export default function TransactionHistory() {
           </style>
         </head>
         <body>
-          <h1>Heritage Bank - Transaction History</h1>
+          <h1>First Heritage Bank of America - Transaction History</h1>
           <p>Generated: ${format(new Date(), 'PPpp')}</p>
           <table>
             <tr>

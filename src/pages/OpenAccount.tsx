@@ -760,7 +760,7 @@ export default function OpenAccount() {
                             />
                           </FormControl>
                           <div className="space-y-1 leading-none">
-                            <FormLabel>I authorize Heritage Bank to obtain credit reports *</FormLabel>
+                            <FormLabel>I authorize First Heritage Bank of America to obtain credit reports *</FormLabel>
                           </div>
                         </FormItem>
                       )}

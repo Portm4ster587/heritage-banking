@@ -304,7 +304,7 @@ export const useEnhancedRealTimeNotifications = () => {
             
             toast({
               title: "💬 New Support Message",
-              description: "You have a new message from Heritage Bank support.",
+              description: "You have a new message from First Heritage Bank of America support.",
               duration: 8000
             });
           }

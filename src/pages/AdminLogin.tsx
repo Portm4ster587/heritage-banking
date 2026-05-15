@@ -84,7 +84,7 @@ const AdminLogin = () => {
         setTimeout(() => {
           toast({
             title: "Admin Access Granted",
-            description: "Welcome to Heritage Bank Administration Portal."
+            description: "Welcome to First Heritage Bank of America Administration Portal."
           });
           navigate('/admin/dashboard');
         }, 1200);
@@ -153,7 +153,7 @@ const AdminLogin = () => {
             <div>
               <CardTitle className="text-2xl font-bold text-heritage-blue">Admin Portal</CardTitle>
               <CardDescription className="text-heritage-blue/70">
-                Heritage Bank Administration System
+                First Heritage Bank of America Administration System
               </CardDescription>
             </div>
           </CardHeader>
@@ -168,7 +168,7 @@ const AdminLogin = () => {
                     <div>
                       <p className="text-sm font-medium text-red-800">Restricted Access</p>
                       <p className="text-xs text-red-600 mt-1">
-                        This portal is for authorized Heritage Bank administrators only. 
+                        This portal is for authorized First Heritage Bank of America administrators only. 
                         All access attempts are logged and monitored.
                       </p>
                     </div>

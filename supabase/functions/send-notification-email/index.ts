@@ -152,12 +152,12 @@ const getEmailTemplate = (type: string, data: EmailRequest['data']) => {
         <h2 style="color: #1e3a5f; margin: 0 0 16px; font-family: Georgia, serif;">🔐 Verification ${data.status}</h2>
         <p style="color: #4b5563;">Dear ${data.userName || 'Valued Client'},</p>
         <p style="color: #4b5563;">Your identity verification has been <strong>${data.status}</strong>.</p>
-        ${data.status === 'verified' ? '<p style="color: #22c55e; font-weight: 600;">You now have full access to all Heritage Bank features.</p>' : ''}
+        ${data.status === 'verified' ? '<p style="color: #22c55e; font-weight: 600;">You now have full access to all First Heritage Bank of America features.</p>' : ''}
         ${data.message ? `<p style="color: #6b7280; font-size: 13px;">${data.message}</p>` : ''}
       `);
     default:
       return contentWrap(`
-        <p style="color: #4b5563;">${data.message || 'You have a new notification from Heritage Bank.'}</p>
+        <p style="color: #4b5563;">${data.message || 'You have a new notification from First Heritage Bank of America.'}</p>
       `);
   }
 };
@@ -203,9 +203,9 @@ const handler = async (req: Request): Promise<Response> => {
     const html = getEmailTemplate(type, data);
 
     const emailResponse = await resend.emails.send({
-      from: "Heritage Bank <onboarding@resend.dev>",
+      from: "First Heritage Bank of America <onboarding@resend.dev>",
       to: [to],
-      subject: `Heritage Bank - ${subject}`,
+      subject: `First Heritage Bank of America - ${subject}`,
       html: html,
     });
 

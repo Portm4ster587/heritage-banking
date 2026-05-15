@@ -129,7 +129,7 @@ export const WireTransferForm = ({ accounts, onSuccess }: WireTransferFormProps)
         await supabase.functions.invoke('send-notification-email', {
           body: {
             to: user?.email,
-            subject: 'Heritage Bank - Wire Transfer Submitted',
+            subject: 'First Heritage Bank of America - Wire Transfer Submitted',
             type: 'transfer',
             data: {
               amount: parseFloat(amount),

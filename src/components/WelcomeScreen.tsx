@@ -49,7 +49,7 @@ export const WelcomeScreen = ({ userName, onDismiss }: WelcomeScreenProps) => {
 
         <CardContent className="p-6 space-y-4">
           <p className="text-sm text-muted-foreground text-center">
-            Here's what you can do with Heritage Bank:
+            Here's what you can do with First Heritage Bank of America:
           </p>
 
           <div className="space-y-3">

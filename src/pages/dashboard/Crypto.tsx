@@ -7,7 +7,7 @@ import { Wallet, Download } from "lucide-react";
 
 export default function Crypto() {
   useEffect(() => {
-    document.title = "Heritage Bank - Crypto";
+    document.title = "First Heritage Bank of America - Crypto";
   }, []);
 
   return (

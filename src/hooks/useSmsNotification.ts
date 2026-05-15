@@ -27,17 +27,17 @@ export const useSmsNotification = () => {
 
   const sendTransactionAlert = async (phone: string, amount: number, type: 'credit' | 'debit', description: string) => {
     const symbol = type === 'credit' ? '+' : '-';
-    const message = `Heritage Bank Alert: ${symbol}$${amount.toLocaleString()} ${description}. Reply STOP to unsubscribe.`;
+    const message = `First Heritage Bank of America Alert: ${symbol}$${amount.toLocaleString()} ${description}. Reply STOP to unsubscribe.`;
     return sendSms({ to: phone, message, type: 'transaction' });
   };
 
   const sendSecurityAlert = async (phone: string, action: string) => {
-    const message = `Heritage Bank Security: ${action}. If this wasn't you, call 1-800-HERITAGE immediately.`;
+    const message = `First Heritage Bank of America Security: ${action}. If this wasn't you, call 1-800-HERITAGE immediately.`;
     return sendSms({ to: phone, message, type: 'security' });
   };
 
   const sendVerificationCode = async (phone: string, code: string) => {
-    const message = `Heritage Bank: Your verification code is ${code}. Valid for 10 minutes. Do not share this code.`;
+    const message = `First Heritage Bank of America: Your verification code is ${code}. Valid for 10 minutes. Do not share this code.`;
     return sendSms({ to: phone, message, type: 'verification' });
   };
 

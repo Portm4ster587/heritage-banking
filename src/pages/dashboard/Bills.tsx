@@ -10,7 +10,7 @@ export default function Bills() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    document.title = "Heritage Bank - Bill Payments";
+    document.title = "First Heritage Bank of America - Bill Payments";
     // small delay for loading screen
     const t = setTimeout(() => setLoading(false), 500);
     return () => clearTimeout(t);

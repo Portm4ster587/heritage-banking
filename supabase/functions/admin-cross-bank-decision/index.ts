@@ -91,8 +91,8 @@ serve(async (req) => {
           ? `Cross-Bank Transfer Approved - $${Number(t.amount).toLocaleString()}`
           : `Cross-Bank Transfer Declined - $${Number(t.amount).toLocaleString()}`;
         const smsMsg = approved
-          ? `Heritage Bank: Your $${Number(t.amount).toLocaleString()} transfer to ${t.recipient_name} has been approved and completed.`
-          : `Heritage Bank: Your $${Number(t.amount).toLocaleString()} transfer to ${t.recipient_name} was declined. ${reason || ''}`.trim();
+          ? `First Heritage Bank of America: Your $${Number(t.amount).toLocaleString()} transfer to ${t.recipient_name} has been approved and completed.`
+          : `First Heritage Bank of America: Your $${Number(t.amount).toLocaleString()} transfer to ${t.recipient_name} was declined. ${reason || ''}`.trim();
 
         if (senderUser?.user?.email) {
           fetch(`${supabaseUrl}/functions/v1/send-notification-email`, {

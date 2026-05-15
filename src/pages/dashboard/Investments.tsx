@@ -14,7 +14,7 @@ export default function Investments() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    document.title = 'Heritage Bank - Investments';
+    document.title = 'First Heritage Bank of America - Investments';
     const load = async () => {
       if (!user) return;
       const [a, c, ca] = await Promise.all([

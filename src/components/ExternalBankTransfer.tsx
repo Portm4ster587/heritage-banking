@@ -170,7 +170,7 @@ export const ExternalBankTransfer = ({
         await supabase.functions.invoke('send-notification-email', {
           body: {
             to: user?.email,
-            subject: 'Heritage Bank - External Transfer Initiated',
+            subject: 'First Heritage Bank of America - External Transfer Initiated',
             type: 'transfer',
             data: {
               amount: amt,

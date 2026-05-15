@@ -71,7 +71,7 @@ export const UserProfileModal = ({ open, onOpenChange, onNavigateToSettings }: U
         <DialogHeader>
           <DialogTitle className="text-2xl">Account Overview</DialogTitle>
           <DialogDescription>
-            Complete view of your Heritage Bank account information
+            Complete view of your First Heritage Bank of America account information
           </DialogDescription>
         </DialogHeader>
 

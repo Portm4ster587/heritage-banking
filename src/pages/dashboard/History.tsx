@@ -33,7 +33,7 @@ export default function HistoryPage() {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    document.title = "Heritage Bank - Transaction History";
+    document.title = "First Heritage Bank of America - Transaction History";
     if (user) {
       fetchRealTransactions();
       setupRealTimeSubscription();

@@ -3,7 +3,7 @@ import { IDMeVerification } from "@/components/IDMeVerification";
 
 export default function IDMe() {
   useEffect(() => {
-    document.title = "Heritage Bank - ID.me";
+    document.title = "First Heritage Bank of America - ID.me";
   }, []);
 
   return (

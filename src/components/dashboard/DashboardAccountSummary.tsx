@@ -279,7 +279,7 @@ export const DashboardAccountSummary = () => {
                 <Building2 className="w-5 h-5 text-heritage-gold flex-shrink-0" />
                 <div className="min-w-0">
                   <p className="text-heritage-gold/60 text-xs">Bank Name</p>
-                  <p className="text-primary-foreground font-semibold text-base truncate">Heritage Bank US</p>
+                  <p className="text-primary-foreground font-semibold text-base truncate">First Heritage Bank of America US</p>
                 </div>
               </div>
             </div>

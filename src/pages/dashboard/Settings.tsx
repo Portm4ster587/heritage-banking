@@ -4,7 +4,7 @@ import { BackButton } from "@/components/BackButton";
 
 export default function Settings() {
   useEffect(() => {
-    document.title = "Heritage Bank - Account Settings";
+    document.title = "First Heritage Bank of America - Account Settings";
   }, []);
 
   return (

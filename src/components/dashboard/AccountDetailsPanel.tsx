@@ -189,7 +189,7 @@ export const AccountDetailsPanel = ({ account, balanceVisible }: AccountDetailsP
                 <Building className="w-5 h-5 text-primary" />
                 <div>
                   <p className="text-xs text-muted-foreground">Bank Name</p>
-                  <p className="font-semibold">Heritage Bank US</p>
+                  <p className="font-semibold">First Heritage Bank of America US</p>
                 </div>
               </div>
             </div>

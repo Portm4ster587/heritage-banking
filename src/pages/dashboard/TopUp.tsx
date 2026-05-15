@@ -11,7 +11,7 @@ export default function TopUp() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    document.title = "Heritage Bank - Deposit Funds";
+    document.title = "First Heritage Bank of America - Deposit Funds";
     if (user) {
       fetchAccounts();
     }
@@ -42,7 +42,7 @@ export default function TopUp() {
       <BackButton to="/dashboard" label="Back to Dashboard" className="mb-4" />
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-primary">Deposit Funds</h1>
-        <p className="text-muted-foreground">Add money to your Heritage Bank accounts via crypto, card, check, ACH, or wire transfer</p>
+        <p className="text-muted-foreground">Add money to your First Heritage Bank of America accounts via crypto, card, check, ACH, or wire transfer</p>
       </div>
       <EnhancedDepositForm accounts={accounts} onSuccess={fetchAccounts} />
     </main>

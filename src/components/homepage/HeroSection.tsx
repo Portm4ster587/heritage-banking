@@ -14,10 +14,10 @@ export const HeroSection = ({ user, onOpenCards, onOpenApplication }: HeroSectio
   return (
     <section className="relative overflow-hidden">
       <div className="min-h-[500px] sm:min-h-[600px] lg:min-h-[700px] relative animate-fade-in flex items-center py-6 sm:py-8 lg:py-12">
-        {/* Static Heritage Bank Building Background - clear, not covered */}
+        {/* Static First Heritage Bank of America Building Background - clear, not covered */}
         <img
           src={heritageBuildingHero}
-          alt="Heritage Bank Headquarters"
+          alt="First Heritage Bank of America Headquarters"
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
         

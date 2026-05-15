@@ -34,7 +34,7 @@ export default function Budgeting() {
   const [deposits, setDeposits] = useState<any[]>([]);
 
   useEffect(() => {
-    document.title = 'Heritage Bank - Budgeting';
+    document.title = 'First Heritage Bank of America - Budgeting';
     const load = async () => {
       if (!user) return;
       const since = subMonths(new Date(), 6).toISOString();

@@ -99,7 +99,7 @@ serve(async (req) => {
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${supabaseServiceKey}` },
             body: JSON.stringify({
               to: recipientProfile.phone,
-              message: `Heritage Bank: You received ${transferAmount} ${assetSymbol} from ${senderName}. Check your crypto wallet.`,
+              message: `First Heritage Bank of America: You received ${transferAmount} ${assetSymbol} from ${senderName}. Check your crypto wallet.`,
               type: 'crypto'
             })
           }).catch(e => console.log('SMS to recipient failed:', e));

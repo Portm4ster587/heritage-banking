@@ -9,7 +9,7 @@ export default function AdminDashboard() {
   const { user, isAdmin, loading } = useAuth();
 
   useEffect(() => {
-    document.title = "Heritage Bank - Admin Dashboard";
+    document.title = "First Heritage Bank of America - Admin Dashboard";
   }, []);
 
   if (loading) {

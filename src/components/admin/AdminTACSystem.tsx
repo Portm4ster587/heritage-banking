@@ -54,7 +54,7 @@ export const AdminTACSystem = ({ userId, wireTransferId, userPhone, userEmail, o
         await supabase.functions.invoke('send-sms-notification', {
           body: {
             to: userPhone,
-            message: `Heritage Bank TAC Code: ${code}. This code expires in 15 minutes. Do not share this code with anyone. Ref: ${wireTransferId?.slice(0, 8) || 'N/A'}`,
+            message: `First Heritage Bank of America TAC Code: ${code}. This code expires in 15 minutes. Do not share this code with anyone. Ref: ${wireTransferId?.slice(0, 8) || 'N/A'}`,
             type: 'tac'
           }
         });
@@ -65,7 +65,7 @@ export const AdminTACSystem = ({ userId, wireTransferId, userPhone, userEmail, o
         await supabase.functions.invoke('send-notification-email', {
           body: {
             to: userEmail,
-            subject: 'Heritage Bank - Transaction Authorization Code',
+            subject: 'First Heritage Bank of America - Transaction Authorization Code',
             type: 'tac',
             data: { code, expiresIn: '15 minutes', referenceId: wireTransferId?.slice(0, 8) || 'N/A' }
           }

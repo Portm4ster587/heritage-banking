@@ -133,7 +133,7 @@ const Auth = () => {
       if (data.user) {
         toast({
           title: "Account Created Successfully! 🎉",
-          description: "Welcome to Heritage Bank! You can now sign in. For full banking features, complete your account application.",
+          description: "Welcome to First Heritage Bank of America! You can now sign in. For full banking features, complete your account application.",
           duration: 6000
         });
         setUsernameOrEmail('');
@@ -214,7 +214,7 @@ const Auth = () => {
                 />
               </div>
               <div>
-                <CardTitle className="text-xl font-bold text-heritage-blue">Heritage Bank</CardTitle>
+                <CardTitle className="text-xl font-bold text-heritage-blue">First Heritage Bank of America</CardTitle>
                 <CardDescription className="text-heritage-blue/70 text-sm">
                   Secure premium banking
                 </CardDescription>
