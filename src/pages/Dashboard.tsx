@@ -266,6 +266,7 @@ export default function Dashboard() {
 
         {activeSection === 'accounts' && (
           <div className="space-y-6">
+            <AccountStatusBanner />
             {/* Modern Hero — Citi/USAA-inspired compact balance card */}
             <ModernAccountHero />
 
