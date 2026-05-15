@@ -43,7 +43,7 @@ export const TransferReceiptPDF = ({ transferDetails, onClose }: TransferReceipt
       <!DOCTYPE html>
       <html>
       <head>
-        <title>Heritage Bank - Transfer Receipt</title>
+        <title>First Heritage Bank of America - Transfer Receipt</title>
         <style>
           @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
           
@@ -291,7 +291,7 @@ export const TransferReceiptPDF = ({ transferDetails, onClose }: TransferReceipt
           </div>
           
           <div class="footer">
-            <div class="footer-text">Heritage Bank US • FDIC Insured • Since 1892</div>
+            <div class="footer-text">First Heritage Bank of America US • FDIC Insured • Since 1892</div>
             <div class="footer-note">This is an official receipt. Please keep for your records.</div>
             <div class="footer-note">Generated on ${format(new Date(), 'MMMM dd, yyyy at hh:mm a')}</div>
           </div>

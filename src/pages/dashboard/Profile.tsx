@@ -91,7 +91,7 @@ export default function Profile() {
   const [editedProfile, setEditedProfile] = useState<Partial<Profile>>({});
 
   useEffect(() => {
-    document.title = "Heritage Bank - My Profile";
+    document.title = "First Heritage Bank of America - My Profile";
     if (user) {
       fetchAllData();
     }
@@ -245,7 +245,7 @@ export default function Profile() {
                 <h2 className="text-2xl font-bold">
                   {profile?.first_name && profile?.last_name 
                     ? `${profile.first_name} ${profile.last_name}`
-                    : 'Heritage Bank Member'}
+                    : 'First Heritage Bank of America Member'}
                 </h2>
                 <p className="text-muted-foreground">{user?.email}</p>
                 <div className="flex items-center gap-2 mt-2 flex-wrap">

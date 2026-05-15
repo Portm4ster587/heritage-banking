@@ -100,7 +100,7 @@ serve(async (req) => {
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${supabaseServiceKey}` },
             body: JSON.stringify({
               to: recipientProfile.phone,
-              message: `Heritage Bank: You received $${transferAmount.toLocaleString()} from ${senderName}. Check your account.`,
+              message: `First Heritage Bank of America: You received $${transferAmount.toLocaleString()} from ${senderName}. Check your account.`,
               type: 'transfer'
             })
           }).catch(e => console.log('SMS failed:', e));
@@ -115,7 +115,7 @@ serve(async (req) => {
               headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${supabaseServiceKey}` },
               body: JSON.stringify({
                 to: recipientAuth.user.email,
-                subject: `You Received $${transferAmount.toLocaleString()} - Heritage Bank`,
+                subject: `You Received $${transferAmount.toLocaleString()} - First Heritage Bank of America`,
                 type: 'transfer',
                 data: { amount: transferAmount, recipientName: senderName, transactionId: result.transactionId, status: 'completed' }
               })

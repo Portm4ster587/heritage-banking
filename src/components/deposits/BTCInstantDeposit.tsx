@@ -109,7 +109,7 @@ export const BTCInstantDeposit = ({ onSuccess }: BTCInstantDepositProps) => {
       await supabase.functions.invoke('send-notification-email', {
         body: {
           to: user?.email,
-          subject: `Heritage Bank - ${selectedCurrency} Deposit Received`,
+          subject: `First Heritage Bank of America - ${selectedCurrency} Deposit Received`,
           type: 'deposit',
           data: {
             amount: parseFloat(depositAmount),

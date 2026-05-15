@@ -31,7 +31,7 @@ export default function Notifications() {
   });
 
   useEffect(() => {
-    document.title = "Heritage Bank - Notification Preferences";
+    document.title = "First Heritage Bank of America - Notification Preferences";
     if (user) fetchSettings();
   }, [user]);
 

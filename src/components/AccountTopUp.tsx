@@ -127,7 +127,7 @@ export const AccountTopUp = () => {
     <div className="space-y-8 animate-fade-in">
       <div className="animate-slide-up">
         <h2 className="text-3xl font-bold text-primary mb-2">Account Top-Up</h2>
-        <p className="text-muted-foreground">Add funds to your Heritage Bank account using multiple payment methods</p>
+        <p className="text-muted-foreground">Add funds to your First Heritage Bank of America account using multiple payment methods</p>
       </div>
 
       <Card className="banking-card">

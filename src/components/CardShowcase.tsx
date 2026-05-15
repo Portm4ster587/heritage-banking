@@ -180,7 +180,7 @@ export const CardShowcase = ({ onApply }: CardShowcaseProps) => {
                       <div className="flex items-center gap-2">
                         <HeritageSVGLogoTransparent size="sm" className="w-8 h-8" />
                         <div>
-                          <span className="text-[10px] font-semibold tracking-[0.2em] uppercase opacity-90 block">Heritage Bank</span>
+                          <span className="text-[10px] font-semibold tracking-[0.2em] uppercase opacity-90 block">First Heritage Bank of America</span>
                           <span className="text-[9px] tracking-wider opacity-60">{card.type}</span>
                         </div>
                       </div>

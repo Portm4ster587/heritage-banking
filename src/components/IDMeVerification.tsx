@@ -166,7 +166,7 @@ export const IDMeVerification = () => {
             <p className="text-2xl font-bold text-primary mb-2">{overallProgress.toFixed(0)}% Complete</p>
             <Progress value={overallProgress} className="mb-4" />
             <p className="text-sm text-muted-foreground">
-              Complete your verification to unlock all Heritage Bank features
+              Complete your verification to unlock all First Heritage Bank of America features
             </p>
           </div>
 

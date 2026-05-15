@@ -315,7 +315,7 @@ export default function ConnectExternalBank() {
                       </FormControl>
                       <div className="space-y-1 leading-none">
                         <FormLabel>
-                          I authorize Heritage Bank to verify my account using micro-deposits and agree to the account linking terms *
+                          I authorize First Heritage Bank of America to verify my account using micro-deposits and agree to the account linking terms *
                         </FormLabel>
                       </div>
                     </FormItem>

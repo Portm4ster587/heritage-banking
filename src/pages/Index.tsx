@@ -168,7 +168,7 @@ const Index = () => {
                 </div>
               </div>
               <p className="text-xs text-white/80 leading-relaxed mb-3">
-                Join over 100,000 satisfied customers who've chosen Heritage Bank for security, innovation, and exceptional service.
+                Join over 100,000 satisfied customers who've chosen First Heritage Bank of America for security, innovation, and exceptional service.
               </p>
               <p className="text-xs text-heritage-gold/90 font-semibold flex items-center"><Shield className="w-3.5 h-3.5 mr-1.5" />FDIC Insured up to $250,000</p>
               <p className="text-xs text-white/70 mt-1">Member FDIC | Equal Housing Lender | NMLS #123456</p>
@@ -212,7 +212,7 @@ const Index = () => {
 
           <div className="mt-12 bg-heritage-gold/10 border border-heritage-gold/30 rounded-xl p-6 text-center">
             <h4 className="text-2xl font-bold text-heritage-gold mb-2">Ready to Experience Premium Banking?</h4>
-            <p className="text-white/90 mb-4">Join Heritage Bank today and discover why we're America's most trusted bank!</p>
+            <p className="text-white/90 mb-4">Join First Heritage Bank of America today and discover why we're America's most trusted bank!</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/auth"><Button size="lg" className="bg-heritage-gold text-heritage-blue hover:bg-heritage-gold/90 font-bold">Open Account Now</Button></Link>
               <Link to="/contact"><Button size="lg" variant="outline" className="border-heritage-gold text-heritage-gold hover:bg-heritage-gold hover:text-heritage-blue">Contact Us</Button></Link>
@@ -221,7 +221,7 @@ const Index = () => {
 
           <div className="border-t border-heritage-gold/30 mt-12 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-              <p className="text-white/80 text-sm">© 2025 Heritage Bank. All rights reserved. | Banking Excellence Since 1892</p>
+              <p className="text-white/80 text-sm">© 2025 First Heritage Bank of America. All rights reserved. | Banking Excellence Since 1892</p>
               <div className="flex gap-4 text-sm text-white/80">
                 {["Privacy Policy","Terms of Service","Accessibility","Security"].map((t,i)=>(
                   <span key={t}>{i>0&&<span className="mr-4">•</span>}<a href="#" className="hover:text-heritage-gold transition-colors">{t}</a></span>
@@ -236,7 +236,7 @@ const Index = () => {
 
       <Dialog open={showCards} onOpenChange={setShowCards}>
         <DialogContent className="max-w-7xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader><DialogTitle className="text-2xl">Heritage Bank Cards & Loans</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle className="text-2xl">First Heritage Bank of America Cards & Loans</DialogTitle></DialogHeader>
           <CardShowcase onApply={(type) => { setApplicationType(type as any); setShowCards(false); setShowGuestApplication(true); }} />
         </DialogContent>
       </Dialog>

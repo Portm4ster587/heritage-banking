@@ -69,7 +69,7 @@ export const TransferSuccessScreen = ({
   };
 
   const shareViaEmail = () => {
-    const subject = encodeURIComponent('Heritage Bank Transfer Receipt');
+    const subject = encodeURIComponent('First Heritage Bank of America Transfer Receipt');
     const body = encodeURIComponent(`
 Transfer Confirmation
 
@@ -84,7 +84,7 @@ Account: ****${getLastFour(toAccountNumber)}
 
 Date: ${new Date().toLocaleDateString()}
 
-Heritage Bank - Secure Banking
+First Heritage Bank of America - Secure Banking
     `);
     window.open(`mailto:?subject=${subject}&body=${body}`);
     setShowSharing(false);
@@ -92,7 +92,7 @@ Heritage Bank - Secure Banking
 
   const shareViaWhatsApp = () => {
     const text = encodeURIComponent(`
-Heritage Bank Transfer Receipt
+First Heritage Bank of America Transfer Receipt
 
 Amount: $${amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
 Transaction ID: ${generatedTxId}

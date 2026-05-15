@@ -34,7 +34,7 @@ export default function Cards() {
   const [updatingCard, setUpdatingCard] = useState<string | null>(null);
 
   useEffect(() => {
-    document.title = "Heritage Bank - My Cards";
+    document.title = "First Heritage Bank of America - My Cards";
     if (user) fetchCards();
   }, [user]);
 

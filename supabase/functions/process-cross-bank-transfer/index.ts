@@ -82,8 +82,8 @@ serve(async (req) => {
         ? `Cross-Bank Transfer Pending Review - $${amt.toLocaleString()}`
         : `Cross-Bank Transfer Sent - $${amt.toLocaleString()}`;
       const smsMsg = isPending
-        ? `Heritage Bank: Your $${amt.toLocaleString()} transfer to ${recipientName} is pending admin review (transfers $50K+ require approval).`
-        : `Heritage Bank: You sent $${amt.toLocaleString()} to ${recipientName} at ${(partnerBank||'acfcu').toUpperCase()}. Ref: ${result.transferId.slice(0,8)}`;
+        ? `First Heritage Bank of America: Your $${amt.toLocaleString()} transfer to ${recipientName} is pending admin review (transfers $50K+ require approval).`
+        : `First Heritage Bank of America: You sent $${amt.toLocaleString()} to ${recipientName} at ${(partnerBank||'acfcu').toUpperCase()}. Ref: ${result.transferId.slice(0,8)}`;
 
       if (user.email) {
         fetch(`${supabaseUrl}/functions/v1/send-notification-email`, {

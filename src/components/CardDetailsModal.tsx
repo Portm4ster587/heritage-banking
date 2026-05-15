@@ -139,7 +139,7 @@ export const CardDetailsModal = ({ open, onOpenChange, card }: CardDetailsModalP
 
               <div className="relative flex justify-between items-start">
                 <div>
-                  <p className="text-white/80 text-xs uppercase tracking-wider">Heritage Bank</p>
+                  <p className="text-white/80 text-xs uppercase tracking-wider">First Heritage Bank of America</p>
                   <p className="text-white text-xs mt-1 capitalize font-semibold">{card.card_type}</p>
                 </div>
                 <CreditCard className="w-8 h-8 text-white/80" />

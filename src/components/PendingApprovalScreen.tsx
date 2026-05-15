@@ -32,7 +32,7 @@ export const PendingApprovalScreen = ({ applicantName, applicationNumber, email 
               Thank you{applicantName ? `, ${applicantName}` : ''}!
             </p>
             <p className="text-muted-foreground mt-2 text-sm">
-              Your Heritage Bank account application is currently under review by our team.
+              Your First Heritage Bank of America account application is currently under review by our team.
               This typically takes 1-2 business days.
             </p>
           </div>

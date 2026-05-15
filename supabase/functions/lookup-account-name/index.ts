@@ -47,7 +47,7 @@ serve(async (req) => {
 
     console.log(`Looking up account: ${accountNumber.slice(-4)}, routing: ${routingNumber || 'N/A'}`);
 
-    // First, check if this is a Heritage Bank internal account
+    // First, check if this is a First Heritage Bank of America internal account
     const { data: internalAccount, error: internalError } = await supabase
       .from('accounts')
       .select('id, account_number, account_type, user_id')
@@ -83,7 +83,7 @@ serve(async (req) => {
           JSON.stringify({
             found: true,
             accountName: fullName,
-            bankName: 'Heritage Bank',
+            bankName: 'First Heritage Bank of America',
             accountType: formatAccountType(internalAccount.account_type),
             isInternal: true,
             verified: true
@@ -142,7 +142,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         found: false,
-        message: 'Account not found in Heritage Bank system. Please verify the account details.'
+        message: 'Account not found in First Heritage Bank of America system. Please verify the account details.'
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );

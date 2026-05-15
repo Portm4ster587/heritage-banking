@@ -61,7 +61,7 @@ export const BankingHeader = ({ activeSection, onSectionChange }: BankingHeaderP
             </div>
             <div className="hidden sm:block leading-tight">
               <h1 className="text-lg lg:text-xl font-bold text-heritage-gold">
-                First Heritage Bank
+                First First Heritage Bank of America
               </h1>
               <p className="text-[10px] lg:text-xs text-heritage-gold/80 font-medium tracking-wide">
                 of America

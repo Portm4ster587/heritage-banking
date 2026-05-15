@@ -93,7 +93,7 @@ export const WireTransferTACFlow = ({ transfer, onComplete }: WireTransferTACFlo
         await supabase.functions.invoke('send-sms-notification', {
           body: {
             to: userContact.phone,
-            message: `Heritage Bank: Wire transfer of $${transfer.amount.toLocaleString()} to ${transfer.recipient_name} approved. Ref: ${transfer.id.slice(0, 8)}`,
+            message: `First Heritage Bank of America: Wire transfer of $${transfer.amount.toLocaleString()} to ${transfer.recipient_name} approved. Ref: ${transfer.id.slice(0, 8)}`,
             type: 'transfer'
           }
         });

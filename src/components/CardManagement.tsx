@@ -162,7 +162,7 @@ export const CardManagement = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-3xl font-bold text-primary mb-2">My Cards</h2>
-          <p className="text-muted-foreground">Manage your Heritage Bank cards</p>
+          <p className="text-muted-foreground">Manage your First Heritage Bank of America cards</p>
         </div>
         <div className="flex items-center gap-2">
           <Button className="banking-button">
@@ -181,7 +181,7 @@ export const CardManagement = () => {
             </div>
             <h3 className="text-2xl font-semibold mb-3">No Cards Found</h3>
             <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-              You don't have any cards yet. Request your first Heritage Bank card to start enjoying exclusive benefits and rewards.
+              You don't have any cards yet. Request your first First Heritage Bank of America card to start enjoying exclusive benefits and rewards.
             </p>
             <Button className="banking-button" size="lg">
               <Plus className="w-5 h-5 mr-2" />

@@ -54,7 +54,7 @@ export const HeritageCardHolder = ({ card }: HeritageCardHolderProps) => {
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
               <HeritageSVGLogoTransparent size="sm" className="w-7 h-7" />
-              <span className="text-[10px] font-semibold tracking-widest uppercase opacity-90">Heritage Bank</span>
+              <span className="text-[10px] font-semibold tracking-widest uppercase opacity-90">First Heritage Bank of America</span>
             </div>
             <span className="text-lg font-bold italic tracking-wide">{getNetworkLogo(card.card_network)}</span>
           </div>

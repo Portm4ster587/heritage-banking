@@ -814,7 +814,7 @@ export const FullAdminPanel = () => {
             await supabase.functions.invoke('send-sms-notification', {
               body: {
                 to: application.phone,
-                message: `Welcome to Heritage Bank, ${application.first_name}! Your ${application.application_type.replace('_', ' ')} account has been approved and is now active. Log in to get started. - Heritage Investment Holdings`,
+                message: `Welcome to First Heritage Bank of America, ${application.first_name}! Your ${application.application_type.replace('_', ' ')} account has been approved and is now active. Log in to get started. - Heritage Investment Holdings`,
                 type: 'welcome'
               }
             });
@@ -1329,7 +1329,7 @@ export const FullAdminPanel = () => {
         user_id: verification.user_id,
         type: 'info',
         title: 'Identity Verified!',
-        message: 'Your identity has been successfully verified. You now have full access to all Heritage Bank features.',
+        message: 'Your identity has been successfully verified. You now have full access to all First Heritage Bank of America features.',
         priority: 'high'
       });
 

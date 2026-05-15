@@ -85,7 +85,7 @@ export const CardDisplay = ({ card, className }: CardDisplayProps) => {
               <div className="flex items-center gap-2">
                 <HeritageSVGLogoTransparent size="sm" className="w-8 h-8" />
                 <div>
-                  <p className="text-white/90 text-sm font-bold uppercase tracking-wider">Heritage Bank</p>
+                  <p className="text-white/90 text-sm font-bold uppercase tracking-wider">First Heritage Bank of America</p>
                   <p className="text-white text-xs mt-0.5 capitalize font-semibold">{card.card_type} Card</p>
                 </div>
               </div>
