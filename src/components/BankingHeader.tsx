@@ -59,12 +59,12 @@ export const BankingHeader = ({ activeSection, onSectionChange }: BankingHeaderP
               />
               <div className="absolute inset-0 bg-gradient-to-r from-heritage-gold/20 to-heritage-gold/10 rounded-full blur-md -z-10"></div>
             </div>
-            <div className="hidden sm:block">
+            <div className="hidden sm:block leading-tight">
               <h1 className="text-lg lg:text-xl font-bold text-heritage-gold">
-                Heritage Bank
+                First Heritage Bank
               </h1>
-              <p className="text-xs lg:text-sm text-heritage-gold/80 font-medium">
-                Investments & Holdings
+              <p className="text-[10px] lg:text-xs text-heritage-gold/80 font-medium tracking-wide">
+                of America
               </p>
             </div>
           </Link>
