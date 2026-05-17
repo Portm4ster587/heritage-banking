@@ -6,9 +6,10 @@ import { InternalTransferForm } from "@/components/transfers/InternalTransferFor
 import { ExternalBankTransfer } from "@/components/ExternalBankTransfer";
 import { WireTransferForm } from "@/components/transfers/WireTransferForm";
 import { CrossBankTransferForm } from "@/components/transfers/CrossBankTransferForm";
+import { ZelleTransferForm } from "@/components/transfers/ZelleTransferForm";
 import { HeritageLoadingScreen } from "@/components/HeritageLoadingScreen";
 import { BackButton } from "@/components/BackButton";
-import { ArrowRightLeft, Building2, Globe, Network } from "lucide-react";
+import { ArrowRightLeft, Building2, Globe, Network, Zap } from "lucide-react";
 
 export default function Transfers() {
   const { user } = useAuth();
@@ -51,10 +52,14 @@ export default function Transfers() {
       </div>
       
       <Tabs defaultValue="internal" className="space-y-6">
-        <TabsList className="grid w-full max-w-2xl grid-cols-4">
+        <TabsList className="grid w-full max-w-3xl grid-cols-5">
           <TabsTrigger value="internal" className="flex items-center gap-2">
             <ArrowRightLeft className="w-4 h-4" />
             <span className="hidden sm:inline">Heritage</span>
+          </TabsTrigger>
+          <TabsTrigger value="zelle" className="flex items-center gap-2">
+            <Zap className="w-4 h-4" />
+            <span className="hidden sm:inline">Zelle</span>
           </TabsTrigger>
           <TabsTrigger value="external" className="flex items-center gap-2">
             <Building2 className="w-4 h-4" />
@@ -72,6 +77,10 @@ export default function Transfers() {
 
         <TabsContent value="internal">
           <InternalTransferForm accounts={accounts} onSuccess={fetchAccounts} />
+        </TabsContent>
+
+        <TabsContent value="zelle">
+          <ZelleTransferForm accounts={accounts} onSuccess={fetchAccounts} />
         </TabsContent>
 
         <TabsContent value="external">
