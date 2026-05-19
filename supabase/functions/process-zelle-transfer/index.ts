@@ -6,6 +6,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+const DAILY_LIMIT = 5000;
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
@@ -30,55 +32,50 @@ serve(async (req) => {
     if (!fromAccountId || !recipientIdentifier || !amt || amt <= 0) {
       return new Response(JSON.stringify({ error: 'Missing or invalid fields' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
-    if (amt > 5000) {
-      return new Response(JSON.stringify({ error: 'Zelle daily limit is $5,000' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    if (amt > DAILY_LIMIT) {
+      return new Response(JSON.stringify({ error: `Zelle per-transaction limit is $${DAILY_LIMIT.toLocaleString()}` }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     const admin = createClient(supabaseUrl, serviceKey);
-    const identifier = String(recipientIdentifier).trim();
-    const isEmail = identifier.includes('@');
-    const phoneDigits = identifier.replace(/\D/g, '');
 
-    // Try to find an internal Heritage recipient
-    let recipientUserId: string | null = null;
-    if (isEmail) {
-      const { data: users } = await admin.auth.admin.listUsers({ page: 1, perPage: 1000 });
-      const match = users?.users?.find((u: any) => (u.email || '').toLowerCase() === identifier.toLowerCase());
-      if (match) recipientUserId = match.id;
-    } else if (phoneDigits.length >= 7) {
-      const { data: profile } = await admin
-        .from('profiles')
-        .select('user_id, phone')
-        .ilike('phone', `%${phoneDigits.slice(-10)}%`)
-        .limit(1)
-        .maybeSingle();
-      if (profile) recipientUserId = profile.user_id;
+    // Enforce daily cumulative limit
+    const { data: dailyTotal } = await admin.rpc('zelle_daily_sent_total', { p_user_id: user.id });
+    const alreadySent = Number(dailyTotal || 0);
+    if (alreadySent + amt > DAILY_LIMIT) {
+      const remaining = Math.max(0, DAILY_LIMIT - alreadySent);
+      return new Response(JSON.stringify({
+        error: `Daily Zelle limit exceeded. You've sent $${alreadySent.toLocaleString()} today. Remaining: $${remaining.toLocaleString()}.`
+      }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    // Internal Zelle → instant via heritage RPC
-    if (recipientUserId && recipientUserId !== user.id) {
-      const { data: recAccount } = await admin
-        .from('accounts')
-        .select('account_number')
-        .eq('user_id', recipientUserId)
-        .eq('status', 'active')
-        .order('balance', { ascending: false })
-        .limit(1)
-        .maybeSingle();
+    // Fast internal lookup via RPC
+    const { data: lookup } = await admin.rpc('lookup_zelle_recipient', { p_identifier: String(recipientIdentifier).trim() });
+    const internal = Array.isArray(lookup) ? lookup[0] : null;
+    const recipientUserId: string | null = internal?.recipient_user_id || null;
+    const recipientAccountNumber: string | null = internal?.recipient_account_number || null;
+    const resolvedName: string | null = internal?.recipient_name || null;
 
-      if (recAccount?.account_number) {
-        const { data: result, error: rpcError } = await admin.rpc('process_heritage_transfer', {
-          p_sender_id: user.id,
-          p_from_account_id: fromAccountId,
-          p_recipient_account_number: recAccount.account_number,
-          p_amount: amt,
-          p_memo: `Zelle: ${memo || 'Payment'}`
-        });
-        if (rpcError || result?.error) {
-          return new Response(JSON.stringify({ error: result?.error || 'Transfer failed' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-        }
-        return new Response(JSON.stringify({ success: true, status: 'completed', method: 'zelle_internal', ...result }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    // Internal Zelle → instant via heritage RPC
+    if (recipientUserId && recipientUserId !== user.id && recipientAccountNumber) {
+      const { data: result, error: rpcError } = await admin.rpc('process_heritage_transfer', {
+        p_sender_id: user.id,
+        p_from_account_id: fromAccountId,
+        p_recipient_account_number: recipientAccountNumber,
+        p_amount: amt,
+        p_memo: `Zelle: ${memo || 'Payment'}`
+      });
+      if (rpcError || (result as any)?.error) {
+        return new Response(JSON.stringify({ error: (result as any)?.error || 'Transfer failed' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
       }
+      // Reclassify the internal transfer record as zelle for unified history
+      await admin
+        .from('transfers')
+        .update({ transfer_type: 'zelle', description: `Zelle to ${recipientName || resolvedName || recipientIdentifier}${memo ? ` — ${memo}` : ''}` })
+        .eq('user_id', user.id)
+        .eq('transfer_type', 'heritage_internal')
+        .order('created_at', { ascending: false })
+        .limit(1);
+      return new Response(JSON.stringify({ success: true, status: 'completed', method: 'zelle_internal', recipientName: resolvedName, ...result }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     // External Zelle → debit and record pending (1 business day)
@@ -103,17 +100,17 @@ serve(async (req) => {
       from_account_id: src.id,
       to_account_id: null,
       amount: amt,
-      description: `Zelle to ${recipientName || identifier}${memo ? ` — ${memo}` : ''}`,
+      description: `Zelle to ${recipientName || recipientIdentifier}${memo ? ` — ${memo}` : ''}`,
       user_id: user.id,
       transfer_type: 'zelle',
       status: 'pending',
-      recipient_name: recipientName || identifier,
-      recipient_account: identifier,
+      recipient_name: recipientName || recipientIdentifier,
+      recipient_account: recipientIdentifier,
     });
     await admin.from('user_notifications').insert({
       user_id: user.id,
       title: 'Zelle Payment Sent',
-      message: `Your $${amt.toLocaleString()} Zelle to ${recipientName || identifier} is processing. Delivery within 1 business day.`,
+      message: `Your $${amt.toLocaleString()} Zelle to ${recipientName || recipientIdentifier} is processing. Delivery within 1 business day.`,
       type: 'transfer',
       priority: 'normal',
     });
