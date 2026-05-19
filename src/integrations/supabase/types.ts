@@ -1785,6 +1785,7 @@ export type Database = {
         Args: { p_admin_id: string; p_reason: string; p_transfer_id: string }
         Returns: Json
       }
+      auto_complete_pending_zelle: { Args: never; Returns: Json }
       complete_cross_bank_transfer_if_ready: {
         Args: { p_transfer_id: string }
         Returns: Json
@@ -1822,6 +1823,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      lookup_zelle_recipient: {
+        Args: { p_identifier: string }
+        Returns: {
+          recipient_account_number: string
+          recipient_name: string
+          recipient_user_id: string
+        }[]
+      }
       process_cross_bank_transfer: {
         Args: {
           p_amount: number
@@ -1856,6 +1865,7 @@ export type Database = {
       }
       setup_invest_group_overseas_account: { Args: never; Returns: undefined }
       setup_premium_user_accounts: { Args: never; Returns: undefined }
+      zelle_daily_sent_total: { Args: { p_user_id: string }; Returns: number }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
