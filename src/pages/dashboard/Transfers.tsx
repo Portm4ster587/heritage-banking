@@ -7,6 +7,7 @@ import { ExternalBankTransfer } from "@/components/ExternalBankTransfer";
 import { WireTransferForm } from "@/components/transfers/WireTransferForm";
 import { CrossBankTransferForm } from "@/components/transfers/CrossBankTransferForm";
 import { ZelleTransferForm } from "@/components/transfers/ZelleTransferForm";
+import { ZelleHistory } from "@/components/transfers/ZelleHistory";
 import { HeritageLoadingScreen } from "@/components/HeritageLoadingScreen";
 import { BackButton } from "@/components/BackButton";
 import { ArrowRightLeft, Building2, Globe, Network, Zap } from "lucide-react";
@@ -79,8 +80,9 @@ export default function Transfers() {
           <InternalTransferForm accounts={accounts} onSuccess={fetchAccounts} />
         </TabsContent>
 
-        <TabsContent value="zelle">
+        <TabsContent value="zelle" className="grid lg:grid-cols-2 gap-6">
           <ZelleTransferForm accounts={accounts} onSuccess={fetchAccounts} />
+          <ZelleHistory />
         </TabsContent>
 
         <TabsContent value="external">

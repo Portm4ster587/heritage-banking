@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Zap, Send, Info } from 'lucide-react';
+import { Zap, Send, Info, CheckCircle2, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -20,6 +20,13 @@ interface Account {
 
 const DAILY_LIMIT = 5000;
 
+interface LookupResult {
+  internal: boolean;
+  recipientName: string | null;
+  dailySent: number;
+  dailyRemaining: number;
+}
+
 export const ZelleTransferForm = ({ accounts, onSuccess }: { accounts: Account[]; onSuccess?: () => void }) => {
   const { toast } = useToast();
   const [fromAccount, setFromAccount] = useState('');
@@ -28,9 +35,28 @@ export const ZelleTransferForm = ({ accounts, onSuccess }: { accounts: Account[]
   const [amount, setAmount] = useState('');
   const [memo, setMemo] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [lookup, setLookup] = useState<LookupResult | null>(null);
+  const [looking, setLooking] = useState(false);
   const amt = parseFloat(amount) || 0;
   const source = accounts.find(a => a.id === fromAccount);
   const formatType = (t: string) => t.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  const remaining = lookup ? lookup.dailyRemaining : DAILY_LIMIT;
+
+  // Debounced recipient lookup
+  useEffect(() => {
+    const id = recipientIdentifier.trim();
+    if (id.length < 3) { setLookup(null); return; }
+    setLooking(true);
+    const t = setTimeout(async () => {
+      try {
+        const { data } = await supabase.functions.invoke('lookup-zelle-recipient', { body: { identifier: id } });
+        if (data && !data.error) setLookup(data as LookupResult);
+      } finally {
+        setLooking(false);
+      }
+    }, 400);
+    return () => clearTimeout(t);
+  }, [recipientIdentifier]);
 
   const handleSubmit = async () => {
     if (!fromAccount || !recipientIdentifier || !amount) {
@@ -39,6 +65,10 @@ export const ZelleTransferForm = ({ accounts, onSuccess }: { accounts: Account[]
     }
     if (amt > DAILY_LIMIT) {
       toast({ title: 'Over daily limit', description: `Zelle limit is $${DAILY_LIMIT.toLocaleString()}/day`, variant: 'destructive' });
+      return;
+    }
+    if (lookup && amt > lookup.dailyRemaining) {
+      toast({ title: 'Exceeds remaining daily limit', description: `Only $${lookup.dailyRemaining.toLocaleString()} left today.`, variant: 'destructive' });
       return;
     }
     if (source && (source.balance ?? 0) < amt) {
@@ -52,7 +82,7 @@ export const ZelleTransferForm = ({ accounts, onSuccess }: { accounts: Account[]
         body: {
           fromAccountId: fromAccount,
           recipientIdentifier: recipientIdentifier.trim(),
-          recipientName: recipientName.trim() || null,
+          recipientName: recipientName.trim() || lookup?.recipientName || null,
           amount: amt,
           memo: memo || null,
         }
@@ -63,10 +93,10 @@ export const ZelleTransferForm = ({ accounts, onSuccess }: { accounts: Account[]
       toast({
         title: data.status === 'completed' ? 'Zelle Sent Instantly' : 'Zelle Processing',
         description: data.status === 'completed'
-          ? `$${amt.toLocaleString()} delivered to ${recipientName || recipientIdentifier}.`
+          ? `$${amt.toLocaleString()} delivered to ${recipientName || lookup?.recipientName || recipientIdentifier}.`
           : `$${amt.toLocaleString()} to ${recipientName || recipientIdentifier} will arrive within 1 business day.`,
       });
-      setRecipientIdentifier(''); setRecipientName(''); setAmount(''); setMemo('');
+      setRecipientIdentifier(''); setRecipientName(''); setAmount(''); setMemo(''); setLookup(null);
       onSuccess?.();
     } catch (e: any) {
       toast({ title: 'Zelle failed', description: e.message, variant: 'destructive' });
@@ -78,7 +108,7 @@ export const ZelleTransferForm = ({ accounts, onSuccess }: { accounts: Account[]
   return (
     <Card className="hightech-card">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 flex-wrap">
           <Zap className="h-6 w-6 text-primary" />
           Send with Zelle
           <Badge variant="secondary" className="ml-2">Instant to Heritage members</Badge>
@@ -110,17 +140,36 @@ export const ZelleTransferForm = ({ accounts, onSuccess }: { accounts: Account[]
             placeholder="name@email.com or (555) 123-4567"
             className="h-12"
           />
+          {recipientIdentifier.trim().length >= 3 && (
+            <div className="flex items-center gap-2 text-xs">
+              {looking ? (
+                <span className="text-muted-foreground">Looking up recipient…</span>
+              ) : lookup?.internal ? (
+                <Badge className="bg-emerald-500/20 text-emerald-600 border-emerald-500/30">
+                  <CheckCircle2 className="w-3 h-3 mr-1" />
+                  Heritage member{lookup.recipientName ? ` · ${lookup.recipientName}` : ''} — instant
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="border-amber-500/40 text-amber-600">
+                  <Clock className="w-3 h-3 mr-1" />
+                  External Zelle — delivery within 1 business day
+                </Badge>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">
           <Label>Recipient Name (optional)</Label>
-          <Input value={recipientName} onChange={e => setRecipientName(e.target.value)} placeholder="John Doe" className="h-12" />
+          <Input value={recipientName} onChange={e => setRecipientName(e.target.value)} placeholder={lookup?.recipientName || 'John Doe'} className="h-12" />
         </div>
 
         <div className="space-y-2">
           <Label>Amount (USD)</Label>
-          <Input type="number" min="0" step="0.01" max={DAILY_LIMIT} value={amount} onChange={e => setAmount(e.target.value)} placeholder="0.00" className="h-12" />
-          <p className="text-xs text-muted-foreground">Daily limit: ${DAILY_LIMIT.toLocaleString()}</p>
+          <Input type="number" min="0" step="0.01" max={remaining} value={amount} onChange={e => setAmount(e.target.value)} placeholder="0.00" className="h-12" />
+          <p className="text-xs text-muted-foreground">
+            Daily limit: ${DAILY_LIMIT.toLocaleString()} · Sent today: ${lookup ? lookup.dailySent.toLocaleString() : '0'} · Remaining: ${remaining.toLocaleString()}
+          </p>
         </div>
 
         <div className="space-y-2">
